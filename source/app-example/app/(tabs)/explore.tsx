@@ -6,6 +6,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { HelloWave } from '@/components/HelloWave';
 
 export default function TabTwoScreen() {
   return (
@@ -19,6 +20,8 @@ export default function TabTwoScreen() {
           style={styles.headerImage}
         />
       }>
+        <HelloWave></HelloWave>
+
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Explore</ThemedText>
       </ThemedView>
