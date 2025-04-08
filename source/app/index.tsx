@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 
 export default function Index() {
   return (
@@ -9,6 +10,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
+      <ActivityIndicator animating={true} size="large" />
       <Text>Edit app/index.tsx to edit this screen.</Text>
     </View>
   );
