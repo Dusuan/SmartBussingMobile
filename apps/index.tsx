@@ -1,3 +1,4 @@
+import React from "react";
 import { Text, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { Button } from "react-native-paper";
