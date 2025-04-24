@@ -57,16 +57,11 @@ export default function RouteView() { //Por el momento es un ejemplo
 
         <Card>
             <Card.Content>
-              
                 <Text>Camion 250</Text>
                 <Text>Llegada a 11: 20</Text>
                 <Text>40 min</Text>
-
                 <FontAwesome5 name="walking" size={20}></FontAwesome5>
-
                 <FontAwesome5 name="bus" size={20}></FontAwesome5>
-
-                
             </Card.Content>
         </Card>
         </View>
