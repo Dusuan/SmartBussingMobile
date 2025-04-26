@@ -1,23 +1,27 @@
-import 'dotenv/config';
-
+import "dotenv/config";
 
 export default {
+  
   expo: {
-    name: 'SmartBussingMobile',
-    slug: 'SmartBussingMobile',
-    android: {
-      package: 'com.anonymous.SmartBussingMobile',
-      config: {
-        googleMaps: {
-          apiKey: process.env.GOOGLE_MAPS_API_KEY,
+    extra: {
+      MAPBOX_DOWNLOAD_TOKEN: process.env.MAPBOX_DOWNLOAD_TOKEN,
+    },
+    android :  {
+      package: "com.anonymous.smartbussingmobile"
+    },
+    plugins: [
+      [
+        "@rnmapbox/maps",
+        {
+          RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOAD_TOKEN,
         },
-      },
-    },
-    ios: {
-      bundleIdentifier: 'com.anonymous.SmartBussingMobile',
-      config: {
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
-      },
-    },
+      ],
+      [
+        "expo-location",
+        {
+          locationWhenInUsePermission: "Show current location on map.",
+        },
+      ],
+    ],
   },
 };
