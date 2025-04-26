@@ -2,7 +2,8 @@
 
 # dependencies
 node_modules/
-
+# next.js build directory
+.next/
 # Expo
 .expo/
 dist/
@@ -31,10 +32,13 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
 
 # typescript
 *.tsbuildinfo
 
+# unnecesary app-example files
 app-example
 
-.env
+#build 
+android/
