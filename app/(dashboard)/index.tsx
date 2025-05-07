@@ -6,6 +6,8 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
+import BusCard from "@/components/buscard";
+
 import Constants from "expo-constants";
 Mapbox.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 
@@ -18,10 +20,8 @@ export default function Dashboard() {
         <GestureHandlerRootView style={styles.container}>
           <BottomSheet>
             <BottomSheetView>
-              <View className="flex-1 justify-center items-center h-80">
-              <Text>Hola</Text>
-              </View>
-              <Text>Sí funca</Text>
+              <View className="flex-1 justify-center items-center h-80"></View>
+              <BusCard></BusCard>
             </BottomSheetView>
           </BottomSheet>
         </GestureHandlerRootView>
@@ -31,7 +31,7 @@ export default function Dashboard() {
 }
 
 const styles = StyleSheet.create({
-  page: {
+  page: { 
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
