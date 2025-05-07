@@ -29,6 +29,9 @@ export default function Index() {
         <Button className="mb-8" mode="elevated">
           <Link href="/(routeView)"> Vista de rutas </Link>
         </Button>
+        <Button className="mb-8" mode="elevated">
+          <Link href="/(likedRoute)"> Vista de rutas Favoritas </Link>
+        </Button>
       </View>
     </SafeAreaView>
   );
