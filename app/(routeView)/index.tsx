@@ -1,4 +1,6 @@
-import { ScrollView, Text, View, StyleSheet } from "react-native";
+
+import React, {useState} from "react";
+import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { Card, IconButton, Icon, Surface } from "react-native-paper";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
@@ -9,6 +11,9 @@ import { SafeAreaView } from "react-native-safe-area-context"
 //Aqui abran funciones en donde dependiendo de los camiones a utilizar se realziara el timeline adecuado de la ruta
 
 export default function RouteView() { //Por el momento es un ejemplo
+  
+  const[liked,setLiked] = useState(false)
+  
   return (
     <SafeAreaView style = {{backgroundColor : "#242424"}}>
       <ScrollView>
@@ -20,7 +25,7 @@ export default function RouteView() { //Por el momento es un ejemplo
           <View className ="mb-9">
             <Card style = {{backgroundColor : "#4B4B4B", height: 180}}>
               <Card.Content>
-                <Text className="text-2xl mt-3" style= {{color : "#FF544B"}}>Salida a las 10: 30</Text>
+                <Text className="text-2xl mt-3" style= {{color : "#FF544B"}}>Salida a las 10: 50</Text>
 
                 <View className="flex flex-row w-full h-8 mt-7 gap-x-3">
                   <Surface style = {styles.walkBar} elevation={3} className="flex-1 items-center justify-center p-4 ">
@@ -41,16 +46,23 @@ export default function RouteView() { //Por el momento es un ejemplo
                 </View>
                 
                 <View className="flex flex-row justify-between w-full mt-5">
-                  <Text className="text-lg text-left color-white">Llegada a 11: 20</Text>
+                  <Text className="text-lg text-left color-white" >Llegada a 11: 50</Text>
                   <Text className="text-right color-white" >40 min</Text>
                 </View>
 
-                <View className="absolute ml-80 mt-4">
+                <View className="absolute ml-80 mt-4 ">
                   <IconButton
-                      icon= {() => <AntDesign name="hearto" color= "#FFFFFF" size={20}></AntDesign>}
-                      size={20}
-                      onPress={() => console.log("I like this route")}
-                  />
+                      icon= {() => (
+
+                        <AntDesign
+                          name= {liked ? 'heart' : 'hearto'}
+                          color={liked ? 'red' : 'white'}
+                          size={25}
+                        ></AntDesign>
+
+                      ) }
+                      onPress={() => setLiked(!liked)}
+                  /> 
                 </View>
                 
             </Card.Content>
@@ -71,20 +83,47 @@ export default function RouteView() { //Por el momento es un ejemplo
       <View className="mt-4">
         <Card style = {{backgroundColor : "#4B4B4B"}}>
             <Card.Content>
-                <Text>MicroBus 250</Text>
-                <Text>Calle Miguel Aleman</Text>
-                <Text>Bulevard Costero</Text>
-                <Text>Llegada a 11:20</Text>
-                <Text>40 min</Text>
-                <FontAwesome5 name="bus" size={20}></FontAwesome5>
 
-                <View className="absolute ml-80 mt-4">
-                  <IconButton
-                      icon= {() => <Ionicons name="alert-circle" size={20}></Ionicons>}
-                      size={20}
+                <View className="flex flex-row justify-start items-center gap-x-3">
+                  <FontAwesome5 name="bus" size={25} color="#FF544B"></FontAwesome5>
+                  <Text className="text-2xl" style = {{color : "#FF544B"}}>MicroBus 250</Text>
+
+                  <View>
+                    <IconButton
+                      icon= {() => <Ionicons name="alert-circle" size={25} color= "#FF544B"></Ionicons>}
+                      size={25}
                       onPress={() => console.log("Comentarios de Camion")}
-                  />
+                    />
+                  </View>
                 </View>
+
+
+              <View>
+                <View style = {styles.routeLine}></View>
+
+                <View className="absolute ml-10">
+                  <View className="flex flex-row items-center justify-between mb-7">
+                    <Text className="text-base color-white">Desde Calle Miguel Aleman</Text>
+                    <IconButton
+                      icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
+                      onPress={() => console.log("Comentarios de la ruta")}
+                    />  
+
+                    <Text className="text-lg color-white">11:20 am</Text> 
+                  </View>
+
+                  <View className="flex flex-row items-center justify-between">
+                    <Text className="text-base color-white">Llegada a Bulevard Costero</Text>
+                    <IconButton
+                      icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
+                      onPress={() => console.log("Comentarios de la ruta")}
+                    />
+
+                    <Text className="text-lg text-pretty color-white">10:50 am</Text>
+                  </View>
+                </View>
+              </View>
+
             </Card.Content>
         </Card>
       </View>
@@ -96,6 +135,54 @@ export default function RouteView() { //Por el momento es un ejemplo
           <FontAwesome5 name="walking" color = "#FFFFFF" size={30}></FontAwesome5>
           <Text className="color-white">10 minutos</Text>
         </View> 
+      </View>
+
+      <View className="mt-4">
+        <Card style = {{backgroundColor : "#4B4B4B"}}>
+            <Card.Content>
+
+                <View className="flex flex-row justify-start items-center gap-x-3">
+                  <FontAwesome5 name="bus" size={25} color="#FF544B"></FontAwesome5>
+                  <Text className="text-2xl" style = {{color : "#FF544B"}}>MicroBus 101</Text>
+
+                  <View>
+                    <IconButton
+                      icon= {() => <Ionicons name="alert-circle" size={25} color= "#FF544B"></Ionicons>}
+                      size={25}
+                      onPress={() => console.log("Comentarios de Camion")}
+                    />
+                  </View>
+                </View>
+
+
+              <View>
+                <View style = {styles.routeLine}></View>
+
+                <View className="absolute ml-10">
+                  <View className="flex flex-row items-center justify-between mb-7">
+                    <Text className="text-base color-white">Desde Playa Hermosa</Text>
+                    <IconButton
+                      icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
+                      onPress={() => console.log("Comentarios de la ruta")}
+                    />  
+
+                    <Text className="text-lg color-white">11:20 am</Text> 
+                  </View>
+
+                  <View className="flex flex-row items-center justify-between">
+                    <Text className="text-base color-white">Llegada a Cotsco Street</Text>
+                    <IconButton
+                      icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
+                      onPress={() => console.log("Comentarios de la ruta")}
+                    />
+
+                    <Text className="text-lg text-pretty color-white">11:40 am</Text>
+                  </View>
+                </View>
+              </View>
+
+            </Card.Content>
+        </Card>
       </View>
 
 
@@ -130,6 +217,11 @@ const styles = StyleSheet.create({
     },
 
     routeLine : {
-
+      borderLeftWidth : 5,
+      borderColor : "#B3261E",
+      borderRadius : 5,
+      borderStyle : "solid",
+      height : 125,
+      marginLeft : 10,
     }
 })
