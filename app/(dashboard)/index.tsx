@@ -8,7 +8,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useState } from "react";
 import BusCard from "@/components/buscard";
-
+import { LocationPuck } from "@rnmapbox/maps";
 import Constants from "expo-constants";
 import { useEffect } from "react";
 
@@ -18,21 +18,25 @@ export default function Dashboard() {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <Mapbox.MapView style={styles.map}>
-          {/*
-          
-          Encontrar forma de que no crashee usando la localización del usuario
-          <Mapbox.UserLocation visible={true} />
-           
+        <Mapbox.MapView style={styles.map}> 
           <Mapbox.Camera
+            defaultSettings={{
+              zoomLevel: 12,
+              centerCoordinate: [-116.6076, 31.8658], // centerCoordinate: [-116.6076, 31.8658] order of [y, x] instead of [x, y]
+            }}
+            zoomLevel={12}
             followUserLocation={true}
             followUserMode={UserTrackingMode.Follow}
-            zoomLevel={12}
-              
-          */}
-          <Mapbox.Camera
-           centerCoordinate={[-122.1797, 37.4518]} // order of [y, x] instead of [x, y]
-            zoomLevel={12}
+          />
+          <LocationPuck
+            topImage="topImage"
+            visible={true}
+            scale={["interpolate", ["linear"], ["zoom"], 10, 1.0, 20, 4.0]}
+            pulsing={{
+              isEnabled: true,
+              color: "teal",
+              radius: 50.0,
+            }}
           />
         </Mapbox.MapView>
       </View>
