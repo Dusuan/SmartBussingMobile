@@ -9,6 +9,11 @@ export default {
     android :  {
       package: "com.anonymous.smartbussingmobile"
     },
+    
+      ios: {
+        bundleIdentifier: "com.anonymous.smartbussingmobile"
+      }
+    ,
     plugins: [
       [
         "@rnmapbox/maps",
