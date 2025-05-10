@@ -1,7 +1,7 @@
 import { Platform, Text, View, PermissionsAndroid } from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Mapbox from "@rnmapbox/maps";
+import MapboxGL from "@rnmapbox/maps";
 import { UserTrackingMode } from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -11,22 +11,31 @@ import BusCard from "@/components/buscard";
 import { LocationPuck } from "@rnmapbox/maps";
 import Constants from "expo-constants";
 import { useEffect } from "react";
+import tilesets from "../../assets/tilesets/tilesets.json";
 
-Mapbox.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
+MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
+MapboxGL.setTelemetryEnabled(false);
 
 export default function Dashboard() {
   return (
     <View style={styles.page}>
       <View style={styles.container}>
-        <Mapbox.MapView style={styles.map}> 
-          <Mapbox.Camera
+        <MapboxGL.MapView
+          styleURL="mapbox://styles/dusuan/cmahkukuu00t601rf921chgpg"
+          rotateEnabled={true}
+          style={styles.map}
+        >
+          <MapboxGL.Camera
             defaultSettings={{
               zoomLevel: 12,
               centerCoordinate: [-116.6076, 31.8658], // centerCoordinate: [-116.6076, 31.8658] order of [y, x] instead of [x, y]
             }}
-            zoomLevel={12}
-            followUserLocation={true}
-            followUserMode={UserTrackingMode.Follow}
+            zoomLevel={14}
+            //  followUserLocation={true}
+            //  followUserMode={UserTrackingMode.Follow}
+            pitch={20}
+            animationMode="flyTo"
+            animationDuration={1000}
           />
           <LocationPuck
             topImage="topImage"
@@ -38,7 +47,21 @@ export default function Dashboard() {
               radius: 50.0,
             }}
           />
-        </Mapbox.MapView>
+
+          {/*  <MapboxGL.VectorSource // adding a vector source and styling it directly in the app
+            id="id-lines-source"
+            url=""
+          >
+            <MapboxGL.LineLayer
+              id="line-layer"
+              style={{
+                lineColor: "#FF5733", // Red color for the line
+                lineWidth: 5,
+              }}
+            />
+          </MapboxGL.VectorSource>
+        */}
+        </MapboxGL.MapView>
       </View>
     </View>
   );
