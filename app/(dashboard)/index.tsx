@@ -6,7 +6,7 @@ import { UserTrackingMode } from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import BusCard from "@/components/buscard";
 import { LocationPuck } from "@rnmapbox/maps";
 import Constants from "expo-constants";
@@ -17,6 +17,9 @@ MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
 
 export default function Dashboard() {
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  // callbacks
+
   return (
     <View style={styles.page}>
       <View style={styles.container}>
@@ -62,6 +65,16 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
         </MapboxGL.MapView>
+        {/* */}
+        <View className="inset-y-10" style={styles.BottomSheet}>
+          <GestureHandlerRootView style={styles.container}>
+            <BottomSheet ref={bottomSheetRef}>
+              <BottomSheetView>
+                <Text>Awesome 🎉</Text>
+              </BottomSheetView>
+            </BottomSheet>
+          </GestureHandlerRootView>
+        </View>
       </View>
     </View>
   );
@@ -74,10 +87,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   container: {
+    flex: 1,
     height: "100%",
     width: "100%",
   },
   map: {
     flex: 1,
   },
+  BottomSheet : {
+    position : "absolute",
+
+  }
 });
