@@ -1,3 +1,8 @@
 {
-    "de":{}
+  "RojoBlanco": {
+    "url": "mapbox://styles/dusuan/cmaj4o9tg00xs01snh0p24j9a"
+  },
+  "default": {
+    "url": "mapbox://styles/mapbox/streets-v11"
+  }
 }
