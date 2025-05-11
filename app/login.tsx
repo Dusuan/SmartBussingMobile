@@ -2,6 +2,8 @@ import * as React from 'react';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Divider, useTheme } from 'react-native-paper';
 import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 const separacion = StyleSheet.create({
     container: {
@@ -26,6 +28,8 @@ const Login = () => {
 
     const [correo, setCorreo] = React.useState('');
     const [contraseña, setContraseña] = React.useState('');
+    const [mostrarContraseña, setMostrarContraseña] = React.useState(false);
+
 
     return (
 
@@ -42,35 +46,64 @@ const Login = () => {
         </View>
 
         <View className='mt-5'>
-        <View className='ml-10'>
-       
-            <Text style={{color: '#A4FFD7'}}>Correo electrónico</Text>
-        </View>
         <View className="ml-10 mr-10">
         <TextInput
-            label="Escriba aqui..."
+            left={<TextInput.Icon icon="email" color="#FFFFFF" />}
+            label={<Text style={{ color: '#FFFFFF' }}>Correo electrónico</Text>}       
             mode="flat"
             value={correo}
             onChangeText={correo => setCorreo(correo)}
-            theme={{ colors: { primary: '#3B7C5F', background:'#E6FFF4' } }}
-            style={{ backgroundColor: '#FFFFFF' }}
             underlineColor="#3B7C5F"
+            activeUnderlineColor="#3B7C5F"
+            outlineColor='#FFFFFF'
+            activeOutlineColor='#FFFFFF'
+            selectionColor="#FFFFFF"
+            textColor="#FFFFFF" 
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.3)',
+            }}
+  theme={{
+    colors: {
+      primary: '#FFFFFF',     
+      text: '#FFFFFF',        
+      placeholder: '#FFFFFF',
+    },
+  }}
         />
+        </View>
         </View>
         
         <View className="mt-5">
-        <View className='ml-10'>
-            <Text style={{color: '#A4FFD7'}}>Contraseña</Text>
-        </View>
         <View className="ml-10 mr-10">
         <TextInput
-            label="Escriba aqui..."
+        left={<TextInput.Icon icon="lock" color="#FFFFFF" />}
+        right={<TextInput.Icon
+             icon={mostrarContraseña ? 'eye-off' : 'eye'}
+              color="#FFFFFF"
+              onPress={() => setMostrarContraseña(!mostrarContraseña)}
+              />}
+             label={<Text style={{ color: '#FFFFFF' }}>Contraseña</Text>}       
             mode="flat"
             value={contraseña}
             onChangeText={contraseña => setContraseña(contraseña)}
-            theme={{ colors: { primary: '#3B7C5F', background:'#E6FFF4' } }}
-            style={{ backgroundColor: '#FFFFFF' }}
+            secureTextEntry={!mostrarContraseña}
             underlineColor="#3B7C5F"
+            activeUnderlineColor="#3B7C5F"
+            outlineColor='#FFFFFF'
+            activeOutlineColor='#FFFFFF'
+            selectionColor="#FFFFFF"
+            textColor="#FFFFFF"
+
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.3)',
+            }}
+  theme={{
+    colors: {
+      primary: '#FFFFFF',     
+      text: '#FFFFFF',        
+      placeholder: '#FFFFFF', 
+    },
+  }}
         />
         </View>
         </View>
@@ -95,7 +128,6 @@ const Login = () => {
         </Button>
         </View>
         </View>
-     </View>
      </ImageBackground>
     );
 };
