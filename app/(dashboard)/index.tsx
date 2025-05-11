@@ -12,6 +12,8 @@ import { LocationPuck } from "@rnmapbox/maps";
 import Constants from "expo-constants";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
+import { Avatar, Button, Card, Text as PaperText } from 'react-native-paper';
+
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -20,11 +22,13 @@ export default function Dashboard() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   // callbacks
 
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11")
+
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
       <MapboxGL.MapView
         style = {styles.map}
-        styleURL="mapbox://styles/dusuan/cmahkukuu00t601rf921chgpg"
+        styleURL={CurrMap}
         rotateEnabled={true}
       >
         <MapboxGL.Camera
@@ -71,7 +75,7 @@ export default function Dashboard() {
           ref={bottomSheetRef}
         >
           <BottomSheetView>
-            <Text>Awesome 🎉</Text>
+            <PaperText>Awesome 🎉</PaperText>
           </BottomSheetView>
         </BottomSheet>
     </GestureHandlerRootView>
