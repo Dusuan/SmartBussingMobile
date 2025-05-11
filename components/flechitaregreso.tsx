@@ -15,7 +15,7 @@ export default function flechitaregreso ( texto: ruta) {
         router.navigate(`${texto.ruta}`);
     };
     return(
-     <View className="ml-1">
+     <View className="ml-3 mt-2">
                     <IconButton
                         icon={() => (
                         <AntDesign
