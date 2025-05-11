@@ -4,6 +4,8 @@ import { TextInput, Button, Divider, useTheme } from 'react-native-paper';
 import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import { router } from 'expo-router';
+
 
 const separacion = StyleSheet.create({
     container: {
@@ -23,6 +25,11 @@ const separacion = StyleSheet.create({
           alignItems: 'center',
         },
       });
+
+       const navigateProfile = () => {
+          //redireccion hacia la pagina principal (segun q no jala)
+          router.navigate('/');
+        };
 
 const Login = () => {
 
@@ -111,9 +118,10 @@ const Login = () => {
         
         <View style={separacion.container}>
         <View className="ms-14 mt-20">
-        <Button mode="contained" onPress={() => console.log('Pressed')}
+        <Button mode="contained" onPress={() => navigateProfile()}
             textColor="#A4FFD7"
             style={{ backgroundColor:'transparent' }}
+            
             >
             Regresar
         </Button>
