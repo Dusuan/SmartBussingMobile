@@ -12,6 +12,8 @@ import { LocationPuck } from "@rnmapbox/maps";
 import Constants from "expo-constants";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
+import { Avatar, Button, Card, Text as PaperText } from 'react-native-paper';
+
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -20,38 +22,39 @@ export default function Dashboard() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   // callbacks
 
-  return (
-    <View style={styles.page}>
-      <View style={styles.container}>
-        <MapboxGL.MapView
-          styleURL="mapbox://styles/dusuan/cmahkukuu00t601rf921chgpg"
-          rotateEnabled={true}
-          style={styles.map}
-        >
-          <MapboxGL.Camera
-            defaultSettings={{
-              zoomLevel: 12,
-              centerCoordinate: [-116.6076, 31.8658], // centerCoordinate: [-116.6076, 31.8658] order of [y, x] instead of [x, y]
-            }}
-            zoomLevel={14}
-            //  followUserLocation={true}
-            //  followUserMode={UserTrackingMode.Follow}
-            pitch={20}
-            animationMode="flyTo"
-            animationDuration={1000}
-          />
-          <LocationPuck
-            topImage="topImage"
-            visible={true}
-            scale={["interpolate", ["linear"], ["zoom"], 10, 1.0, 20, 4.0]}
-            pulsing={{
-              isEnabled: true,
-              color: "teal",
-              radius: 50.0,
-            }}
-          />
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11")
 
-          {/*  <MapboxGL.VectorSource // adding a vector source and styling it directly in the app
+  return (
+    <GestureHandlerRootView style={styles.root} className="flex-1 relative">
+      <MapboxGL.MapView
+        style = {styles.map}
+        styleURL={CurrMap}
+        rotateEnabled={true}
+      >
+        <MapboxGL.Camera
+          defaultSettings={{
+            zoomLevel: 12,
+            centerCoordinate: [-116.6076, 31.8658], // centerCoordinate: [-116.6076, 31.8658] order of [y, x] instead of [x, y]
+          }}
+          zoomLevel={14}
+          //  followUserLocation={true}
+          //  followUserMode={UserTrackingMode.Follow}
+          pitch={20}
+          animationMode="flyTo"
+          animationDuration={1000}
+        />
+        <LocationPuck
+          topImage="topImage"
+          visible={true}
+          scale={["interpolate", ["linear"], ["zoom"], 10, 1.0, 20, 4.0]}
+          pulsing={{
+            isEnabled: true,
+            color: "teal",
+            radius: 50.0,
+          }}
+        />
+
+        {/*  <MapboxGL.VectorSource // adding a vector source and styling it directly in the app
             id="id-lines-source"
             url=""
           >
@@ -64,38 +67,31 @@ export default function Dashboard() {
             />
           </MapboxGL.VectorSource>
         */}
-        </MapboxGL.MapView>
-        {/* */}
-        <View className="inset-y-10" style={styles.BottomSheet}>
-          <GestureHandlerRootView style={styles.container}>
-            <BottomSheet ref={bottomSheetRef}>
-              <BottomSheetView>
-                <Text>Awesome 🎉</Text>
-              </BottomSheetView>
-            </BottomSheet>
-          </GestureHandlerRootView>
-        </View>
-      </View>
-    </View>
+      </MapboxGL.MapView>
+        <BottomSheet
+          index={0}
+          snapPoints={["75%"]}
+          enablePanDownToClose={false}
+          ref={bottomSheetRef}
+        >
+          <BottomSheetView>
+            <PaperText>Awesome 🎉</PaperText>
+          </BottomSheetView>
+        </BottomSheet>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  page: {
+  root: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
+    position: "relative",
   },
   map: {
     flex: 1,
   },
-  BottomSheet : {
-    position : "absolute",
-
-  }
+  bottomSheetContainer: {
+    justifyContent: "flex-end",
+    zIndex: 10,
+  },
 });
