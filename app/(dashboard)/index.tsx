@@ -19,6 +19,9 @@ import Constants from "expo-constants";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
 import MapView from "@/components/mapview";
+import Flechitaregreso from "@/components/flechitaregreso";
+import ProfileButton from "@/components/gotologin";
+
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -73,6 +76,11 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
       </MapboxGL.MapView>
+      <View className="absolute top-20 z-10
+       w-full">
+        <Flechitaregreso ruta={"../"} />
+        <ProfileButton ruta={"/(profile)"} />
+      </View>
 
       <BottomSheet
         index={0}

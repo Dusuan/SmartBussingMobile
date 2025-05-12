@@ -22,7 +22,7 @@ export default function LikedRoute() {
     <SafeAreaView>
       <ScrollView>
         <View className="flex justify-center mt-10">
-          <View className="ml-2">
+          <View className="bg-black ml-2">
             <IconButton
               icon={() => (
                 <AntDesign
