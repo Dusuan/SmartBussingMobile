@@ -5,6 +5,7 @@ import { Card, IconButton, Icon, Button } from "react-native-paper";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Flechitaregreso from "../../components/flechitaregreso";
 
 export default function LikedRoute() {
   const navigateProfile = () => {
@@ -22,17 +23,8 @@ export default function LikedRoute() {
     <SafeAreaView>
       <ScrollView>
         <View className="flex justify-center mt-10">
-          <View className="bg-black ml-2">
-            <IconButton
-              icon={() => (
-                <AntDesign
-                  name="leftcircle"
-                  color="#2C2C2C"
-                  size={30}
-                ></AntDesign>
-              )}
-              onPress={() => navigateProfile()}
-            ></IconButton>
+          <View className=" ml-2">
+            <Flechitaregreso ruta={"../"} />
           </View>
           <Text className="text-3xl text-center">Rutas Favoritas</Text>
         </View>
