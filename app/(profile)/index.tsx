@@ -16,7 +16,7 @@ export default function Profile() {
   };
   return (
     <SafeAreaView>
-      <Flechitaregreso ruta={"/(dashboard)"} />
+      <Flechitaregreso ruta={"../"} />
 
       {/*Apartado donde sale el nombre y correo del usuario*/}
       <View className="h-48 w-90 m-6 rounded-[15px] flex flex-wrap">
