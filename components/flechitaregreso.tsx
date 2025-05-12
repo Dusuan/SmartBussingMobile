@@ -1,0 +1,25 @@
+import { router } from "expo-router";
+import { Button, View, Text } from "react-native";
+import { Card, IconButton, Icon, Surface } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+
+type ruta = {
+  ruta: string;
+};
+
+export default function flechitaregreso(texto: ruta) {
+  const navigateProfile = () => {
+    //redireccion hacia la pagina principal (segun q no jala)
+    router.navigate(`${texto.ruta}`);
+  };
+  return (
+    <View className="ml-3 mt-2">
+      <IconButton
+        icon={() => <AntDesign name="arrowleft" color="#2C2C2C" size={30} />}
+        onPress={() => navigateProfile()}
+      />
+    </View>
+  );
+}

@@ -10,6 +10,7 @@ export default function RootLayout() {
         <Stack.Screen name="register" options={{ headerShown: false }} />
         <Stack.Screen name="(routeView)/index" options={{headerShown: false}}/>
         <Stack.Screen name = "(likedRoute)/index" options={{headerShown : false}}></Stack.Screen>
+        <Stack.Screen name = "(profile)/index" options={{headerShown : false}}></Stack.Screen>
         <Stack.Screen
           name="(dashboard)/index"
           options={{ headerShown: false }}
