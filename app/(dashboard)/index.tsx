@@ -1,4 +1,10 @@
-import { Platform, Text, View, PermissionsAndroid } from "react-native";
+import {
+  Platform,
+  Text,
+  View,
+  PermissionsAndroid,
+  ImageBackground,
+} from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapboxGL from "@rnmapbox/maps";
@@ -67,19 +73,31 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
       </MapboxGL.MapView>
+
       <BottomSheet
         index={0}
-        snapPoints={["75%"]}
+        snapPoints={["75%", "50%", "25%", "10%"]}
         enablePanDownToClose={false}
         ref={bottomSheetRef}
       >
-        <BottomSheetView>
-          {Object.entries(tilesets).map(([key, value]) => (
-            <View key={key} className="mx-2 py-4">
-              <MapView img={value.url} name={key} url={value.url} setCurrMap = {setCurrMap}/>
-            </View>
-          ))}
-        </BottomSheetView>
+        <ImageBackground
+          source={require("../../assets/images/fondologinregister.png")}
+          style={styles.BottomSheetbackground}
+          resizeMode="cover"
+        >
+          <BottomSheetView style={styles.bottomSheetContainer}>
+            {Object.entries(tilesets).map(([key, value]) => (
+              <View key={key} className="mx-2 py-4">
+                <MapView
+                  img={value.url}
+                  name={key}
+                  url={value.url}
+                  setCurrMap={setCurrMap}
+                />
+              </View>
+            ))}
+          </BottomSheetView>
+        </ImageBackground>
       </BottomSheet>
     </GestureHandlerRootView>
   );
@@ -94,7 +112,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomSheetContainer: {
-    justifyContent: "flex-end",
-    zIndex: 10,
+    marginTop: 20,
+    marginRight: 10,
+    marginLeft: 10,
+  },
+  BottomSheetbackground: {
+    flex: 1,
+    marginTop: 0,
   },
 });
