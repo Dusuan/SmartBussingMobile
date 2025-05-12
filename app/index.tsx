@@ -14,6 +14,9 @@ export default function Index() {
         />
       </View>
       <View>
+
+        <image></image>
+
         <Button className="mb-8" mode="elevated">
           <Link href="/login"> Login </Link>
         </Button>

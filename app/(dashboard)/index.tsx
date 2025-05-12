@@ -12,6 +12,7 @@ import { LocationPuck } from "@rnmapbox/maps";
 import Constants from "expo-constants";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
+import MapView from "@/components/mapview";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -20,11 +21,13 @@ export default function Dashboard() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   // callbacks
 
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
+
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
       <MapboxGL.MapView
-        style = {styles.map}
-        styleURL="mapbox://styles/dusuan/cmahkukuu00t601rf921chgpg"
+        style={styles.map}
+        styleURL={CurrMap}
         rotateEnabled={true}
       >
         <MapboxGL.Camera
@@ -64,16 +67,20 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
       </MapboxGL.MapView>
-        <BottomSheet
-          index={0}
-          snapPoints={["75%"]}
-          enablePanDownToClose={false}
-          ref={bottomSheetRef}
-        >
-          <BottomSheetView>
-            <Text>Awesome 🎉</Text>
-          </BottomSheetView>
-        </BottomSheet>
+      <BottomSheet
+        index={0}
+        snapPoints={["75%"]}
+        enablePanDownToClose={false}
+        ref={bottomSheetRef}
+      >
+        <BottomSheetView>
+          {Object.entries(tilesets).map(([key, value]) => (
+            <View key={key} className="mx-2 py-4">
+              <MapView img={value.url} name={key} url={value.url} setCurrMap = {setCurrMap}/>
+            </View>
+          ))}
+        </BottomSheetView>
+      </BottomSheet>
     </GestureHandlerRootView>
   );
 }
