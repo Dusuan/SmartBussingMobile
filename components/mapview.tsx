@@ -8,15 +8,25 @@ type view = {
   name: string;
   url: string;
   setCurrMap: Dispatch<SetStateAction<string>>;
+  setRuta: Dispatch<SetStateAction<string>>;
 };
 
-export default function MapView({ img, name, url, setCurrMap }: view) {
+export default function MapView({ img, name, url, setCurrMap, setRuta }: view) {
   return (
-      <Card style={styles.card} mode="elevated" onPress={() => setCurrMap(url)}>
-        <Card.Content>
-          <PaperText style={styles.text} variant="titleLarge">{name}</PaperText>
-        </Card.Content>
-      </Card>
+    <Card
+      style={styles.card}
+      mode="elevated"
+      onPress={() => {
+        setCurrMap(url);
+        setRuta(name);
+      }}
+    >
+      <Card.Content>
+        <PaperText style={styles.text} variant="titleLarge">
+          {name}
+        </PaperText>
+      </Card.Content>
+    </Card>
   );
 }
 
@@ -25,7 +35,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     borderRadius: 20,
   },
-  text : {
-    color : "white",
-  }
+  text: {
+    color: "white",
+  },
 });
