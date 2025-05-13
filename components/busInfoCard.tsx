@@ -30,6 +30,8 @@ export default function BusInfoTimeline({nombreBus,time,pInicio,pFinal, color} :
 
   const calculateTimeSalida = () => {
     const currDate = new Date()
+    currDate.setHours(currDate.getHours() - 7)
+
     const totalMinutes = currDate.getMinutes()
     const hours = currDate.getHours() + Math.floor(totalMinutes / 60)
     const minutes = totalMinutes % 60
@@ -44,6 +46,7 @@ export default function BusInfoTimeline({nombreBus,time,pInicio,pFinal, color} :
 
   const calculateTimeLlegada = (time : number) => {
       const currDate = new Date()
+      currDate.setHours(currDate.getHours() - 7)
       const totalMinutes = currDate.getMinutes() + time
       let hours = (currDate.getHours())+ Math.floor(totalMinutes / 60)
       const minutes = totalMinutes % 60;
