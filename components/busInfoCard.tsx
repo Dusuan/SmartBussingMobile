@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from "react";
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
+import { Text, View, StyleSheet} from "react-native";
 import { Card, IconButton, Icon, Surface } from "react-native-paper";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
-import AntDesign from "react-native-vector-icons/AntDesign"
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { SafeAreaView } from "react-native-safe-area-context"
-import { hoverGestureHandlerProps } from "react-native-gesture-handler/lib/typescript/handlers/gestures/hoverGesture";
+
+import {useFonts} from "expo-font";
+import * as SplashScreen from "expo-splash-screen"
+
 
 type bus = {
-    numBus : string,
     nombreBus : string,
     time : number,
     pInicio : string
@@ -18,7 +17,13 @@ type bus = {
 }
 
 
-export default function BusInfoTimeline({numBus,nombreBus,time,pInicio,pFinal, color} : bus){
+export default function BusInfoTimeline({nombreBus,time,pInicio,pFinal, color} : bus){
+
+  const [fontsLoaded] = useFonts({Manrope : require("../assets/fonts/Manrope-regular.otf")}) //Agregeun esto con el nombre de las fonts que van a usar
+
+  if(!fontsLoaded) return null; //Y esto para que no se crashee
+
+  //Tambien hay otra funcion que sirve cuando se vaya a deployar pero para mas adelante
 
   const [dateArrived,setDateArrived] = useState<string | null>(null)
   const [dateDepartue, setDateDepartue] = useState<string | null>(null)
@@ -40,12 +45,12 @@ export default function BusInfoTimeline({numBus,nombreBus,time,pInicio,pFinal, c
   const calculateTimeLlegada = (time : number) => {
       const currDate = new Date()
       const totalMinutes = currDate.getMinutes() + time
-      const hours = currDate.getHours() + Math.floor(totalMinutes / 60)
+      let hours = (currDate.getHours())+ Math.floor(totalMinutes / 60)
       const minutes = totalMinutes % 60;
 
       //Formato de 12 horas
 
-      const formattedHours = hours %12 || 12;
+      const formattedHours = hours %12  || 12;
       const formmattedMinutes = minutes.toString().padStart(2,"0")
       const ampm = hours >= 12 ? "pm" : "am";
 
@@ -64,7 +69,7 @@ export default function BusInfoTimeline({numBus,nombreBus,time,pInicio,pFinal, c
         
                         <View className="flex flex-row justify-start items-center gap-x-3">
                           <FontAwesome5 name="bus" size={25} color={color}></FontAwesome5>
-                          <Text className="text-2xl" style = {{color : color}}>{nombreBus} {numBus}</Text>
+                          <Text className="text-2xl" style = {{color : "white" , fontFamily : "Manrope"}}>{nombreBus}</Text>
         
                           <View>
                             <IconButton
@@ -81,7 +86,7 @@ export default function BusInfoTimeline({numBus,nombreBus,time,pInicio,pFinal, c
         
                         <View className="absolute ml-10">
                           <View className="flex flex-row items-center justify-between mb-7">
-                            <Text className="text-base color-white">Desde {pInicio}</Text>
+                            <Text className="text-base color-white" style = {{fontFamily : "Manrope"}}>Desde {pInicio}</Text>
                             <IconButton
                               icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
                               onPress={() => console.log("Comentarios de la ruta")}
@@ -91,7 +96,7 @@ export default function BusInfoTimeline({numBus,nombreBus,time,pInicio,pFinal, c
                           </View>
         
                           <View className="flex flex-row items-center justify-between">
-                            <Text className="text-base color-white">Llegada a {pFinal}</Text>
+                            <Text className="text-base color-white" style = {{fontFamily : "Manrope"}}>Llegada a {pFinal}</Text>
                             <IconButton
                               icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
                               onPress={() => console.log("Comentarios de la ruta")}

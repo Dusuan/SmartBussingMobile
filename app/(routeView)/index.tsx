@@ -28,7 +28,7 @@ export default function RouteView() { //Por el momento es un ejemplo
       </View>
 
       <View className="mt-4">
-       <BusInfoTimeline numBus="230" nombreBus="Rojo" time={12} pInicio="Calle Microondas" pFinal="Calle Nigga" color="blue"></BusInfoTimeline>
+       <BusInfoTimeline nombreBus="Azul y Negro" time={35} pInicio="Calle Microondas" pFinal="Calle Primera" color="blue"></BusInfoTimeline>
       </View>
 
       <View className="flex flex-1 items-start mt-4">
