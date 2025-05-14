@@ -4,6 +4,8 @@ import {
   View,
   PermissionsAndroid,
   ImageBackground,
+  Dimensions,
+  Image,
 } from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,6 +23,13 @@ import tilesets from "../../assets/tilesets/tilesets.json";
 import MapView from "@/components/mapview";
 import Flechitaregreso from "@/components/flechitaregreso";
 import ProfileButton from "@/components/gotologin";
+import useBottomSheetAnimatedIndex from "@gorhom/bottom-sheet";
+import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
+import { ScrollView } from "react-native-gesture-handler";
+import Pullbottom from "@/components/pullbottom";
+import { Modal, Portal, Button, PaperProvider } from 'react-native-paper';
+import * as React from 'react';
+import Anuncio from "@/components/anuncio";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -28,9 +37,24 @@ MapboxGL.setTelemetryEnabled(false);
 export default function Dashboard() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   // callbacks
-
+  const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(3);
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
   const [Ruta, setRuta] = useState("Sin ruta");
+  
+  //Cosas del modal
+  const [visible, setVisible] = React.useState(true);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const containerStyle = {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 20,
+    height: `${95}%` as `${number}%`,
+    width: `${90}%` as `${number}%`,
+    borderRadius: 15,
+  };
+
 
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
@@ -76,10 +100,17 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
       </MapboxGL.MapView>
-
-
-
-
+    
+      {/*Modal verbo*/}
+      <Portal>
+            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+              <View className="flex-1 justify-start">
+                <Anuncio nombreEmpresa={"Empresa"} descripcion={"Descripcion de empresa"} distancia={"Distancia"} />
+                <Anuncio nombreEmpresa={"Empresa"} descripcion={"Descripcion de empresa"} distancia={"Distancia"} />
+              </View>
+            </Modal>
+      </Portal>
+  
       <View className="absolute top-20 z-2">
         <View
           className="flex-row
@@ -88,18 +119,30 @@ export default function Dashboard() {
           <View className="">
             <Flechitaregreso ruta={"/"} />
             <ProfileButton ruta={"/(profile)"} />
+            <Pullbottom HandleOpenPress={HandleOpenPress}></Pullbottom>
           </View>
-          <View  style= {{backgroundColor: "#3B7C5F"}} className="flex justify-center mt-2 items-center border-2 border-white px-4 max-h-12 mr-4 border-whit rounded-lg">
-            <Text className="" style={{color: "white" }}>{Ruta}</Text>
+          <View
+            style={[
+              { backgroundColor: "rgba(114,114,114, .9)" },
+              { borderColor: "#ffffff" },
+            ]}
+            className="flex justify-center mt-2 items-center border-2 px-4 max-h-12 mr-4 border-whit rounded-lg"
+          >
+            <Text className="" style={{ color: "#FFFFFF" }}>
+              {Ruta}
+            </Text>
           </View>
         </View>
       </View>
 
       <BottomSheet
         index={2}
-        snapPoints={["100%", "75%", "50%", "30%", "10%"]}
+        snapPoints={["10%", "30%", "50%", "75%", "90%"]}
         enablePanDownToClose={false}
         ref={bottomSheetRef}
+        backgroundStyle={{
+          backgroundColor: "#727272",
+        }}
       >
         <ImageBackground
           source={require("../../assets/images/fondologinregister.png")}
