@@ -9,18 +9,18 @@ type ruta = {
   ruta: string;
 };
 
-export default function flechitaregreso(texto: ruta) {
+export default function ProfileButton(texto: ruta) {
   const navigateProfile = () => {
     //redireccion hacia la pagina principal (segun q no jala)
     router.navigate(`${texto.ruta}`);
   };
   return (
-    <View className="ml-3 ">
+    <View className="ml-3">
       <IconButton
         className=""
         mode="contained-tonal"
         containerColor="#ffffff"
-        icon={() => <AntDesign name="arrowleft" color="#2C2C2C" size={30} />}
+        icon={() => <AntDesign name="user" color="#2C2C2C" size={30} />}
         onPress={() => navigateProfile()}
       />
     </View>

@@ -1,4 +1,10 @@
-import { Platform, Text, View, PermissionsAndroid } from "react-native";
+import {
+  Platform,
+  Text,
+  View,
+  PermissionsAndroid,
+  ImageBackground,
+} from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapboxGL from "@rnmapbox/maps";
@@ -13,6 +19,8 @@ import Constants from "expo-constants";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
 import MapView from "@/components/mapview";
+import Flechitaregreso from "@/components/flechitaregreso";
+import ProfileButton from "@/components/gotologin";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -22,6 +30,7 @@ export default function Dashboard() {
   // callbacks
 
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
+  const [Ruta, setRuta] = useState("Sin ruta");
 
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
@@ -67,19 +76,50 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
       </MapboxGL.MapView>
+
+
+
+
+      <View className="absolute top-20 z-2">
+        <View
+          className="flex-row
+         w-full  justify-between"
+        >
+          <View className="">
+            <Flechitaregreso ruta={"/"} />
+            <ProfileButton ruta={"/(profile)"} />
+          </View>
+          <View  style= {{backgroundColor: "#3B7C5F"}} className="flex justify-center mt-2 items-center border-2 border-white px-4 max-h-12 mr-4 border-whit rounded-lg">
+            <Text className="" style={{color: "white" }}>{Ruta}</Text>
+          </View>
+        </View>
+      </View>
+
       <BottomSheet
-        index={0}
-        snapPoints={["75%"]}
+        index={2}
+        snapPoints={["100%", "75%", "50%", "30%", "10%"]}
         enablePanDownToClose={false}
         ref={bottomSheetRef}
       >
-        <BottomSheetView>
-          {Object.entries(tilesets).map(([key, value]) => (
-            <View key={key} className="mx-2 py-4">
-              <MapView img={value.url} name={key} url={value.url} setCurrMap = {setCurrMap}/>
-            </View>
-          ))}
-        </BottomSheetView>
+        <ImageBackground
+          source={require("../../assets/images/fondologinregister.png")}
+          style={styles.BottomSheetbackground}
+          resizeMode="cover"
+        >
+          <BottomSheetView style={styles.bottomSheetContainer}>
+            {Object.entries(tilesets).map(([key, value]) => (
+              <View key={key} className="mx-2 py-4">
+                <MapView
+                  img={value.url}
+                  name={key}
+                  url={value.url}
+                  setCurrMap={setCurrMap}
+                  setRuta={setRuta}
+                />
+              </View>
+            ))}
+          </BottomSheetView>
+        </ImageBackground>
       </BottomSheet>
     </GestureHandlerRootView>
   );
@@ -94,7 +134,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomSheetContainer: {
-    justifyContent: "flex-end",
-    zIndex: 10,
+    marginTop: 20,
+    marginRight: 10,
+    marginLeft: 10,
+  },
+  BottomSheetbackground: {
+    flex: 1,
+    marginTop: 0,
   },
 });

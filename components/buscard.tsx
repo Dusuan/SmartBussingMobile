@@ -5,6 +5,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { Link, router } from "expo-router";
 import { IconButton } from "react-native-paper";
+
 export default function BusCard() {
 
  const navigateProfile = () => {
