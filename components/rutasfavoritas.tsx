@@ -14,7 +14,7 @@ export default function rutasfavoritas({ inicio, destino }: ruta) {
   };
 
   return (
-    <View className="h-20 w-90 m-6 rounded-[15px] items-center flex-row justify-between bg-gray-100">
+    <View className="h-20 w-90 m-6 rounded-[15px] items-center flex-row justify-between bg-gray-800">
       <View className="flex">
         <Text className="text-xl ml-3 mt-1">{inicio}</Text>
         <Text className="text-lg ml-3 mt-1">{destino}</Text>
