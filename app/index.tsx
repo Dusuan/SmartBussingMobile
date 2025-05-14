@@ -41,9 +41,7 @@ export default function Index() {
         <Button className="mb-8" mode="elevated">
           <Link href="/(profile)"> Perfil </Link>
         </Button>
-      
       </View>
-
       <View className="mb-8" style={{ flexDirection: "row", justifyContent: "center", marginTop: 200}}>
 
         <Button className="mb-8" mode="elevated" buttonColor = "#1d3a2d" textColor = "#f5f5f5" style={{ marginRight: 25 , borderRadius: 15, paddingVertical: 8, paddingHorizontal: 5}}>
