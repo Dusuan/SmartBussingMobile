@@ -21,7 +21,7 @@ import tilesets from "../../assets/tilesets/tilesets.json";
 import MapView from "@/components/mapview";
 import Flechitaregreso from "@/components/flechitaregreso";
 import ProfileButton from "@/components/gotologin";
-import { Modal, Portal, Button, PaperProvider } from 'react-native-paper';
+import { Modal, Portal, Button, PaperProvider, Card, Text as PaperText } from 'react-native-paper';
 import * as React from 'react';
 import Anuncio from "@/components/anuncio";
 
@@ -142,7 +142,23 @@ export default function Dashboard() {
                   setRuta={setRuta}
                 />
               </View>
+              
             ))}
+            
+            {/*Boton para ver rutas populares (anuncios xd) */}
+            <Card
+              style={styles.card}
+              mode="elevated"
+              onPress={() => {
+              showModal();
+              }}>
+              <Card.Content>
+                <PaperText style={styles.text} variant="titleLarge">  
+                  Ver Lugares Populares
+                </PaperText>
+              </Card.Content>
+            </Card>
+
           </BottomSheetView>
         </ImageBackground>
       </BottomSheet>
@@ -166,5 +182,15 @@ const styles = StyleSheet.create({
   BottomSheetbackground: {
     flex: 1,
     marginTop: 0,
+  },
+  card: {
+    backgroundColor: "black",
+    borderRadius: 20,
+    width: "97%",
+    alignSelf: "center",
+    marginTop: 17,
+  },
+  text: {
+    color: "white",
   },
 });
