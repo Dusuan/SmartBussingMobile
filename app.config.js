@@ -30,6 +30,9 @@ export default {
           locationWhenInUsePermission: "Show current location on map.",
         },
       ],
+      [
+        "expo-font"
+      ]
     ],
   },
 };

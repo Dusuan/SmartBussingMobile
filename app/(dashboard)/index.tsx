@@ -19,6 +19,8 @@ import Constants from "expo-constants";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
 import MapView from "@/components/mapview";
+import Flechitaregreso from "@/components/flechitaregreso";
+import ProfileButton from "@/components/gotologin";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -28,6 +30,7 @@ export default function Dashboard() {
   // callbacks
 
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
+  const [Ruta, setRuta] = useState("Sin ruta");
 
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
@@ -74,9 +77,27 @@ export default function Dashboard() {
         */}
       </MapboxGL.MapView>
 
+
+
+
+      <View className="absolute top-20 z-2">
+        <View
+          className="flex-row
+         w-full  justify-between"
+        >
+          <View className="">
+            <Flechitaregreso ruta={"/"} />
+            <ProfileButton ruta={"/(profile)"} />
+          </View>
+          <View  style= {{backgroundColor: "#3B7C5F"}} className="flex justify-center mt-2 items-center border-2 border-white px-4 max-h-12 mr-4 border-whit rounded-lg">
+            <Text className="" style={{color: "white" }}>{Ruta}</Text>
+          </View>
+        </View>
+      </View>
+
       <BottomSheet
-        index={0}
-        snapPoints={["75%", "50%", "25%", "10%"]}
+        index={2}
+        snapPoints={["100%", "75%", "50%", "30%", "10%"]}
         enablePanDownToClose={false}
         ref={bottomSheetRef}
       >
@@ -93,6 +114,7 @@ export default function Dashboard() {
                   name={key}
                   url={value.url}
                   setCurrMap={setCurrMap}
+                  setRuta={setRuta}
                 />
               </View>
             ))}

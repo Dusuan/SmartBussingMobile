@@ -1,6 +1,7 @@
 {
-  "Ampleación Indeco": {
-    "url": "mapbox://styles/dusuan/cmaj4o9tg00xs01snh0p24j9a"
+  "Ampleación Indeco -------------": {
+    "url": "mapbox://styles/dusuan/cmaj4o9tg00xs01snh0p24j9a",
+    "color" : "#FF0000"
   },
   "default": {
     "url": "mapbox://styles/mapbox/streets-v11"
