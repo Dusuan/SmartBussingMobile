@@ -26,6 +26,10 @@ export default function RootLayout() {
             name="(dashboard)/index"
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="(com_microbuses)/index"
+            options={{ headerShown: false }}
+          />
         </Stack>
     </PaperProvider>
   );

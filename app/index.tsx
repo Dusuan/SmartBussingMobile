@@ -40,8 +40,13 @@ export default function Index() {
           <Button className="mb-8" mode="elevated">
             <Link href="/(profile)"> Perfil </Link>
           </Button>
+          <Button className="mb-8" mode="elevated">
+            <Link href="/(com_microbuses)"> Comentarios Microbuses</Link>
+          </Button>
+          <Button className="mb-8" mode="elevated">
+            <Link href="/(com_rutas)"> Comentarios Rutas </Link>
+          </Button>
         </View>
-
         <View
           className="mb-8"
           style={{
