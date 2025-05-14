@@ -8,12 +8,18 @@ import LinearGradient from "react-native-linear-gradient";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import Rutasfavoritas from "@/components/rutasfavoritas";
+import {useFonts} from "expo-font";
 
 export default function Profile() {
   const navigateProfile = () => {
     //redireccion hacia la pagina principal (segun q no jala)
     router.navigate("/(dashboard)");
   };
+
+  const [fontsLoaded] = useFonts({Manrope : require("../../assets/fonts/Manrope-regular.otf")}) //Agregeun esto con el nombre de las fonts que van a usar
+      
+  if(!fontsLoaded) return null; //Y esto para que no se crashee
+
   return (
     <SafeAreaView>
       <Flechitaregreso ruta={"../"} />
@@ -35,8 +41,8 @@ export default function Profile() {
               className="mt-10 ml-3"
             />
           </View>
-          <Text className="text-4xl mt-14 ml-28 text-white">Hola, Usuario</Text>
-          <Text className="text-xl  ml-28 text-white">
+          <Text style={{fontFamily: "Manrope"}} className="text-4xl mt-14 ml-28 text-white">Hola, Usuario</Text>
+          <Text style={{fontFamily: "Manrope"}} className="text-xl ml-28 text-white">
             correo.ejemplo@cetys.edu.mx
           </Text>
         </LinearGradient>
@@ -48,9 +54,9 @@ export default function Profile() {
           <Feather name="user" color="gray" size={50} className="ml-4 mt-3" />
         </View>
 
-        <Text className="text-3xl ml-24 mt-5 text-black">Modificar Perfil</Text>
+        <Text style={{fontFamily: "Manrope"}} className="text-3xl ml-24 mt-5 text-black">Modificar Perfil</Text>
 
-        <View className="ml-14 mt-2">
+        <View className="ml-9 mt-2">
           <IconButton
             icon={() => <AntDesign name="arrowright" color="grey" size={40} />}
             onPress={() => navigateProfile()}
@@ -65,7 +71,7 @@ export default function Profile() {
           <AntDesign name="hearto" color="grey" size={45} />
         </View>
 
-        <Text className="text-3xl ml-24 mt-4 absolute text-black">
+        <Text style={{fontFamily: "Manrope"}} className="text-3xl ml-24 mt-4 absolute text-black">
           Rutas Favoritas
         </Text>
 
