@@ -34,7 +34,7 @@ export default function LikedRoute() {
               onPress={() => navigateProfile()}
             ></IconButton>
           </View>
-          <Text className="text-3xl text-center">Rutas Favoritas</Text>
+          <Text className="text-3xl text-center">Comentarios de Rutas</Text>
         </View>
 
         <View className="m-6 mt-20">

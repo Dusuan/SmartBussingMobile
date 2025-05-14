@@ -27,6 +27,9 @@ import useBottomSheetAnimatedIndex from "@gorhom/bottom-sheet";
 import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import Pullbottom from "@/components/pullbottom";
+import { Modal, Portal, Button, PaperProvider } from 'react-native-paper';
+import * as React from 'react';
+import Anuncio from "@/components/anuncio";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -37,6 +40,21 @@ export default function Dashboard() {
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(3);
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
   const [Ruta, setRuta] = useState("Sin ruta");
+  
+  //Cosas del modal
+  const [visible, setVisible] = React.useState(true);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const containerStyle = {
+    backgroundColor: 'white',
+    padding: 20,
+    margin: 20,
+    height: `${95}%` as `${number}%`,
+    width: `${90}%` as `${number}%`,
+    borderRadius: 15,
+  };
+
 
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
@@ -82,7 +100,17 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
       </MapboxGL.MapView>
-
+    
+      {/*Modal verbo*/}
+      <Portal>
+            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+              <View className="flex-1 justify-start">
+                <Anuncio nombreEmpresa={"Empresa"} descripcion={"Descripcion de empresa"} distancia={"Distancia"} />
+                <Anuncio nombreEmpresa={"Empresa"} descripcion={"Descripcion de empresa"} distancia={"Distancia"} />
+              </View>
+            </Modal>
+      </Portal>
+  
       <View className="absolute top-20 z-2">
         <View
           className="flex-row
