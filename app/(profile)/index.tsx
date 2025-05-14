@@ -104,9 +104,6 @@ export default function Profile(){
 
             </View>
             
-            
-            
-
             {/*Boton de cerrar sesion*/}
             <View style={{ width: '50%', alignSelf: 'center', borderRadius: 25, overflow: 'hidden' }}>
               <Button 
@@ -115,7 +112,6 @@ export default function Profile(){
               onPress={() => console.log("Insertar aqui el verbo para cerrar sesion (backend shit?)")} 
               />
             </View>
-
 
         </SafeAreaView>
 )}
