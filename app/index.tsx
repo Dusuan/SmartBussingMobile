@@ -1,12 +1,14 @@
 import { Text, View } from "react-native";
 import { Link } from "expo-router";
-import { Button } from "react-native-paper";
+import { Button, IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
 import { Style } from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { blue } from "react-native-reanimated/lib/typescript/Colors";
+import Entypo from 'react-native-vector-icons/Entypo';
+
 export default function Index() {
   return (
     <ImageBackground
@@ -17,6 +19,16 @@ export default function Index() {
       <View style={styles.overlay} />
 
       <SafeAreaView className="flex-1 items-center justify-center">
+
+        <View className="mb-8 ml-80 mt-5">
+          <Link href="/(profile)/configuracion">
+            <IconButton 
+            icon="cog" 
+            size={40}
+            />
+          </Link>
+          </View>
+
         <View>
           <Image
             source={require("../assets/images/smartbussing-removebg-preview.png")}
@@ -40,8 +52,13 @@ export default function Index() {
           <Button className="mb-8" mode="elevated">
             <Link href="/(profile)"> Perfil </Link>
           </Button>
+          <Button className="mb-8" mode="elevated">
+            <Link href="/(com_microbuses)"> Comentarios Microbuses</Link>
+          </Button>
+          <Button className="mb-8" mode="elevated">
+            <Link href="/(com_rutas)"> Comentarios Rutas </Link>
+          </Button>
         </View>
-
         <View
           className="mb-8"
           style={{

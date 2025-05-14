@@ -1,9 +1,11 @@
 {
   "Ampleación Indeco -------------": {
+    "img": "../assets/images/primera.jpg",
     "url": "mapbox://styles/dusuan/cmaj4o9tg00xs01snh0p24j9a",
-    "color" : "#FF0000"
+    "color": "#FF0000"
   },
   "default": {
+    "img": "../assets/images/primera.jpg",
     "url": "mapbox://styles/mapbox/streets-v11"
   }
 }

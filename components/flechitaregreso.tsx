@@ -19,7 +19,7 @@ export default function flechitaregreso(texto: ruta) {
       <IconButton
         className=""
         mode="contained-tonal"
-        containerColor="#ffffff"
+        containerColor="#727272"
         icon={() => <AntDesign name="arrowleft" color="#2C2C2C" size={30} />}
         onPress={() => navigateProfile()}
       />

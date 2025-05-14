@@ -177,7 +177,7 @@ const Register = () => {
             buttonColor='#1D3A2D'
             textColor='#FFFFFF'
             >
-            Iniciar sesión
+            Registrar
         </Button>
         </View>
         </View>

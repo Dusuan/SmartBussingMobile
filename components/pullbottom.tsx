@@ -4,24 +4,23 @@ import { Card, IconButton, Icon, Surface } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { Dispatch, SetStateAction } from "react";
 
-type ruta = {
-  ruta: string;
+
+type bottomSheet = {
+  HandleOpenPress: Dispatch<SetStateAction<Boolean>>;
 };
 
-export default function ProfileButton(texto: ruta) {
-  const navigateProfile = () => {
-    //redireccion hacia la pagina principal (segun q no jala)
-    router.navigate(`${texto.ruta}`);
-  };
+export default function pullbottom({HandleOpenPress}: bottomSheet) {
+
   return (
-    <View className="ml-3">
+    <View className="ml-3 ">
       <IconButton
         className=""
         mode="contained-tonal"
         containerColor="#727272"
-        icon={() => <AntDesign name="user" color="#2C2C2C" size={30} />}
-        onPress={() => navigateProfile()}
+        icon={() => <AntDesign name="home" color="#2C2C2C" size={30} />}
+        onPress={() => HandleOpenPress(true)}
       />
     </View>
   );
