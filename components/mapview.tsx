@@ -1,8 +1,15 @@
 import { View, Pressable, Image } from "react-native";
-import { Avatar, Button, Card, Text as PaperText } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  Text as PaperText,
+  IconButton,
+} from "react-native-paper";
 import { Dispatch, SetStateAction } from "react";
 import { StyleSheet } from "react-native";
-
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { router } from "expo-router";
 type view = {
   img: string;
   name: string;
@@ -12,6 +19,10 @@ type view = {
 };
 
 export default function MapView({ img, name, url, setCurrMap, setRuta }: view) {
+  const navigate = () => {
+    //redireccion hacia la pagina principal (segun q no jala)
+    router.navigate(`/(com_microbuses)`);
+  };
   return (
     <Pressable
       onPress={() => {
@@ -20,7 +31,7 @@ export default function MapView({ img, name, url, setCurrMap, setRuta }: view) {
       }}
     >
       <View
-        className="h-20  rounded-[15px] items-center flex-row"
+        className="h-20  rounded-[15px] items-center justify-start flex-row"
         style={[
           styles.card,
           {
@@ -29,23 +40,34 @@ export default function MapView({ img, name, url, setCurrMap, setRuta }: view) {
         ]}
       >
         <Image
-          source={require("../assets/images/primera.jpg")}
+          source={require("../assets/images/Microbus.jpg")}
           style={{
-            width: 80,
-            height: 80,
-            borderRadius: 20,
+            width: 60,
+            height: 60,
+            borderRadius: 10,
             marginRight: 10,
           }}
-          resizeMode="contain"
+          resizeMode="cover"
         />
-
-
         <PaperText
           style={[{ backgroundColor: "transparent" }, styles.text]}
           variant="titleLarge"
         >
           {name}
         </PaperText>
+        <View className="z-[100] flex-1 flex-row justify-end">
+          {name != "Mapa de Ensenada" ? (
+            <IconButton
+              className=""
+              mode="contained-tonal"
+              containerColor="#353935"
+              icon={() => (
+                <AntDesign name="exclamationcircle" color="#FAF9F6" size={30} />
+              )}
+              onPress={() => navigate()}
+            />
+          ) : null}
+        </View>
       </View>
     </Pressable>
   );

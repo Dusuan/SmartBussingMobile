@@ -27,9 +27,16 @@ import useBottomSheetAnimatedIndex from "@gorhom/bottom-sheet";
 import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import Pullbottom from "@/components/pullbottom";
-import { Modal, Portal, Button, PaperProvider } from "react-native-paper";
+import {
+  Modal,
+  Portal,
+  Button,
+  PaperProvider,
+  IconButton,
+} from "react-native-paper";
 import * as React from "react";
 import Anuncio from "@/components/anuncio";
+import { AntDesign } from "@expo/vector-icons";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -59,16 +66,50 @@ export default function Dashboard() {
     {
       id: "2",
       render: () => (
-        <View className="">
-          
+        <View className="p-4">
+          <Button
+            className="mb-8"
+            mode="elevated"
+            textColor="black"
+            onPress={showAds}
+          >
+            {" "}
+            Ver lugares de la semana{" "}
+          </Button>
+          <Button
+            className="mb-8"
+            mode="elevated"
+            textColor="black"
+            onPress={showAds}
+          >
+            {" "}
+            Ver lugares de la semana{" "}
+          </Button>
+          <Button
+            className="mb-8"
+            mode="elevated"
+            textColor="black"
+            onPress={showAds}
+          >
+            {" "}
+            Ver lugares de la semana{" "}
+          </Button>
         </View>
       ),
     },
     {
       id: "3",
       render: () => (
-        <View className="">
-          
+        <View className="p-4">
+          <Button
+            className="mb-8"
+            mode="elevated"
+            textColor="black"
+            onPress={showAds}
+          >
+            {" "}
+            Ver lugares de la semana{" "}
+          </Button>
         </View>
       ),
     },
@@ -77,13 +118,13 @@ export default function Dashboard() {
   // callbacks
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(3);
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
-  const [Ruta, setRuta] = useState("Sin ruta");
+  const [Ruta, setRuta] = useState("Mapa de Ensenada");
 
   //Cosas del modal
-  const [visible, setVisible] = React.useState(true);
+  const [IsAdsVisible, setAdsVisible] = useState(true);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const showAds = () => setAdsVisible(true);
+  const hideAds = () => setAdsVisible(false);
   const containerStyle = {
     backgroundColor: "white",
     padding: 20,
@@ -141,21 +182,27 @@ export default function Dashboard() {
       {/*Modal verbo*/}
       <Portal>
         <Modal
-          visible={visible}
-          onDismiss={hideModal}
+          visible={IsAdsVisible}
+          onDismiss={hideAds}
           contentContainerStyle={containerStyle}
         >
-          <View className="flex-1 justify-start">
-            <Anuncio
-              nombreEmpresa={"Empresa"}
-              descripcion={"Descripcion de empresa"}
-              distancia={"Distancia"}
-            />
-            <Anuncio
-              nombreEmpresa={"Empresa"}
-              descripcion={"Descripcion de empresa"}
-              distancia={"Distancia"}
-            />
+          <View className="flex-1 ">
+            <View className="flex flex-row items-center justify-between">
+              <Text> Revisa los lugares de la semana! </Text>
+              <IconButton icon="close" size={30} onPress={hideAds} style={{}} />
+            </View>
+            <View>
+              <Anuncio
+                nombreEmpresa={"Empresa"}
+                descripcion={"Descripcion de empresa"}
+                distancia={"Distancia"}
+              />
+              <Anuncio
+                nombreEmpresa={"Empresa"}
+                descripcion={"Descripcion de empresa"}
+                distancia={"Distancia"}
+              />
+            </View>
           </View>
         </Modal>
       </Portal>
@@ -172,12 +219,12 @@ export default function Dashboard() {
           </View>
           <View
             style={[
-              { backgroundColor: "rgba(114,114,114, .9)" },
-              { borderColor: "#ffffff" },
+              { backgroundColor: "rgba(53,57,53, .9)" },
+              { borderColor: "#FAF9F6" },
             ]}
             className="flex justify-center mt-2 items-center border-2 px-4 max-h-12 mr-4 border-whit rounded-lg"
           >
-            <Text className="" style={{ color: "#FFFFFF" }}>
+            <Text className="" style={{ color: "#FAF9F6" }}>
               {Ruta}
             </Text>
           </View>
@@ -187,11 +234,12 @@ export default function Dashboard() {
       <BottomSheet
         style={{ marginRight: 8, marginLeft: 8 }}
         index={2}
+        animateOnMount={true}
         snapPoints={["10%", "30%", "50%", "75%", "90%"]}
-        enablePanDownToClose={false}
+        enablePanDownToClose={true}
         ref={bottomSheetRef}
         backgroundStyle={{
-          backgroundColor: "#727272",
+          backgroundColor: "#FAF9F6",
         }}
       >
         <ImageBackground
@@ -202,9 +250,7 @@ export default function Dashboard() {
           <BottomSheetView style={styles.bottomSheetContainer}>
             <FlatList
               data={Slides}
-              contentContainerStyle={{
-                
-              }}
+              contentContainerStyle={{}}
               horizontal
               pagingEnabled
               keyExtractor={(item) => item.id}
@@ -236,6 +282,6 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   page: {
-    width: width - 20,
+    width: width - 16,
   },
 });

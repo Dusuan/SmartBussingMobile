@@ -13,7 +13,7 @@ import {useFonts} from "expo-font";
 export default function Profile() {
   const navigateProfile = () => {
     //redireccion hacia la pagina principal (segun q no jala)
-    router.navigate("/(dashboard)");
+    router.navigate("/configuracion");
   };
 
   const [fontsLoaded] = useFonts({Manrope : require("../../assets/fonts/Manrope-regular.otf")}) //Agregeun esto con el nombre de las fonts que van a usar
@@ -110,7 +110,7 @@ export default function Profile() {
           color={"black"}
           onPress={() =>
             console.log(
-              "Insertar aqui el verbo para cerrar sesion (backend shit?)"
+              "Cerrando sesión!"
             )
           }
         />
