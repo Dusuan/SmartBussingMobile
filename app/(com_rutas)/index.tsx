@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function LikedRoute() {
   const navigateProfile = () => {
     //Ahorita esta redirigiendo al main, pero cuando se haga la del profile ahi se debera regresar
-    router.navigate("/(profile)");
+    router.navigate("../");
   };
 
   const navigateTimeline = () => {

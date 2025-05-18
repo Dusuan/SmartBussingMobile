@@ -37,6 +37,7 @@ import {
 import * as React from "react";
 import Anuncio from "@/components/anuncio";
 import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -44,6 +45,11 @@ MapboxGL.setTelemetryEnabled(false);
 const width = Dimensions.get("window").width;
 
 export default function Dashboard() {
+  const navigate = (ruta: String) => {
+    //redireccion hacia la pagina principal (segun q no jala)
+    router.navigate(`/${ruta}`);
+  };
+
   const Slides = [
     {
       id: "1",
@@ -80,19 +86,10 @@ export default function Dashboard() {
             className="mb-8"
             mode="elevated"
             textColor="black"
-            onPress={showAds}
+            onPress={() => navigate("(routeView)")}
           >
             {" "}
-            Ver lugares de la semana{" "}
-          </Button>
-          <Button
-            className="mb-8"
-            mode="elevated"
-            textColor="black"
-            onPress={showAds}
-          >
-            {" "}
-            Ver lugares de la semana{" "}
+            Ejemplo de ruta
           </Button>
         </View>
       ),

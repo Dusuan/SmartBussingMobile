@@ -26,17 +26,19 @@ export default function RootLayout() {
           name="(dashboard)/index"
           options={{ headerShown: false }}
         />
-          <Stack.Screen
-            name="(com_microbuses)/index"
-            options={{ headerShown: false }}
-          />
         <Stack.Screen
-            name="(profile)/configuracion"
-            options={{ headerShown: false }}
-          ></Stack.Screen>
-
-        </Stack>
-          
+          name="(com_microbuses)/index"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="(profile)/configuracion"
+          options={{ headerShown: false }}
+        ></Stack.Screen>
+        <Stack.Screen
+          name="(com_rutas)/index"
+          options={{ headerShown: false }}
+        ></Stack.Screen>
+      </Stack>
     </PaperProvider>
   );
 }

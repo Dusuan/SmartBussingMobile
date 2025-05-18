@@ -7,7 +7,7 @@ import { ImageBackground } from "react-native";
 import { Style } from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { blue } from "react-native-reanimated/lib/typescript/Colors";
-import Entypo from 'react-native-vector-icons/Entypo';
+import Entypo from "react-native-vector-icons/Entypo";
 
 export default function Index() {
   return (
@@ -16,18 +16,8 @@ export default function Index() {
       style={{ flex: 1, justifyContent: "center" }}
       resizeMode="cover"
     >
-      <View style={styles.overlay} />
-
       <SafeAreaView className="flex-1 items-center justify-center">
-
-        <View className="mb-8 ml-80 mt-5">
-          <Link href="/(profile)/configuracion">
-            <IconButton 
-            icon="cog" 
-            size={40}
-            />
-          </Link>
-          </View>
+        <View style={styles.overlay} />
 
         <View>
           <Image
@@ -45,26 +35,16 @@ export default function Index() {
             <Link href="/(routeView)"> Vista de rutas </Link>
           </Button>
 
-          <Button className="mb-8" mode="elevated">
+          {/*<Button className="mb-8" mode="elevated">
             <Link href="/(likedRoute)"> Vista de rutas Favoritas </Link>
-          </Button>
-
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(profile)"> Perfil </Link>
-          </Button>
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(com_microbuses)"> Comentarios Microbuses</Link>
-          </Button>
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(com_rutas)"> Comentarios Rutas </Link>
-          </Button>
+          </Button>*/}
         </View>
         <View
           className="mb-8"
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            marginTop: 200,
+            marginTop: 20,
           }}
         >
           <Button
