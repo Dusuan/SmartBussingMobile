@@ -41,7 +41,7 @@ export default function Dashboard() {
     {
       id: "1",
       render: () => (
-        <View className="">
+        <View className="m-2">
           {Object.entries(tilesets).map(([key, value]) => (
             <View key={key} className=" py-4">
               <MapView
@@ -185,6 +185,7 @@ export default function Dashboard() {
       </View>
 
       <BottomSheet
+        style={{ marginRight: 8, marginLeft: 8 }}
         index={2}
         snapPoints={["10%", "30%", "50%", "75%", "90%"]}
         enablePanDownToClose={false}
@@ -235,6 +236,6 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   page: {
-    width: width,
+    width: width - 20,
   },
 });
