@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MapboxGL from "@rnmapbox/maps";
 import { UserTrackingMode } from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useState, useRef } from "react";
 import BusCard from "@/components/buscard";
@@ -27,34 +27,71 @@ import useBottomSheetAnimatedIndex from "@gorhom/bottom-sheet";
 import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import Pullbottom from "@/components/pullbottom";
-import { Modal, Portal, Button, PaperProvider } from 'react-native-paper';
-import * as React from 'react';
+import { Modal, Portal, Button, PaperProvider } from "react-native-paper";
+import * as React from "react";
 import Anuncio from "@/components/anuncio";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
 
+const width = Dimensions.get("window").width;
+
 export default function Dashboard() {
+  const Slides = [
+    {
+      id: "1",
+      render: () => (
+        <View className="">
+          {Object.entries(tilesets).map(([key, value]) => (
+            <View key={key} className=" py-4">
+              <MapView
+                img={value.url}
+                name={key}
+                url={value.url}
+                setCurrMap={setCurrMap}
+                setRuta={setRuta}
+              />
+            </View>
+          ))}
+        </View>
+      ),
+    },
+    {
+      id: "2",
+      render: () => (
+        <View className="">
+          
+        </View>
+      ),
+    },
+    {
+      id: "3",
+      render: () => (
+        <View className="">
+          
+        </View>
+      ),
+    },
+  ];
   const bottomSheetRef = useRef<BottomSheet>(null);
   // callbacks
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(3);
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
   const [Ruta, setRuta] = useState("Sin ruta");
-  
+
   //Cosas del modal
   const [visible, setVisible] = React.useState(true);
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const containerStyle = {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     margin: 20,
     height: `${95}%` as `${number}%`,
     width: `${90}%` as `${number}%`,
     borderRadius: 15,
   };
-
 
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
@@ -100,17 +137,29 @@ export default function Dashboard() {
           </MapboxGL.VectorSource>
         */}
       </MapboxGL.MapView>
-    
+
       {/*Modal verbo*/}
       <Portal>
-            <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-              <View className="flex-1 justify-start">
-                <Anuncio nombreEmpresa={"Empresa"} descripcion={"Descripcion de empresa"} distancia={"Distancia"} />
-                <Anuncio nombreEmpresa={"Empresa"} descripcion={"Descripcion de empresa"} distancia={"Distancia"} />
-              </View>
-            </Modal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={containerStyle}
+        >
+          <View className="flex-1 justify-start">
+            <Anuncio
+              nombreEmpresa={"Empresa"}
+              descripcion={"Descripcion de empresa"}
+              distancia={"Distancia"}
+            />
+            <Anuncio
+              nombreEmpresa={"Empresa"}
+              descripcion={"Descripcion de empresa"}
+              distancia={"Distancia"}
+            />
+          </View>
+        </Modal>
       </Portal>
-  
+
       <View className="absolute top-20 z-2">
         <View
           className="flex-row
@@ -150,17 +199,19 @@ export default function Dashboard() {
           resizeMode="cover"
         >
           <BottomSheetView style={styles.bottomSheetContainer}>
-            {Object.entries(tilesets).map(([key, value]) => (
-              <View key={key} className="mx-2 py-4">
-                <MapView
-                  img={value.url}
-                  name={key}
-                  url={value.url}
-                  setCurrMap={setCurrMap}
-                  setRuta={setRuta}
-                />
-              </View>
-            ))}
+            <FlatList
+              data={Slides}
+              contentContainerStyle={{
+                
+              }}
+              horizontal
+              pagingEnabled
+              keyExtractor={(item) => item.id}
+              showsHorizontalScrollIndicator={true}
+              renderItem={({ item }) => (
+                <View style={styles.page}>{item.render()}</View>
+              )}
+            />
           </BottomSheetView>
         </ImageBackground>
       </BottomSheet>
@@ -177,12 +228,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomSheetContainer: {
-    marginTop: 20,
-    marginRight: 10,
-    marginLeft: 10,
+    flex: 1,
   },
   BottomSheetbackground: {
     flex: 1,
     marginTop: 0,
+  },
+  page: {
+    width: width,
   },
 });
