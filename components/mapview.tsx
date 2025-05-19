@@ -22,7 +22,7 @@ type view = {
 export default function MapView({ img, name, url, setCurrMap, setRuta }: view) {
   const navigate = () => {
     //redireccion hacia la pagina principal (segun q no jala)
-    router.navigate(`/(com_rutas)`);
+    router.navigate(`/(com_microbuses)`);
   };
   return (
     <Pressable

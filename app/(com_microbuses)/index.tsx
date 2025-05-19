@@ -24,7 +24,7 @@ export default function LikedRoute() {
   return (
     <SafeAreaView style={{ backgroundColor: "#2b5b45" }}>
       <ScrollView>
-        <View className="flex justify-center mt-10">
+        <View className="flex justify-between items-center mt-10">
           <View className="ml-2">
             <IconButton
               icon={() => (
@@ -37,8 +37,8 @@ export default function LikedRoute() {
               onPress={() => navigateProfile()}
             ></IconButton>
           </View>
-          <Text className="text-3xl text-center" style={{ color: "white" }}>
-            Comentarios de Microbus
+          <Text className="text-3xl text-center " style={{ color: "white" }}>
+            Comentarios de Ruta
           </Text>
         </View>
 
