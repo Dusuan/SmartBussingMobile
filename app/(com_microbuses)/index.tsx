@@ -87,7 +87,7 @@ const ComentariosRuta = ()  => {
           </Text>
         </View>
 
-        <View className="m-6 mt-20">
+        <View className="m-6 mt-14">
           <View className="mb-20">
             {/* Primer Comentario */}
 
