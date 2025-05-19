@@ -3,13 +3,14 @@ import {
   Avatar,
   Button,
   Card,
-  Text as PaperText,
   IconButton,
 } from "react-native-paper";
 import { Dispatch, SetStateAction } from "react";
 import { StyleSheet } from "react-native";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { router } from "expo-router";
+import Text from './AppText';
+
 type view = {
   img: string;
   name: string;
@@ -49,12 +50,12 @@ export default function MapView({ img, name, url, setCurrMap, setRuta }: view) {
           }}
           resizeMode="cover"
         />
-        <PaperText
+        <Text
           style={[{ backgroundColor: "transparent" }, styles.text]}
           variant="titleLarge"
         >
           {name}
-        </PaperText>
+        </Text>
         <View className="z-[100] flex-1 flex-row justify-end">
           {name != "Mapa de Ensenada" ? (
             <IconButton

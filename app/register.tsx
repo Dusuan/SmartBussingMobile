@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import Text from '../components/AppText';
+import { View,  StyleSheet, ImageBackground } from 'react-native';
 import { TextInput, Button, Divider, useTheme } from 'react-native-paper';
 import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import { router } from 'expo-router';

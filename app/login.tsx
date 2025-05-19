@@ -1,10 +1,11 @@
 import * as React from "react";
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import { View, StyleSheet, ImageBackground } from "react-native";
 import { TextInput, Button, Divider, useTheme } from "react-native-paper";
 import { white } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import { router } from "expo-router";
+import Text from '../components/AppText';
 
 const separacion = StyleSheet.create({
   container: {

@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import Text from "../components/AppText";
+import { View } from "react-native";
 import { Link } from "expo-router";
 import { Button, IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,11 +29,10 @@ export default function Index() {
         </View>
         <View>
           <Button className="mb-8" mode="elevated">
-            <Link href="/(dashboard)"> Dashboard </Link>
-          </Button>
-
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(routeView)"> Vista de rutas </Link>
+            <Link href="/(dashboard)">
+              {" "}
+              <Text style={{ fontFamily: "MyFont" }}>Dashboard</Text>{" "}
+            </Link>
           </Button>
 
           {/*<Button className="mb-8" mode="elevated">
@@ -59,14 +59,14 @@ export default function Index() {
               paddingHorizontal: 5,
             }}
           >
-            <Link href="/login"> Login </Link>
+            <Link href="/login">Login</Link>
           </Button>
 
           <Button
             className="mb-8"
             mode="elevated"
             buttonColor="#1d3a2d"
-            textColor="#f5f5f5"
+            textColor="#ffffff"
             style={{
               marginLeft: 25,
               borderRadius: 15,
@@ -76,7 +76,7 @@ export default function Index() {
           >
             <Link className="mb-8" href="/register">
               {" "}
-              Registro{" "}
+              Registro
             </Link>
           </Button>
         </View>

@@ -1,6 +1,5 @@
 import {
   Platform,
-  Text,
   View,
   PermissionsAndroid,
   ImageBackground,
@@ -33,11 +32,14 @@ import {
   Button,
   PaperProvider,
   IconButton,
+
 } from "react-native-paper";
 import * as React from "react";
 import Anuncio from "@/components/anuncio";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
+import Text from '../../components/AppText';
+
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -46,7 +48,6 @@ const width = Dimensions.get("window").width;
 
 export default function Dashboard() {
   const navigate = (ruta: String) => {
-    //redireccion hacia la pagina principal (segun q no jala)
     router.navigate(`/${ruta}`);
   };
 
