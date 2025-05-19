@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Text from '../components/AppText';
-import { View,  StyleSheet, ImageBackground } from 'react-native';
+import { View,  StyleSheet, ImageBackground, Alert } from 'react-native';
 import { TextInput, Button, Divider, useTheme } from 'react-native-paper';
 import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 import { router } from 'expo-router';
@@ -37,6 +37,49 @@ const Register = () => {
     const [nombre, setNombre] = React.useState('');
     const [contraseña, setContraseña] = React.useState('');
     const [confirmarcontraseña, setConfirmarContraseña] = React.useState('');
+
+    const Registro = {
+        nombre : nombre,
+        email : correo,
+        password : contraseña
+    }
+
+    const addNewUser = async () => {
+        try{
+
+          if(contraseña !== confirmarcontraseña){
+            Alert.alert("Por favorverifique que sus contraseñas sean iguales")
+          }
+
+          else{
+
+            const response = await fetch("http://{api}/api/v1/user", {
+                method:'POST',
+                headers : {
+                    Accept : 'application/json',
+                  'Content-type' : 'application/json'
+                },
+                credentials : 'include',
+                body : JSON.stringify(Registro)
+            })
+            
+            console.log("Response", response.status)
+
+            if(!response.ok){
+              Alert.alert("Hubo un error al momento de procesar su solicitud")
+            }
+
+            else{
+              Alert.alert("Se ha registrado con exito")
+              router.navigate("/")
+            }
+            
+          }
+
+        }catch(error){
+            Alert.alert("Hubo un error fatal en el sistema")
+        } 
+    }
 
   return (
 
@@ -174,7 +217,7 @@ const Register = () => {
         </View>
 
         <View className="me-14 mt-20">
-        <Button mode="contained" onPress={() => console.log('Pressed')}
+        <Button mode="contained" onPress={() => addNewUser()}
             buttonColor='#1D3A2D'
             textColor='#FFFFFF'
             >
