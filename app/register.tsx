@@ -53,7 +53,7 @@ const Register = () => {
 
           else{
 
-            const response = await fetch("http://{api}/api/v1/user", {
+            const response = await fetch("https://smart-bussing-back.onrender.com/api/v1/user", {
                 method:'POST',
                 headers : {
                     Accept : 'application/json',
