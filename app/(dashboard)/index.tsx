@@ -27,7 +27,6 @@ import useBottomSheetAnimatedIndex from "@gorhom/bottom-sheet";
 import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import Pullbottom from "@/components/pullbottom";
-import { Modal, Portal, Button, PaperProvider } from 'react-native-paper';
 import { Modal, Portal, Button, PaperProvider, Card, Text as PaperText } from 'react-native-paper';
 import * as React from 'react';
 import Anuncio from "@/components/anuncio";
