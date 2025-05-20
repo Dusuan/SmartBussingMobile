@@ -211,7 +211,7 @@ export default function Dashboard() {
          w-full  justify-between"
         >
           <View className="">
-            <Flechitaregreso ruta={"/"} />
+            {/*<Flechitaregreso ruta={"/"} />*/}
             <ProfileButton ruta={"/(profile)"} />
             <Pullbottom HandleOpenPress={HandleOpenPress}></Pullbottom>
           </View>

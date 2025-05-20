@@ -6,6 +6,7 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "react-native";
 import Text from "../../components/AppText";
+import Flechitaregreso from "@/components/flechitaregreso";
 
 interface Comentario { //Esta interface sirve para poder consumir los objetos que se hagan en el fetch y usarlos
 
@@ -70,17 +71,8 @@ const ComentariosRuta = ()  => {
     <SafeAreaView style={{ backgroundColor: "#2b5b45" }}>
       <ScrollView>
         <View className="flex justify-between items-center mt-10">
-          <View className="ml-2">
-            <IconButton
-              icon={() => (
-                <AntDesign
-                  name="leftcircle"
-                  color="#2C2C2C"
-                  size={30}
-                ></AntDesign>
-              )}
-              onPress={() => navigateProfile()}
-            ></IconButton>
+          <View className="">
+            <Flechitaregreso ruta={"../"}/>
           </View>
           <Text className="text-3xl text-center " style={{ color: "white" }}>
             Comentarios de Ruta 

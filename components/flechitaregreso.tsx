@@ -15,12 +15,12 @@ export default function flechitaregreso(texto: ruta) {
     router.navigate(`${texto.ruta}`);
   };
   return (
-    <View className="ml-3 ">
+    <View className=" ">
       <IconButton
         className=""
         mode="contained-tonal"
-        containerColor="#353935"
-        icon={() => <AntDesign name="arrowleft" color="#FAF9F6" size={30} />}
+        containerColor="#FAF9F6"
+        icon={() => <AntDesign name="arrowleft" color="#353935" size={30} />}
         onPress={() => navigate()}
       />
     </View>
