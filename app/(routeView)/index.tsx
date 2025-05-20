@@ -1,6 +1,6 @@
 
 import React, {useState} from "react";
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView,  View, StyleSheet, TouchableOpacity } from "react-native";
 import { Link } from "expo-router";
 import { Card, IconButton, Icon, Surface } from "react-native-paper";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
@@ -10,6 +10,8 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import SummaryTravel from "@/components/summaryTravel";
 import WalkTime from "@/components/walkTimeline";
 import BusInfoTimeline from "@/components/busInfoCard";
+import Text from '../../components/AppText';
+
 
 //Aqui abran funciones en donde dependiendo de los camiones a utilizar se realziara el timeline adecuado de la ruta
 

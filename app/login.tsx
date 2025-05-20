@@ -1,10 +1,8 @@
 import * as React from "react";
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import { View, StyleSheet, ImageBackground, Alert } from "react-native";
 import { TextInput, Button, Divider, useTheme } from "react-native-paper";
-import { white } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
-import EvilIcons from "react-native-vector-icons/EvilIcons";
-import Entypo from "react-native-vector-icons/Entypo";
 import { router } from "expo-router";
+import Text from '../components/AppText';
 
 const separacion = StyleSheet.create({
   container: {
@@ -31,6 +29,38 @@ const navigateProfile = () => {
 };
 
 const Login = () => {
+
+  const manageLogin = async ( correo : string , contraseña : string) => {
+      try{
+        const response = await fetch(`http://{API}/api/v1/user/login?email=${correo}&password=${contraseña}`,{
+          method : 'POST',
+          headers : {
+                Accept : 'application/json',
+                'Content-Type' : 'application/json'
+              },
+              credentials : 'include',
+        })
+
+        console.log("Response : " , response.status)
+
+        if(response.status === 401){
+          Alert.alert("Por favor vuelva a ingresar sus datos")
+        }
+        else if(!response.ok){
+          Alert.alert("Hubo un error en el servidor, vuelva a intentarlo mas tarde")
+        }
+        else{
+          Alert.alert("Bienvenido a SmartBussing")
+          router.navigate("/(dashboard)")
+        }
+
+      }catch(error){
+        Alert.alert("Hubo un error fatal en el sistema")
+      }
+  }
+
+
+
   const [correo, setCorreo] = React.useState("");
   const [contraseña, setContraseña] = React.useState("");
   const [mostrarContraseña, setMostrarContraseña] = React.useState(false);
@@ -129,7 +159,7 @@ const Login = () => {
         <View className="me-14 mt-20">
           <Button
             mode="contained"
-            onPress={() => console.log("Pressed")}
+            onPress={() => manageLogin(correo,contraseña)}
             buttonColor="#1D3A2D"
             textColor="#FFFFFF"
           >

@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import Text from "../components/AppText";
+import { View } from "react-native";
 import { Link } from "expo-router";
 import { Button, IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,7 +8,7 @@ import { ImageBackground } from "react-native";
 import { Style } from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { blue } from "react-native-reanimated/lib/typescript/Colors";
-import Entypo from 'react-native-vector-icons/Entypo';
+import Entypo from "react-native-vector-icons/Entypo";
 
 export default function Index() {
   return (
@@ -16,18 +17,8 @@ export default function Index() {
       style={{ flex: 1, justifyContent: "center" }}
       resizeMode="cover"
     >
-      <View style={styles.overlay} />
-
       <SafeAreaView className="flex-1 items-center justify-center">
-
-        <View className="mb-8 ml-80 mt-5">
-          <Link href="/(profile)/configuracion">
-            <IconButton 
-            icon="cog" 
-            size={40}
-            />
-          </Link>
-          </View>
+        <View style={styles.overlay} />
 
         <View>
           <Image
@@ -38,33 +29,22 @@ export default function Index() {
         </View>
         <View>
           <Button className="mb-8" mode="elevated">
-            <Link href="/(dashboard)"> Dashboard </Link>
+            <Link href="/(dashboard)">
+              {" "}
+              <Text style={{ fontFamily: "MyFont" }}>Dashboard</Text>{" "}
+            </Link>
           </Button>
 
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(routeView)"> Vista de rutas </Link>
-          </Button>
-
-          <Button className="mb-8" mode="elevated">
+          {/*<Button className="mb-8" mode="elevated">
             <Link href="/(likedRoute)"> Vista de rutas Favoritas </Link>
-          </Button>
-
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(profile)"> Perfil </Link>
-          </Button>
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(com_microbuses)"> Comentarios Microbuses</Link>
-          </Button>
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(com_rutas)"> Comentarios Rutas </Link>
-          </Button>
+          </Button>*/}
         </View>
         <View
           className="mb-8"
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            marginTop: 200,
+            marginTop: 20,
           }}
         >
           <Button
@@ -79,14 +59,14 @@ export default function Index() {
               paddingHorizontal: 5,
             }}
           >
-            <Link href="/login"> Login </Link>
+            <Link href="/login">Login</Link>
           </Button>
 
           <Button
             className="mb-8"
             mode="elevated"
             buttonColor="#1d3a2d"
-            textColor="#f5f5f5"
+            textColor="#ffffff"
             style={{
               marginLeft: 25,
               borderRadius: 15,
@@ -96,7 +76,7 @@ export default function Index() {
           >
             <Link className="mb-8" href="/register">
               {" "}
-              Registro{" "}
+              Registro
             </Link>
           </Button>
         </View>

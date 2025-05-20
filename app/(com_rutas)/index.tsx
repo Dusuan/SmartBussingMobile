@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Link, router } from "expo-router";
 import { Card, IconButton, Icon, Button } from "react-native-paper";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Text from '../../components/AppText';
 
 export default function LikedRoute() {
   const navigateProfile = () => {
     //Ahorita esta redirigiendo al main, pero cuando se haga la del profile ahi se debera regresar
-    router.navigate("/(profile)");
+    router.navigate("../");
   };
 
   const navigateTimeline = () => {

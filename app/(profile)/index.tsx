@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Button, View, Text, ScrollView } from "react-native";
+import { Button, View,  ScrollView } from "react-native";
 import { Card, IconButton, Icon, Surface } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Flechitaregreso from "../../components/flechitaregreso";
@@ -9,11 +9,13 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import Rutasfavoritas from "@/components/rutasfavoritas";
 import {useFonts} from "expo-font";
+import Text from '../../components/AppText';
+
 
 export default function Profile() {
   const navigateProfile = () => {
     //redireccion hacia la pagina principal (segun q no jala)
-    router.navigate("/(dashboard)");
+    router.navigate("/configuracion");
   };
 
   const [fontsLoaded] = useFonts({Manrope : require("../../assets/fonts/Manrope-regular.otf")}) //Agregeun esto con el nombre de las fonts que van a usar
@@ -110,7 +112,7 @@ export default function Profile() {
           color={"black"}
           onPress={() =>
             console.log(
-              "Insertar aqui el verbo para cerrar sesion (backend shit?)"
+              "Cerrando sesión!"
             )
           }
         />

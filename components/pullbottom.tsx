@@ -18,8 +18,8 @@ export default function pullbottom({HandleOpenPress}: bottomSheet) {
       <IconButton
         className=""
         mode="contained-tonal"
-        containerColor="#727272"
-        icon={() => <AntDesign name="home" color="#2C2C2C" size={30} />}
+        containerColor="#353935"
+        icon={() => <AntDesign name="home" color="#FAF9F6" size={30} />}
         onPress={() => HandleOpenPress(true)}
       />
     </View>
