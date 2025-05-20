@@ -32,14 +32,12 @@ import {
   Button,
   PaperProvider,
   IconButton,
-
 } from "react-native-paper";
 import * as React from "react";
 import Anuncio from "@/components/anuncio";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
-import Text from '../../components/AppText';
-
+import Text from "../../components/AppText";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -97,19 +95,7 @@ export default function Dashboard() {
     },
     {
       id: "3",
-      render: () => (
-        <View className="p-4">
-          <Button
-            className="mb-8"
-            mode="elevated"
-            textColor="black"
-            onPress={showAds}
-          >
-            {" "}
-            Ver lugares de la semana{" "}
-          </Button>
-        </View>
-      ),
+      render: () => <View className="p-4"></View>,
     },
   ];
   const bottomSheetRef = useRef<BottomSheet>(null);
@@ -237,7 +223,7 @@ export default function Dashboard() {
         enablePanDownToClose={true}
         ref={bottomSheetRef}
         backgroundStyle={{
-          backgroundColor: "#FAF9F6",
+          backgroundColor: "#808080",
         }}
       >
         <ImageBackground
