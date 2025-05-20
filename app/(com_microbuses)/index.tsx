@@ -36,7 +36,7 @@ const ComentariosRuta = ()  => {
     const getComentarios = async () => {
         try{
           console.log("ANTES DE FECHEAR")
-            const response = await fetch("http://{API:DIR}/api/v1/reporteRuta");
+            const response = await fetch("https://smart-bussing-back.onrender.com/api/v1/reporteRuta");
             console.log("Despues del fetch")
 
             if(!response.ok){

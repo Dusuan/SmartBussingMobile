@@ -32,7 +32,7 @@ const Login = () => {
 
   const manageLogin = async ( correo : string , contraseña : string) => {
       try{
-        const response = await fetch(`http://{API}/api/v1/user/login?email=${correo}&password=${contraseña}`,{
+        const response = await fetch(`https://smart-bussing-back.onrender.com/api/v1/user/login?email=${correo}&password=${contraseña}`,{
           method : 'POST',
           headers : {
                 Accept : 'application/json',
@@ -58,7 +58,6 @@ const Login = () => {
         Alert.alert("Hubo un error fatal en el sistema")
       }
   }
-
 
 
   const [correo, setCorreo] = React.useState("");
