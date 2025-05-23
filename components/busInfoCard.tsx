@@ -4,10 +4,6 @@ import { Card, IconButton, Icon, Surface } from "react-native-paper";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import {useFonts} from "expo-font";
-import * as SplashScreen from "expo-splash-screen"
-
-
 type bus = {
     nombreBus : string,
     time : number,
@@ -19,9 +15,12 @@ type bus = {
 
 export default function BusInfoTimeline({nombreBus,time,pInicio,pFinal, color} : bus){
 
+  /*
   const [fontsLoaded] = useFonts({Manrope : require("../assets/fonts/Manrope-regular.otf")}) //Agregeun esto con el nombre de las fonts que van a usar
 
   if(!fontsLoaded) return null; //Y esto para que no se crashee
+
+  ¨*/
 
   //Tambien hay otra funcion que sirve cuando se vaya a deployar pero para mas adelante
 
@@ -89,23 +88,23 @@ export default function BusInfoTimeline({nombreBus,time,pInicio,pFinal, color} :
         
                         <View className="absolute ml-10">
                           <View className="flex flex-row items-center justify-between mb-7">
-                            <Text className="text-base color-white" style = {{fontFamily : "Manrope"}}>Desde {pInicio}</Text>
+                            <Text className="text-base" style = {{fontFamily : "Manrope", color : 'white'}}>Desde {pInicio}</Text>
                             <IconButton
                               icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
                               onPress={() => console.log("Comentarios de la ruta")}
                             />  
         
-                            <Text className="text-lg color-white">{dateDepartue}</Text>  
+                            <Text className="text-lg" style = {{color : 'white'}}>{dateDepartue}</Text>  
                           </View>
         
                           <View className="flex flex-row items-center justify-between">
-                            <Text className="text-base color-white" style = {{fontFamily : "Manrope"}}>Llegada a {pFinal}</Text>
+                            <Text className="text-base" style = {{fontFamily : "Manrope", color : 'white'}}>Llegada a {pFinal}</Text>
                             <IconButton
                               icon= {() => <Ionicons name="alert-circle" size={20} color="#FFFFFF"></Ionicons>}
                               onPress={() => console.log("Comentarios de la ruta")}
                             />
         
-                            <Text className="text-lg text-pretty color-white">{dateArrived}</Text>
+                            <Text className="text-lg text-pretty" style = {{color : 'white'}}>{dateArrived}</Text>
                           </View>
                         </View>
                       </View>

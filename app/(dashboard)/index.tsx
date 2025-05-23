@@ -38,6 +38,7 @@ import Anuncio from "@/components/anuncio";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import Text from "../../components/AppText";
+import RouteView from "../(routeView)";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -49,7 +50,27 @@ export default function Dashboard() {
     router.navigate(`/${ruta}`);
   };
 
-  const Slides = [
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  // callbacks
+  const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(3);
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
+  const [Ruta, setRuta] = useState("Mapa de Ensenada");
+
+  //Cosas del modal
+  const [IsAdsVisible, setAdsVisible] = useState(true);
+
+  const showAds = () => setAdsVisible(true);
+  const hideAds = () => setAdsVisible(false);
+  const containerStyle = {
+    backgroundColor: "white",
+    padding: 20,
+    margin: 20,
+    height: `${95}%` as `${number}%`,
+    width: `${90}%` as `${number}%`,
+    borderRadius: 15,
+  };
+
+    const Slides = React.useMemo(() => [
     {
       id: "1",
       render: () => (
@@ -85,7 +106,7 @@ export default function Dashboard() {
             className="mb-8"
             mode="elevated"
             textColor="black"
-            onPress={() => navigate("(routeView)")}
+            onPress={() => console.log("Navegando") /*navigate("(routeView)") */}
           >
             {" "}
             Ejemplo de ruta
@@ -95,28 +116,11 @@ export default function Dashboard() {
     },
     {
       id: "3",
-      render: () => <View className="p-4"></View>,
+      render: () =>( <View className="p-4">
+        <RouteView></RouteView>
+      </View>)
     },
-  ];
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  // callbacks
-  const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(3);
-  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
-  const [Ruta, setRuta] = useState("Mapa de Ensenada");
-
-  //Cosas del modal
-  const [IsAdsVisible, setAdsVisible] = useState(true);
-
-  const showAds = () => setAdsVisible(true);
-  const hideAds = () => setAdsVisible(false);
-  const containerStyle = {
-    backgroundColor: "white",
-    padding: 20,
-    margin: 20,
-    height: `${95}%` as `${number}%`,
-    width: `${90}%` as `${number}%`,
-    borderRadius: 15,
-  };
+  ],[tilesets,setCurrMap,setRuta,showAds]);
 
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
