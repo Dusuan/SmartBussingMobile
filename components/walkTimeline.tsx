@@ -17,7 +17,7 @@ export default function WalkTime({time} : timeWalk){
             <View style={styles.dashedLine}>
               <View className="absolute flex flex-row gap-x-4 ml-10 mt-10">
                 <FontAwesome5 name="walking" color="#FFFFFF" size={30}></FontAwesome5>
-                <Text className="color-white">{time} minutos</Text>
+                <Text style = {{color : 'white'}} >{time} minutos</Text>
             </View>
             </View>
     )

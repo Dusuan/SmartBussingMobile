@@ -30,8 +30,8 @@ export default function SummaryTravel(){
                 </View>
 
                 <View className="flex flex-row justify-between w-full mt-5">
-                  <Text className="text-lg text-left color-white"style = {{fontFamily : "Manrope"}} >Llegada a las 11:50</Text>
-                  <Text className="text-right color-white" style = {{fontFamily : "Manrope"}}>40 min</Text>
+                  <Text className="text-lg text-left"style = {{fontFamily : "Manrope", color : 'white'}} >Llegada a las 11:50</Text>
+                  <Text className="text-right" style = {{fontFamily : "Manrope", color : 'white'}}>40 min</Text>
                 </View>
 
                 <View className="absolute ml-80 mt-4 ">

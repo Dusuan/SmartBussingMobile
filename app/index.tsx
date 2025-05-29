@@ -23,17 +23,19 @@ export default function Index() {
         <View>
           <Image
             source={require("../assets/images/smartbussing-removebg-preview.png")}
-            style={{ width: 200, height: 200, marginBottom: 20 }}
+            style={{ width: 200, height: 200, marginBottom: 170 }}
             resizeMode="contain"
           />
         </View>
         <View>
-          <Button className="mb-8" mode="elevated">
+         {/* <Button className="mb-8" mode="elevated">
             <Link href="/(dashboard)">
               {" "}
               <Text style={{ fontFamily: "MyFont" }}>Dashboard</Text>{" "}
             </Link>
           </Button>
+
+         }
 
           {/*<Button className="mb-8" mode="elevated">
             <Link href="/(likedRoute)"> Vista de rutas Favoritas </Link>
@@ -44,7 +46,7 @@ export default function Index() {
           style={{
             flexDirection: "row",
             justifyContent: "center",
-            marginTop: 20,
+            marginTop: 90,
           }}
         >
           <Button
