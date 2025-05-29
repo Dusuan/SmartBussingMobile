@@ -11,7 +11,6 @@ import Rutasfavoritas from "@/components/rutasfavoritas";
 import {useFonts} from "expo-font";
 import Text from '../../components/AppText';
 
-
 export default function Profile() {
   const navigateProfile = () => {
     //redireccion hacia la pagina principal (segun q no jala)
