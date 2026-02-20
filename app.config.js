@@ -1,27 +1,56 @@
 import "dotenv/config";
 
 export default {
-  
   expo: {
     scheme: "SmartBussing",
     name: "SmartBussing",
     slug: "SmartBussing",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/images/icon.png",
+    scheme: ["smartbussingmobile"],
+    userInterfaceStyle: "automatic",
+    newArchEnabled: true,
+    assetBundlePatterns: ["**/*"],
+    ios: {
+      bundleIdentifier: "com.anonymous.smartbussingmobile",
+
+      supportsTablet: true,
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
+    },
+    android: {
+      package: "com.anonymous.smartbussingmobile",
+
+      adaptiveIcon: {
+        foregroundImage: "./assets/images/adaptive-icon.png",
+        backgroundColor: "#ffffff",
+      },
+      config: {
+        googleMaps: {
+          apikey: "env.GOOGLE_MAPS_API_KEY",
+        },
+      },
+      package: "com.anonymous.SmartBussingMobile",
+    },
+    web: {
+      bundler: "metro",
+      output: "static",
+      favicon: "./assets/images/favicon.png",
+    },
     extra: {
       MAPBOX_DOWNLOAD_TOKEN: process.env.MAPBOX_DOWNLOAD_TOKEN,
+      eas: {
+        projectId: "59ed2265-a0be-426b-8fd2-00728974014d",
+      },
     },
-    android :  {
-      package: "com.anonymous.smartbussingmobile"
-    },
-    
-      ios: {
-        bundleIdentifier: "com.anonymous.smartbussingmobile"
-      }
-    ,
+
     plugins: [
       [
         "@rnmapbox/maps",
         {
-          RNMapboxMapsDownloadToken: process.env.MAPBOX_DOWNLOAD_TOKEN,
+          RNMAPBOX_MAPS_DOWNLOAD_TOKEN: process.env.MAPBOX_DOWNLOAD_TOKEN,
         },
       ],
       [
@@ -30,9 +59,17 @@ export default {
           locationWhenInUsePermission: "Show current location on map.",
         },
       ],
+      ["expo-font"],
+      "expo-router",
       [
-        "expo-font"
-      ]
+        "expo-splash-screen",
+        {
+          image: "./assets/images/splash-icon.png",
+          imageWidth: 200,
+          resizeMode: "contain",
+          backgroundColor: "#ffffff",
+        },
+      ],
     ],
   },
 };

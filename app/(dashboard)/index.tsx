@@ -9,13 +9,13 @@ import {
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MapboxGL from "@rnmapbox/maps";
-import { UserTrackingMode } from "@rnmapbox/maps";
+import  UserTrackingMode  from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useState, useRef } from "react";
 import BusCard from "@/components/buscard";
-import { LocationPuck } from "@rnmapbox/maps";
+import LocationPuck  from "@rnmapbox/maps";
 import Constants from "expo-constants";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
