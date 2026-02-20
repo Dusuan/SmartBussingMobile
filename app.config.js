@@ -16,6 +16,9 @@ export default {
       bundleIdentifier: "com.anonymous.smartbussingmobile",
 
       supportsTablet: true,
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
     },
     android: {
       package: "com.anonymous.smartbussingmobile",
@@ -38,6 +41,9 @@ export default {
     },
     extra: {
       MAPBOX_DOWNLOAD_TOKEN: process.env.MAPBOX_DOWNLOAD_TOKEN,
+      eas: {
+        projectId: "59ed2265-a0be-426b-8fd2-00728974014d",
+      },
     },
 
     plugins: [
