@@ -3,6 +3,7 @@ import { View, StyleSheet, ImageBackground, Alert } from "react-native";
 import { TextInput, Button, Divider, useTheme } from "react-native-paper";
 import { router } from "expo-router";
 import Text from '../components/AppText';
+import { useUser } from "./contextUser";
 
 const separacion = StyleSheet.create({
   container: {
@@ -51,6 +52,7 @@ const Login = () => {
         }
         else{
           Alert.alert("Bienvenido a SmartBussing")
+          asignUserInfo()
           router.navigate("/(dashboard)")
         }
 
@@ -59,6 +61,25 @@ const Login = () => {
       }
   }
 
+  const {setUser} = useUser();
+
+  const asignUserInfo = async () => {
+    try{
+      const response = await fetch(`https://smart-bussing-back.onrender.com/api/v1/user/`);
+
+      if(!response.ok){
+        console.log("Hubo un error de respuesta del servidor")
+      }
+
+      const data = await response.json();
+      console.log("Usuario : ", data)
+      setUser(data)
+
+    }catch(error){
+      console.log("No se pudo obtener la info del usuario", error)
+    }
+    
+  }
 
   const [correo, setCorreo] = React.useState("");
   const [contraseña, setContraseña] = React.useState("");

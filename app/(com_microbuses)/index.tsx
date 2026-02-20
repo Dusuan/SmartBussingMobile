@@ -29,10 +29,15 @@ interface Comentario { //Esta interface sirve para poder consumir los objetos qu
 
 }
 
-const ComentariosRuta = ()  => {
+type Route = {
+  name : string
+}
+
+const ComentariosRuta = ({name} : Route)  => {
 
     const [coments, setComentarios] = useState<Comentario[]>([])
 
+    //Esta funcion obtiene los comentarios que hay en esa ruta 
     const getComentarios = async () => {
         try{
           console.log("ANTES DE FECHEAR")
@@ -146,6 +151,11 @@ const ComentariosRuta = ()  => {
 
             {/*Fin del primer Comentario*/}
             {/**/}
+
+            {/* Comienzo del text input para guardar comentarios */}
+            <View>
+
+            </View>
 
             <View className="mt-10 flex justify-center items-center">
               <Text className="text-xl text-center" style={{ color: "white" }}>

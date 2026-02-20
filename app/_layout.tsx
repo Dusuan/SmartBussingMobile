@@ -4,6 +4,7 @@ import { DefaultTheme, PaperProvider } from "react-native-paper";
 import { StatusBar } from "react-native";
 import { useFonts } from "expo-font";
 import Text from '../components/AppText';
+import { UserProvider } from "./contextUser";
 
 
 export default function RootLayout() {
@@ -37,6 +38,7 @@ export default function RootLayout() {
   };
   return (
     <PaperProvider theme={theme}>
+      <UserProvider>
       <StatusBar hidden={true} />
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -71,6 +73,7 @@ export default function RootLayout() {
           options={{ headerShown: false }}
         ></Stack.Screen>
       </Stack>
+      </UserProvider>
     </PaperProvider>
   );
 }
