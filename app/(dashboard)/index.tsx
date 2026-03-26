@@ -141,7 +141,7 @@ export default function Dashboard() {
           animationMode="flyTo"
           animationDuration={1000}
         />
-        <LocationPuck
+        {/* <LocationPuck
           topImage="topImage"
           visible={true}
           scale={["interpolate", ["linear"], ["zoom"], 10, 1.0, 20, 4.0]}
@@ -149,8 +149,8 @@ export default function Dashboard() {
             isEnabled: true,
             color: "teal",
             radius: 50.0,
-          }}
-        />
+          }} 
+        />*/}
 
         {/*  <MapboxGL.VectorSource // adding a vector source and styling it directly in the app
             id="id-lines-source"

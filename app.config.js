@@ -4,7 +4,7 @@ export default {
   expo: {
     scheme: "SmartBussing",
     name: "SmartBussing",
-    slug: "SmartBussing",
+    slug: "smart-bussing-mobile",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
@@ -12,6 +12,7 @@ export default {
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     assetBundlePatterns: ["**/*"],
+    owner: "smart-bussing",
     ios: {
       bundleIdentifier: "com.anonymous.smartbussingmobile",
 
@@ -42,7 +43,7 @@ export default {
     extra: {
       MAPBOX_DOWNLOAD_TOKEN: process.env.MAPBOX_DOWNLOAD_TOKEN,
       eas: {
-        projectId: "59ed2265-a0be-426b-8fd2-00728974014d",
+        projectId: "04c352a6-b378-4fdb-9b9b-64d0c38b698b",
       },
     },
 

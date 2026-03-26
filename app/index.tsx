@@ -5,7 +5,6 @@ import { Button, IconButton } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
-import { Style } from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { blue } from "react-native-reanimated/lib/typescript/Colors";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -63,7 +62,20 @@ export default function Index() {
           >
             <Link href="/login">Login</Link>
           </Button>
-
+<Button
+            className="mb-8"
+            mode="elevated"
+            buttonColor="#1d3a2d"
+            textColor="#f5f5f5"
+            style={{
+              marginRight: 25,
+              borderRadius: 15,
+              paddingVertical: 8,
+              paddingHorizontal: 5,
+            }}
+          >
+            <Link href="/(dashboard)">Dev</Link>
+          </Button>
           <Button
             className="mb-8"
             mode="elevated"
