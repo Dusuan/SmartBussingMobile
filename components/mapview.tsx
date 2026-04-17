@@ -11,6 +11,8 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import { router } from "expo-router";
 import Text from './AppText';
 
+export type MapStyleState = { type: "url" | "json"; value: string };
+
 type view = {
   img: string;
   name: string;

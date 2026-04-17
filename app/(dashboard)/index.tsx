@@ -41,6 +41,8 @@ import Text from "../../components/AppText";
 import RouteView from "../(routeView)";
 import * as Location from "expo-location";
 import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
+import uberStyle from "@/assets/tilesets/map-style.json";
+import { MapStyleState } from "@/components/mapview";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -56,8 +58,9 @@ export default function Dashboard() {
   const cameraRef = useRef<MapboxGL.Camera>(null);
 
   // callbacks
-  const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(1);
+  const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
+
   const [Ruta, setRuta] = useState("Mapa de Ensenada");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [searchMarker, setSearchMarker] = useState<[number, number] | null>(null);
@@ -77,7 +80,7 @@ export default function Dashboard() {
   };
 
   // Request location permissions and get current position
-  useEffect(() => {
+  React.useLayoutEffect(() => {
     const requestLocationPermission = async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -154,6 +157,14 @@ export default function Dashboard() {
     },
   ],[tilesets,setCurrMap,setRuta,showAds]);
 
+  if(userLocation === null){
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-center">Obteniendo ubicación...</Text>
+      </View>
+    );
+  }
+
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
       <MapboxGL.MapView
@@ -164,10 +175,10 @@ export default function Dashboard() {
         <MapboxGL.Camera
           ref={cameraRef}
           defaultSettings={{
-            zoomLevel: 12,
-            centerCoordinate: userLocation ?? [-116.6076, 31.8658], // centerCoordinate: [-116.6076, 31.8658] order of [y, x] instead of [x, y]
+            zoomLevel: 14,
+            centerCoordinate: userLocation ?? [-116.6076, 31.8658],
           }}
-          zoomLevel={12}
+          zoomLevel={14}
           //  followUserLocation={true}
           //  followUserMode={UserTrackingMode.Follow}
           pitch={20}
@@ -259,26 +270,27 @@ export default function Dashboard() {
             </Text>
           </View>
         </View>
-        <View style={{ marginTop: 12 }}>
+        
+      </View>
+      
+      <BottomSheet
+        style={{ marginRight: 8, marginLeft: 8 }}
+        index={1}
+        animateOnMount={true}
+        snapPoints={["15%", "30%", "50%", "75%", "90%"]}
+        enablePanDownToClose={false}
+        ref={bottomSheetRef}
+        backgroundStyle={{
+          backgroundColor: "#808080",
+        }}
+      >
+        <View style={{ marginTop: 12 , marginBottom: 12}}>
           <SearchBar
             userLocation={userLocation}
             onSelectLocation={handleLocationSelect}
             setSearchMarker={setSearchMarker}
           />
         </View>
-      </View>
-
-      <BottomSheet
-        style={{ marginRight: 8, marginLeft: 8 }}
-        index={2}
-        animateOnMount={true}
-        snapPoints={["10%", "30%", "50%", "75%", "90%"]}
-        enablePanDownToClose={true}
-        ref={bottomSheetRef}
-        backgroundStyle={{
-          backgroundColor: "#808080",
-        }}
-      >
         <ImageBackground
           source={require("../../assets/images/fondologinregister.png")}
           style={styles.BottomSheetbackground}
