@@ -39,6 +39,10 @@ import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import Text from "../../components/AppText";
 import RouteView from "../(routeView)";
+import * as Location from "expo-location";
+import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
+import uberStyle from "@/assets/tilesets/map-style.json";
+import { MapStyleState } from "@/components/mapview";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -51,10 +55,15 @@ export default function Dashboard() {
   };
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const cameraRef = useRef<MapboxGL.Camera>(null);
+
   // callbacks
-  const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(3);
-  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
+  const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/dark-v11");
+
   const [Ruta, setRuta] = useState("Mapa de Ensenada");
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [searchMarker, setSearchMarker] = useState<[number, number] | null>(null);
 
   //Cosas del modal
   const [IsAdsVisible, setAdsVisible] = useState(true);
@@ -70,7 +79,34 @@ export default function Dashboard() {
     borderRadius: 15,
   };
 
-    const Slides = React.useMemo(() => [
+  // Request location permissions and get current position
+  React.useLayoutEffect(() => {
+    const requestLocationPermission = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === "granted") {
+          const position = await Location.getCurrentPositionAsync({});
+          setUserLocation([position.coords.longitude, position.coords.latitude]);
+        }
+      } catch (error) {
+        console.error("Error requesting location permission:", error);
+      }
+    };
+    requestLocationPermission();
+    console.log("User location:", userLocation);
+  }, []);
+
+  const handleLocationSelect = (feature: GeocodingFeature) => {
+    setSearchMarker(feature.center);
+    cameraRef.current?.setCamera({
+      centerCoordinate: feature.center,
+      zoomLevel: 15,
+      animationMode: "flyTo",
+      animationDuration: 800,
+    });
+  };
+
+  const Slides = React.useMemo(() => [
     {
       id: "1",
       render: () => (
@@ -122,6 +158,14 @@ export default function Dashboard() {
     },
   ],[tilesets,setCurrMap,setRuta,showAds]);
 
+  if(userLocation === null){
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-center">Cargando ...</Text>
+      </View>
+    );
+  }
+
   return (
     <GestureHandlerRootView style={styles.root} className="flex-1 relative">
       <MapboxGL.MapView
@@ -130,9 +174,10 @@ export default function Dashboard() {
         rotateEnabled={true}
       >
         <MapboxGL.Camera
+          ref={cameraRef}
           defaultSettings={{
-            zoomLevel: 12,
-            centerCoordinate: [-116.6076, 31.8658], // centerCoordinate: [-116.6076, 31.8658] order of [y, x] instead of [x, y]
+            zoomLevel: 14,
+            centerCoordinate: userLocation ?? [-116.6076, 31.8658],
           }}
           zoomLevel={14}
           //  followUserLocation={true}
@@ -141,17 +186,26 @@ export default function Dashboard() {
           animationMode="flyTo"
           animationDuration={1000}
         />
-        {/* <LocationPuck
-          topImage="topImage"
-          visible={true}
-          scale={["interpolate", ["linear"], ["zoom"], 10, 1.0, 20, 4.0]}
-          pulsing={{
-            isEnabled: true,
-            color: "teal",
-            radius: 50.0,
-          }} 
-        />*/}
 
+        <MapboxGL.LocationPuck visible />
+
+        {searchMarker && (
+          <MapboxGL.PointAnnotation
+            id="search-result"
+            coordinate={searchMarker}
+          >
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                backgroundColor: "#fff",
+                borderWidth: 3,
+                borderColor: "#508484",
+              }}
+            />
+          </MapboxGL.PointAnnotation>
+        )}
         {/*  <MapboxGL.VectorSource // adding a vector source and styling it directly in the app
             id="id-lines-source"
             url=""
@@ -217,19 +271,27 @@ export default function Dashboard() {
             </Text>
           </View>
         </View>
+        
       </View>
-
+      
       <BottomSheet
         style={{ marginRight: 8, marginLeft: 8 }}
-        index={2}
+        index={1}
         animateOnMount={true}
-        snapPoints={["10%", "30%", "50%", "75%", "90%"]}
-        enablePanDownToClose={true}
+        snapPoints={["15%", "30%", "50%", "75%", "90%"]}
+        enablePanDownToClose={false}
         ref={bottomSheetRef}
         backgroundStyle={{
           backgroundColor: "#808080",
         }}
       >
+        <View style={{ marginTop: 12 , marginBottom: 12}}>
+          <SearchBar
+            userLocation={userLocation}
+            onSelectLocation={handleLocationSelect}
+            setSearchMarker={setSearchMarker}
+          />
+        </View>
         <ImageBackground
           source={require("../../assets/images/fondologinregister.png")}
           style={styles.BottomSheetbackground}
