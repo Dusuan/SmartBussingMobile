@@ -59,7 +59,7 @@ export default function Dashboard() {
 
   // callbacks
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
-  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v11");
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/dark-v11");
 
   const [Ruta, setRuta] = useState("Mapa de Ensenada");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
@@ -93,6 +93,7 @@ export default function Dashboard() {
       }
     };
     requestLocationPermission();
+    console.log("User location:", userLocation);
   }, []);
 
   const handleLocationSelect = (feature: GeocodingFeature) => {
@@ -160,7 +161,7 @@ export default function Dashboard() {
   if(userLocation === null){
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-center">Obteniendo ubicación...</Text>
+        <Text className="text-center">Cargando ...</Text>
       </View>
     );
   }
