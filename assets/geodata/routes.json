@@ -1,0 +1,150 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "route-101",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-116.6060, 31.8665],
+          [-116.6080, 31.8620],
+          [-116.6040, 31.8560],
+          [-116.5980, 31.8490],
+          [-116.5935, 31.8385]
+        ]
+      },
+      "properties": {
+        "feature_type": "route",
+        "route_id": "101",
+        "route_short_name": "101",
+        "route_long_name": "Centro - Reforma - UABC",
+        "route_color": "#34D399",
+        "route_text_color": "#065F46",
+        "route_type": "microbus"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "route-102",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-116.6215, 31.8590],
+          [-116.6160, 31.8560],
+          [-116.6090, 31.8530],
+          [-116.6020, 31.8500],
+          [-116.5960, 31.8460],
+          [-116.5910, 31.8460]
+        ]
+      },
+      "properties": {
+        "feature_type": "route",
+        "route_id": "102",
+        "route_short_name": "102",
+        "route_long_name": "Plaza Marina - Macroplaza",
+        "route_color": "#F59E0B",
+        "route_text_color": "#78350F",
+        "route_type": "microbus"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "route-103",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [-116.6060, 31.8665],
+          [-116.6000, 31.8610],
+          [-116.5960, 31.8550],
+          [-116.5940, 31.8490],
+          [-116.5910, 31.8460]
+        ]
+      },
+      "properties": {
+        "feature_type": "route",
+        "route_id": "103",
+        "route_short_name": "103",
+        "route_long_name": "Centro - Macroplaza Directo",
+        "route_color": "#818CF8",
+        "route_text_color": "#1E1B4B",
+        "route_type": "microbus"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "stop-ST001",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-116.6060, 31.8665]
+      },
+      "properties": {
+        "feature_type": "stop",
+        "stop_id": "ST001",
+        "stop_name": "Parada Centro",
+        "stop_description": "Centro histórico de Ensenada",
+        "routes": ["101", "103"]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "stop-ST002",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-116.5935, 31.8385]
+      },
+      "properties": {
+        "feature_type": "stop",
+        "stop_id": "ST002",
+        "stop_name": "UABC Valle Dorado",
+        "stop_description": "Universidad Autónoma de Baja California",
+        "routes": ["101"]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "stop-ST003",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-116.6215, 31.8590]
+      },
+      "properties": {
+        "feature_type": "stop",
+        "stop_id": "ST003",
+        "stop_name": "Plaza Marina",
+        "stop_description": "Zona comercial Plaza Marina",
+        "routes": ["102"]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "stop-ST004",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-116.5910, 31.8460]
+      },
+      "properties": {
+        "feature_type": "stop",
+        "stop_id": "ST004",
+        "stop_name": "Macroplaza",
+        "stop_description": "Centro comercial Macroplaza",
+        "routes": ["102", "103"]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "stop-ST005",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-116.6080, 31.8620]
+      },
+      "properties": {
+        "feature_type": "stop",
+        "stop_id": "ST005",
+        "stop_name": "Ampliación Indeco",
+        "stop_description": "Colonia Ampliación Indeco",
+        "routes": ["101"]
+      }
+    }
+  ]
+}
