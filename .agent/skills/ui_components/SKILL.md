@@ -1,3 +1,8 @@
+------
+titulo: ui_components
+descripcion: Reglas para la implementación de componentes UI usando Tailwind (NativeWind), React Native Paper y StyleSheet, incluyendo interactividad y tipografía.
+------
+
 # Skill: Creación de Componentes UI (SmartBussingMobile)
 
 ## Contexto

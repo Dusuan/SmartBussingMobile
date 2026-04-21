@@ -1,3 +1,8 @@
+------
+titulo: api_communication
+descripcion: Reglas e instrucciones para el manejo de peticiones HTTP, seguridad de datos sensibles, uso de fetch nativo y manejo de errores globales.
+------
+
 # Skill: Comunicaciones con API (SmartBussingMobile)
 
 ## Contexto
