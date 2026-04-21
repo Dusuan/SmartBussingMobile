@@ -115,6 +115,7 @@ export default function Dashboard() {
         <MapRouteController
           cameraRef={cameraRef}
           activeRouteId={activeRouteId}
+          mode={mode}
           onRoutePress={handleRouteSelect}
         />
       </MapboxGL.MapView>

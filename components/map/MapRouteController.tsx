@@ -33,6 +33,11 @@ interface MapRouteControllerProps {
   activeRouteId?: string | null;
 
   /**
+   * Controlled mode from outside.
+   */
+  mode?: MapDisplayMode;
+
+  /**
    * Called when the user taps a route line directly on the map.
    * Receives the route_id of the tapped route.
    */
@@ -94,6 +99,7 @@ function ModeToggleButton({ mode, onToggle, visible }: ModeToggleProps) {
 export function MapRouteController({
   cameraRef,
   activeRouteId: externalActiveRouteId,
+  mode: externalMode,
   onRoutePress,
 }: MapRouteControllerProps) {
   const {
@@ -108,6 +114,7 @@ export function MapRouteController({
     mode,
     setActiveRoute,
     clearRoute,
+    setMode,
     toggleMode,
     activeRouteFilter,
     inactiveRoutesFilter,
@@ -123,6 +130,13 @@ export function MapRouteController({
       setActiveRoute(externalActiveRouteId);
     }
   }, [externalActiveRouteId]);
+
+  // Sync external mode → internal state
+  useEffect(() => {
+    if (externalMode !== undefined && externalMode !== mode) {
+      setMode(externalMode);
+    }
+  }, [externalMode, mode, setMode]);
 
   // Move camera when active route changes
   useEffect(() => {
@@ -190,7 +204,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 200,
     alignSelf: 'center',
-    zIndex: 50,
   },
   modeToggleBtn: {
     flexDirection: 'row',
