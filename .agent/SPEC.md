@@ -45,5 +45,14 @@ type TypeExContentType = {
   - `Location.getCurrentPositionAsync()`: Obtención de la coordenada inicial del usuario.
 - **Control de Mapas (`Dashboard / Mapbox`):**
   - `cameraRef.current?.setCamera({ centerCoordinate, zoomLevel, animationMode })`: Función para desplazar animadamente la cámara al realizar búsquedas en el `SearchBar`.
+  - **`MapRouteController`**: Controlador centralizado que renderiza rutas y paradas optimizadas mediante orígenes vectoriales (`ShapeSource`) y capas nativas de Mapbox (`LineLayer`, `SymbolLayer`). Gestiona directamente el estado del modo de visualización.
+- **Gestión de Datos y Estado (Hooks):**
+  - `useRouteFilter` / `useRoutesData`: Hooks tipados en TypeScript para el manejo eficiente de la información de rutas y su filtrado dentro del flujo de la UI.
 - **Estimación de Tiempo (`Context`):**
   - `calculateAllTime(items: Array<string>)`: Suma acumulativa rudimentaria de `busTime` y `walkTime`.
+
+## 4. Arquitectura Modular de Interfaz
+Para evitar un `Dashboard` sobrecargado ("bloat"), la interfaz de usuario se desacopla en los siguientes subcomponentes principales:
+- `DashboardTopBar`: Maneja la navegación superior y la barra de búsqueda.
+- `DashboardBottomSheet`: Agrupa la lógica y presentación del panel inferior desplazable, sirviendo componentes como `BusCard`.
+- `AdsModal`: Modal independiente para visualización de anuncios en flujo.

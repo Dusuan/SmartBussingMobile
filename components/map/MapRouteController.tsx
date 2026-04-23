@@ -10,15 +10,16 @@
  * This component is designed to be placed INSIDE <MapboxGL.MapView>.
  */
 
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import MapboxGL from '@rnmapbox/maps';
 import { RouteLineLayer } from './RouteLineLayer';
 import { RouteStopsLayer } from './RouteStopsLayer';
 import { useRoutesData } from '@/hooks/useRoutesData';
 import { useRouteFilter } from '@/hooks/useRouteFilter';
-import { MapDisplayMode } from '@/types/geodata';
+import { MapDisplayMode, StopFeature, MapboxPoi } from '@/types/geodata';
 import AppText from '@/components/AppText';
+import { StopPopup } from './StopPopup';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -42,6 +43,16 @@ interface MapRouteControllerProps {
    * Receives the route_id of the tapped route.
    */
   onRoutePress?: (routeId: string) => void;
+
+  /**
+   * External selected Mapbox POI to display a popup for.
+   */
+  externalMapPoi?: MapboxPoi | null;
+
+  /**
+   * Callback to clear the external Mapbox POI.
+   */
+  onClearExternalMapPoi?: () => void;
 }
 
 // ─── Camera Padding ───────────────────────────────────────────────────────────
@@ -101,6 +112,8 @@ export function MapRouteController({
   activeRouteId: externalActiveRouteId,
   mode: externalMode,
   onRoutePress,
+  externalMapPoi,
+  onClearExternalMapPoi,
 }: MapRouteControllerProps) {
   const {
     routesGeoJSON,
@@ -120,6 +133,16 @@ export function MapRouteController({
     inactiveRoutesFilter,
     stopsFilter,
   } = useRouteFilter();
+
+  const [selectedStop, setSelectedStop] = useState<StopFeature | null>(null);
+
+  const handleStopPress = useCallback((feature: StopFeature) => {
+    setSelectedStop(feature);
+  }, []);
+
+  const handleClosePopup = useCallback(() => {
+    setSelectedStop(null);
+  }, []);
 
   // Sync external activeRouteId → internal state
   useEffect(() => {
@@ -183,7 +206,43 @@ export function MapRouteController({
       <RouteStopsLayer
         shape={stopsGeoJSON}
         filter={stopsFilter}
+        onStopPress={handleStopPress}
       />
+
+      {selectedStop && selectedStop.geometry.type === 'Point' && (
+        <MapboxGL.MarkerView
+          coordinate={selectedStop.geometry.coordinates as [number, number]}
+          id={`popup-${selectedStop.properties.stop_id}`}
+        >
+          <StopPopup
+            stopName={selectedStop.properties.stop_name}
+            description={selectedStop.properties.stop_description}
+            imageUrl={selectedStop.properties.stop_image}
+            routes={selectedStop.properties.routes}
+            coordinates={selectedStop.geometry.coordinates as [number, number]}
+            onClose={handleClosePopup}
+          />
+        </MapboxGL.MarkerView>
+      )}
+
+      {/* External Mapbox POI Popup */}
+      {externalMapPoi && (
+        <MapboxGL.MarkerView
+          coordinate={externalMapPoi.coordinates}
+          id={`poi-popup-${externalMapPoi.id}`}
+        >
+          <StopPopup
+            stopName={externalMapPoi.name}
+            description={externalMapPoi.category}
+            hideImage={true}
+            coordinates={externalMapPoi.coordinates}
+            googleMapsUrl={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(externalMapPoi.name)}`}
+            onClose={() => {
+              if (onClearExternalMapPoi) onClearExternalMapPoi();
+            }}
+          />
+        </MapboxGL.MarkerView>
+      )}
 
       {/* Mode Toggle Overlay — rendered OUTSIDE MapboxGL.MapView */}
       {/* NOTE: This must be placed as a sibling to MapboxGL.MapView in the parent, */}
