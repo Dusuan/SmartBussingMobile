@@ -1,4 +1,5 @@
 import React from "react";
+import { router } from "expo-router";
 import { View, Dimensions, StyleSheet, ImageBackground, Text, ScrollView } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -62,6 +63,22 @@ export default function DashboardBottomSheet({
                     }}
                   >
                     Ver en Mapa
+                  </Button>
+                  <Button
+                    mode="outlined"
+                    textColor="#1D3A2D"
+                    style={{ marginTop: 8, borderColor: '#1D3A2D' }}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/(reportRoute)',
+                        params: { 
+                          routeId: route.properties.route_id, 
+                          routeName: route.properties.route_short_name 
+                        }
+                      });
+                    }}
+                  >
+                    Reportar esta ruta
                   </Button>
                 </View>
               </View>
