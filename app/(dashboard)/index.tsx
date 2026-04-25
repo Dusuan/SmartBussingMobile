@@ -6,15 +6,38 @@ import {
   Animated,
 } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import BottomSheet from "@gorhom/bottom-sheet";
+import  UserTrackingMode  from "@rnmapbox/maps";
+import { StyleSheet } from "react-native";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useState, useRef, useCallback } from "react";
+import BusCard from "@/components/buscard";
+import LocationPuck  from "@rnmapbox/maps";
+import Constants from "expo-constants";
+import { useEffect } from "react";
+import tilesets from "../../assets/tilesets/tilesets.json";
+import MapView from "@/components/mapview";
+import Flechitaregreso from "@/components/flechitaregreso";
+import ProfileButton from "@/components/gotologin";
+import useBottomSheetAnimatedIndex from "@gorhom/bottom-sheet";
+import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
+import { ScrollView } from "react-native-gesture-handler";
+import Pullbottom from "@/components/pullbottom";
+import {
+  Button,
+  IconButton,
+} from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Constants from "expo-constants";
 import * as React from "react";
 import Text from "../../components/AppText";
 import * as Location from "expo-location";
+import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
+import uberStyle from "@/assets/tilesets/map-style.json";
+import { MapStyleState } from "@/components/mapview";
+import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
 import { GeocodingFeature } from "@/components/SearchBar";
-import AdsModal from "@/components/AdsModal";
 import DashboardTopBar from "@/components/DashboardTopBar";
 import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
@@ -25,6 +48,20 @@ import { reportRoute } from "@/app/(reportRoute)";
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
 
+const width = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
+
+const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-6372485658515796~9768969991';
+
+export default function Dashboard() {
+  const navigate = (ruta: String) => {
+    router.navigate(`/${ruta}`);
+  };
+  const bannerRef = useRef<BannerAd>(null);
+
+    useForeground(() => {
+    Platform.OS === 'android' && bannerRef.current?.load();
+  });
 // Ensenada city center — default camera target
 const ENSENADA_CENTER: [number, number] = [-116.6060, 31.8600];
 
@@ -58,10 +95,37 @@ export default function Dashboard() {
     bottomSheetRef.current?.snapToIndex(2);
   }, [setActiveRoute]);
 
+  //Cosas del slider de anuncios
   const [IsAdsVisible, setAdsVisible] = useState(true);
-  const showAds = () => setAdsVisible(true);
-  const hideAds = () => setAdsVisible(false);
+  const [IsAdsDismissed, setAdsDismissed] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current; // 0 = visible, 1 = hidden (slid down)
 
+  const showAds = () => {
+    if (!IsAdsDismissed) {
+      setAdsVisible(true);
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 60,
+        friction: 12,
+      }).start();
+    }
+  };
+
+  const hideAds = useCallback(() => {
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(() => {
+      setAdsVisible(false);
+      setAdsDismissed(true); // No vuelve a salir
+    });
+  }, [slideAnim]);
+
+  const sliderHeight = height; // Pantalla completa
+
+  // Request location permissions and get current position
   React.useLayoutEffect(() => {
     (async () => {
       try {
@@ -157,16 +221,77 @@ export default function Dashboard() {
           </MapboxGL.PointAnnotation>
         )}
 
-        {/* ── Geo-Routes Module: routes + stops layers ── */}
-        <MapRouteController
-          cameraRef={cameraRef}
-          activeRouteId={activeRouteId}
-          mode={mode}
-          onRoutePress={handleRouteSelect}
-          externalMapPoi={selectedMapPoi}
-          onClearExternalMapPoi={() => setSelectedMapPoi(null)}
-        />
-      </MapboxGL.MapView>
+      {/*------------------------ Slider de Anuncios (Pantalla Completa) ------------------------*/}
+      {IsAdsVisible && (
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "#1a1a2e",
+            zIndex: 50,
+            elevation: 20,
+            transform: [
+              {
+                translateY: slideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, sliderHeight + 50],
+                }),
+              },
+            ],
+          }}
+        >
+          {/* Header */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 20,
+              paddingTop: 50,
+              paddingBottom: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(255,255,255,0.1)",
+            }}
+          >
+            <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: "700" }}>
+              📍 Lugares de la semana
+            </Text>
+            <IconButton
+              icon="close"
+              size={28}
+              iconColor="#ffffff"
+              onPress={hideAds}
+              style={{ margin: 0 }}
+            />
+          </View>
+
+          {/* Contenido con scroll vertical */}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16 }}
+            style={{ flex: 1 }}
+          >
+            <Anuncio
+              nombreEmpresa={"Empresa"}
+              descripcion={"Descripcion de empresa"}
+              distancia={"Distancia"}
+            />
+            <Anuncio
+              nombreEmpresa={"Empresa 2"}
+              descripcion={"Otra descripcion"}
+              distancia={"Distancia"}
+            />
+          </ScrollView>
+
+          {/* Banner Ad fijo en la parte inferior */}
+          <View style={{paddingBottom: 24 }}>
+            <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+          </View>
+        </Animated.View>
+      )}
 
       {/* Mode toggle overlay — shown only when a route is active */}
       <ModeToggleButton
