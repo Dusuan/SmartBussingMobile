@@ -1,3 +1,8 @@
+------
+titulo: mapbox_integration
+descripcion: Instrucciones para la visualización del mapa con Mapbox, manejo de anotaciones, trazado de rutas y control de cámara.
+------
+
 # Skill: Mapbox Integration (SmartBussingMobile)
 
 ## Contexto

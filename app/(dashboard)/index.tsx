@@ -1,14 +1,10 @@
 import {
-  Platform,
   View,
-  PermissionsAndroid,
-  ImageBackground,
-  Dimensions,
   Image,
+  StyleSheet,
+  TouchableOpacity,
   Animated,
 } from "react-native";
-import { Link } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 import MapboxGL from "@rnmapbox/maps";
 import  UserTrackingMode  from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
@@ -31,18 +27,23 @@ import {
   Button,
   IconButton,
 } from "react-native-paper";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Constants from "expo-constants";
 import * as React from "react";
-import Anuncio from "@/components/anuncio";
-import { AntDesign } from "@expo/vector-icons";
-import { router } from "expo-router";
 import Text from "../../components/AppText";
-import RouteView from "../(routeView)";
 import * as Location from "expo-location";
 import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
 import uberStyle from "@/assets/tilesets/map-style.json";
 import { MapStyleState } from "@/components/mapview";
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
+import { GeocodingFeature } from "@/components/SearchBar";
+import DashboardTopBar from "@/components/DashboardTopBar";
+import DashboardBottomSheet from "@/components/DashboardBottomSheet";
+import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
+import { useRouteFilter } from "@/hooks/useRouteFilter";
+import { MapboxPoi } from "@/types/geodata";
+import { reportRoute } from "@/app/(reportRoute)";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -61,17 +62,38 @@ export default function Dashboard() {
     useForeground(() => {
     Platform.OS === 'android' && bannerRef.current?.load();
   });
+// Ensenada city center — default camera target
+const ENSENADA_CENTER: [number, number] = [-116.6060, 31.8600];
 
+
+
+// ─── Main Dashboard ─────────────────────────────────────────────────────────────
+export default function Dashboard() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const cameraRef = useRef<MapboxGL.Camera>(null);
+  const mapRef = useRef<MapboxGL.MapView>(null);
 
-  // callbacks
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
-  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/dark-v11");
-
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v12");
   const [Ruta, setRuta] = useState("Mapa de Ensenada");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [searchMarker, setSearchMarker] = useState<[number, number] | null>(null);
+  const [selectedMapPoi, setSelectedMapPoi] = useState<MapboxPoi | null>(null);
+
+  // ─── Geo-Routes Module ─────────────────────────────────────────────────────
+  const {
+    activeRouteId,
+    mode,
+    setActiveRoute,
+    clearRoute,
+    toggleMode,
+  } = useRouteFilter();
+
+  const handleRouteSelect = useCallback((routeId: string) => {
+    setActiveRoute(routeId);
+    setRuta(`Ruta ${routeId}`);
+    bottomSheetRef.current?.snapToIndex(2);
+  }, [setActiveRoute]);
 
   //Cosas del slider de anuncios
   const [IsAdsVisible, setAdsVisible] = useState(true);
@@ -105,7 +127,7 @@ export default function Dashboard() {
 
   // Request location permissions and get current position
   React.useLayoutEffect(() => {
-    const requestLocationPermission = async () => {
+    (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status === "granted") {
@@ -115,9 +137,7 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Error requesting location permission:", error);
       }
-    };
-    requestLocationPermission();
-    console.log("User location:", userLocation);
+    })();
   }, []);
 
   const handleLocationSelect = (feature: GeocodingFeature) => {
@@ -130,59 +150,49 @@ export default function Dashboard() {
     });
   };
 
-  const Slides = React.useMemo(() => [
-    {
-      id: "1",
-      render: () => (
-        <View className="m-2">
-          {Object.entries(tilesets).map(([key, value]) => (
-            <View key={key} className=" py-4">
-              <MapView
-                img={value.url}
-                name={key}
-                url={value.url}
-                setCurrMap={setCurrMap}
-                setRuta={setRuta}
-              />
-            </View>
-          ))}
-        </View>
-      ),
-    },
-    {
-      id: "2",
-      render: () => (
-        <View className="p-4">
-          <Button
-            className="mb-8"
-            mode="elevated"
-            textColor="black"
-            onPress={showAds}
-          >
-            {" "}
-            Ver lugares de la semana{" "}
-          </Button>
-          <Button
-            className="mb-8"
-            mode="elevated"
-            textColor="black"
-            onPress={() => console.log("Navegando") /*navigate("(routeView)") */}
-          >
-            {" "}
-            Ejemplo de ruta
-          </Button>
-        </View>
-      ),
-    },
-    {
-      id: "3",
-      render: () =>( <View className="p-4">
-        <RouteView></RouteView>
-      </View>)
-    },
-  ],[tilesets,setCurrMap,setRuta,showAds]);
+  const handleMapPress = async (e: any) => {
+    if (!mapRef.current) return;
+    const { properties, geometry } = e;
+    
+    // Clear previously selected POI
+    setSelectedMapPoi(null);
 
-  if(userLocation === null){
+    if (properties && properties.screenPointX !== undefined && properties.screenPointY !== undefined) {
+      try {
+        const TOUCH_RADIUS = 25;
+        const bbox = [
+          properties.screenPointY - TOUCH_RADIUS, // top
+          properties.screenPointX - TOUCH_RADIUS, // left
+          properties.screenPointY + TOUCH_RADIUS, // bottom
+          properties.screenPointX + TOUCH_RADIUS  // right
+        ];
+        // Consultar un área rectangular (caja táctil) para que sea fácil atinarle a los iconos
+        const features = await mapRef.current.queryRenderedFeaturesInRect(bbox);
+        
+        // Encontrar cualquier elemento tocado que tenga nombre, descartando calles y cuerpos de agua
+        const poiFeature = features?.features?.find((f: any) => {
+          if (!f.properties?.name) return false;
+          const layerId = (f.layer?.id || '').toLowerCase();
+          const sourceLayer = (f.sourceLayer || '').toLowerCase();
+          
+          return !layerId.includes('road') && !sourceLayer.includes('road') && !layerId.includes('water');
+        });
+
+        if (poiFeature) {
+          setSelectedMapPoi({
+            id: (poiFeature.id as string) || (poiFeature.properties?.name as string) || Math.random().toString(),
+            name: (poiFeature.properties?.name as string) || 'Comercio',
+            category: (poiFeature.properties?.type as string) || (poiFeature.properties?.maki as string) || 'Punto de interés',
+            coordinates: geometry.coordinates as [number, number],
+          });
+        }
+      } catch (error) {
+        console.error("Error querying map features:", error);
+      }
+    }
+  };
+
+  if (userLocation === null) {
     return (
       <View className="flex-1 items-center justify-center">
         <Text className="text-center">Cargando ...</Text>
@@ -191,21 +201,12 @@ export default function Dashboard() {
   }
 
   return (
-    <GestureHandlerRootView style={styles.root} className="flex-1 relative">
-      <MapboxGL.MapView
-        style={styles.map}
-        styleURL={CurrMap}
-        rotateEnabled={true}
-      >
+    <GestureHandlerRootView style={styles.root}>
+      <MapboxGL.MapView ref={mapRef} style={styles.map} styleURL={CurrMap} rotateEnabled onPress={handleMapPress}>
         <MapboxGL.Camera
           ref={cameraRef}
-          defaultSettings={{
-            zoomLevel: 14,
-            centerCoordinate: userLocation ?? [-116.6076, 31.8658],
-          }}
-          zoomLevel={14}
-          //  followUserLocation={true}
-          //  followUserMode={UserTrackingMode.Follow}
+          defaultSettings={{ zoomLevel: 13, centerCoordinate: userLocation ?? ENSENADA_CENTER }}
+          zoomLevel={13}
           pitch={20}
           animationMode="flyTo"
           animationDuration={1000}
@@ -213,37 +214,12 @@ export default function Dashboard() {
 
         <MapboxGL.LocationPuck visible />
 
+        {/* Search result marker */}
         {searchMarker && (
-          <MapboxGL.PointAnnotation
-            id="search-result"
-            coordinate={searchMarker}
-          >
-            <View
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: 10,
-                backgroundColor: "#fff",
-                borderWidth: 3,
-                borderColor: "#508484",
-              }}
-            />
+          <MapboxGL.PointAnnotation id="search-result" coordinate={searchMarker}>
+            <View style={styles.searchPin} />
           </MapboxGL.PointAnnotation>
         )}
-        {/*  <MapboxGL.VectorSource // adding a vector source and styling it directly in the app
-            id="id-lines-source"
-            url=""
-          >
-            <MapboxGL.LineLayer
-              id="line-layer"
-              style={{
-                lineColor: "#FF5733", // Red color for the line
-                lineWidth: 5,
-              }}
-            />
-          </MapboxGL.VectorSource>
-        */}
-      </MapboxGL.MapView>
 
       {/*------------------------ Slider de Anuncios (Pantalla Completa) ------------------------*/}
       {IsAdsVisible && (
@@ -317,89 +293,42 @@ export default function Dashboard() {
         </Animated.View>
       )}
 
-      <View className="absolute top-20 z-2">
-        <View
-          className="flex-row
-         w-full  justify-between"
-        >
-          <View className="">
-            {/*<Flechitaregreso ruta={"/"} />*/}
-            <ProfileButton ruta={"/(profile)"} />
-            <Pullbottom HandleOpenPress={HandleOpenPress}></Pullbottom>
-          </View>
-          <View
-            style={[
-              { backgroundColor: "rgba(53,57,53, .9)" },
-              { borderColor: "#FAF9F6" },
-            ]}
-            className="flex justify-center mt-2 items-center border-2 px-4 max-h-12 mr-4 border-whit rounded-lg"
-          >
-            <Text className="" style={{ color: "#FAF9F6" }}>
-              {Ruta}
-            </Text>
-          </View>
-        </View>
-        
-      </View>
-      
-      <BottomSheet
-        style={{ marginRight: 8, marginLeft: 8 }}
-        index={1}
-        animateOnMount={true}
-        snapPoints={["15%", "30%", "50%", "75%", "90%"]}
-        enablePanDownToClose={false}
-        ref={bottomSheetRef}
-        backgroundStyle={{
-          backgroundColor: "#808080",
-        }}
-      >
-        <View style={{ marginTop: 12 , marginBottom: 12}}>
-          <SearchBar
-            userLocation={userLocation}
-            onSelectLocation={handleLocationSelect}
-            setSearchMarker={setSearchMarker}
-          />
-        </View>
-        <ImageBackground
-          source={require("../../assets/images/fondologinregister.png")}
-          style={styles.BottomSheetbackground}
-          resizeMode="cover"
-        >
-          <BottomSheetView style={styles.bottomSheetContainer}>
-            <FlatList
-              data={Slides}
-              contentContainerStyle={{}}
-              horizontal
-              pagingEnabled
-              keyExtractor={(item) => item.id}
-              showsHorizontalScrollIndicator={true}
-              renderItem={({ item }) => (
-                <View style={styles.page}>{item.render()}</View>
-              )}
-            />
-          </BottomSheetView>
-        </ImageBackground>
-      </BottomSheet>
+      {/* Mode toggle overlay — shown only when a route is active */}
+      <ModeToggleButton
+        mode={mode}
+        onToggle={toggleMode}
+        visible={activeRouteId !== null}
+      />
+
+      <AdsModal visible={IsAdsVisible} onDismiss={hideAds} />
+      <DashboardTopBar ruta={Ruta} handleOpenPress={HandleOpenPress} />
+      <DashboardBottomSheet
+        bottomSheetRef={bottomSheetRef}
+        userLocation={userLocation}
+        handleLocationSelect={handleLocationSelect}
+        setSearchMarker={setSearchMarker}
+        setCurrMap={setCurrMap}
+        setRuta={setRuta}
+        showAds={showAds}
+        handleRouteSelect={handleRouteSelect}
+      />
+
+      reportRoute
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    position: "relative",
-  },
-  map: {
-    flex: 1,
-  },
-  bottomSheetContainer: {
-    flex: 1,
-  },
-  BottomSheetbackground: {
-    flex: 1,
-    marginTop: 0,
-  },
-  page: {
-    width: width - 16,
+  root: { flex: 1 },
+  map: { flex: 1 },
+
+  // Search pin
+  searchPin: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: '#508484',
   },
 });

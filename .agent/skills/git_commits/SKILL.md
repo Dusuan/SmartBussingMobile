@@ -1,3 +1,8 @@
+------
+titulo: git_commits
+descripcion: Guía para generar mensajes de commit siguiendo convenciones estructuradas en español (tipo, alcance y descripción).
+------
+
 # Skill: Generación de Commit Messages (SmartBussingMobile)
 
 ## Contexto

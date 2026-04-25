@@ -61,7 +61,7 @@ export default function Profile() {
 
         <View className="ml-9 mt-2">
           <IconButton
-            icon={() => <AntDesign name="arrowright" color="grey" size={40} />}
+            icon={() => <AntDesign name="arrow-right" color="grey" size={40} />}
             onPress={() => navigateProfile()}
           />
         </View>
@@ -71,7 +71,7 @@ export default function Profile() {
 
       <View className="h-90 w-90 m-6 mt-1 rounded-[15px] bg-white">
         <View className="ml-5 mt-3">
-          <AntDesign name="hearto" color="grey" size={45} />
+          <AntDesign name="heart" color="grey" size={45} />
         </View>
 
         <Text style={{fontFamily: "Manrope"}} className="text-3xl ml-24 mt-4 absolute text-black">

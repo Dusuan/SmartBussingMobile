@@ -1,3 +1,8 @@
+------
+titulo: code_review
+descripcion: Estándares y lista de verificación (checklist) para revisar código de manera segura y eficiente, cubriendo UI, rendimiento y seguridad.
+------
+
 # Skill: Proceso de Code Review (SmartBussingMobile)
 
 ## Contexto

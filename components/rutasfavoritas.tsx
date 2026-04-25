@@ -28,7 +28,7 @@ export default function rutasfavoritas({ inicio, destino }: ruta) {
       <Text className="text-lg ml-3 mt-1">{destino}</Text>
       </View>
       <IconButton
-      icon={() => <AntDesign name="arrowright" color="grey" size={40} />}
+      icon={() => <AntDesign name="arrow-right" color="grey" size={40} />}
       onPress={() => navigateProfile()}
       />
     </View>
