@@ -4,16 +4,16 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
+  Dimensions,
+  Platform,
 } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
-import  UserTrackingMode  from "@rnmapbox/maps";
-import { StyleSheet } from "react-native";
-import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
+import UserTrackingMode from "@rnmapbox/maps";
+import { FlatList } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useState, useRef, useCallback } from "react";
 import BusCard from "@/components/buscard";
-import LocationPuck  from "@rnmapbox/maps";
-import Constants from "expo-constants";
+import LocationPuck from "@rnmapbox/maps";
 import { useEffect } from "react";
 import tilesets from "../../assets/tilesets/tilesets.json";
 import MapView from "@/components/mapview";
@@ -32,7 +32,6 @@ import Constants from "expo-constants";
 import * as React from "react";
 import Text from "../../components/AppText";
 import * as Location from "expo-location";
-import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
 import uberStyle from "@/assets/tilesets/map-style.json";
 import { MapStyleState } from "@/components/mapview";
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
@@ -43,7 +42,8 @@ import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
 import { useRouteFilter } from "@/hooks/useRouteFilter";
 import { MapboxPoi } from "@/types/geodata";
-import { reportRoute } from "@/app/(reportRoute)";
+import Anuncio from "@/components/anuncio";
+import { router } from "expo-router";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -53,25 +53,19 @@ const height = Dimensions.get("window").height;
 
 const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-6372485658515796~9768969991';
 
-export default function Dashboard() {
-  const navigate = (ruta: String) => {
-    router.navigate(`/${ruta}`);
-  };
-  const bannerRef = useRef<BannerAd>(null);
-
-    useForeground(() => {
-    Platform.OS === 'android' && bannerRef.current?.load();
-  });
 // Ensenada city center — default camera target
 const ENSENADA_CENTER: [number, number] = [-116.6060, 31.8600];
 
-
-
 // ─── Main Dashboard ─────────────────────────────────────────────────────────────
 export default function Dashboard() {
+  const bannerRef = useRef<BannerAd>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const cameraRef = useRef<MapboxGL.Camera>(null);
   const mapRef = useRef<MapboxGL.MapView>(null);
+
+  useForeground(() => {
+    Platform.OS === 'android' && bannerRef.current?.load();
+  });
 
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v12");
@@ -165,7 +159,7 @@ export default function Dashboard() {
           properties.screenPointX - TOUCH_RADIUS, // left
           properties.screenPointY + TOUCH_RADIUS, // bottom
           properties.screenPointX + TOUCH_RADIUS  // right
-        ];
+        ] as [number, number, number, number];
         // Consultar un área rectangular (caja táctil) para que sea fácil atinarle a los iconos
         const features = await mapRef.current.queryRenderedFeaturesInRect(bbox);
         
@@ -220,6 +214,7 @@ export default function Dashboard() {
             <View style={styles.searchPin} />
           </MapboxGL.PointAnnotation>
         )}
+      </MapboxGL.MapView>
 
       {/*------------------------ Slider de Anuncios (Pantalla Completa) ------------------------*/}
       {IsAdsVisible && (
@@ -287,7 +282,7 @@ export default function Dashboard() {
           </ScrollView>
 
           {/* Banner Ad fijo en la parte inferior */}
-          <View style={{paddingBottom: 24 }}>
+          <View style={{ paddingBottom: 24 }}>
             <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
           </View>
         </Animated.View>
@@ -300,7 +295,6 @@ export default function Dashboard() {
         visible={activeRouteId !== null}
       />
 
-      <AdsModal visible={IsAdsVisible} onDismiss={hideAds} />
       <DashboardTopBar ruta={Ruta} handleOpenPress={HandleOpenPress} />
       <DashboardBottomSheet
         bottomSheetRef={bottomSheetRef}
@@ -312,8 +306,6 @@ export default function Dashboard() {
         showAds={showAds}
         handleRouteSelect={handleRouteSelect}
       />
-
-      reportRoute
     </GestureHandlerRootView>
   );
 }
