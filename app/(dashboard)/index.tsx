@@ -5,6 +5,7 @@ import {
   ImageBackground,
   Dimensions,
   Image,
+  Animated,
 } from "react-native";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,7 +14,7 @@ import  UserTrackingMode  from "@rnmapbox/maps";
 import { StyleSheet } from "react-native";
 import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import BusCard from "@/components/buscard";
 import LocationPuck  from "@rnmapbox/maps";
 import Constants from "expo-constants";
@@ -27,10 +28,7 @@ import { useAnimatedStyle, interpolateColor } from "react-native-reanimated";
 import { ScrollView } from "react-native-gesture-handler";
 import Pullbottom from "@/components/pullbottom";
 import {
-  Modal,
-  Portal,
   Button,
-  PaperProvider,
   IconButton,
 } from "react-native-paper";
 import * as React from "react";
@@ -43,16 +41,26 @@ import * as Location from "expo-location";
 import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
 import uberStyle from "@/assets/tilesets/map-style.json";
 import { MapStyleState } from "@/components/mapview";
+import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
 
 const width = Dimensions.get("window").width;
+const height = Dimensions.get("window").height;
+
+const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-6372485658515796~9768969991';
 
 export default function Dashboard() {
   const navigate = (ruta: String) => {
     router.navigate(`/${ruta}`);
   };
+  const bannerRef = useRef<BannerAd>(null);
+
+    useForeground(() => {
+    Platform.OS === 'android' && bannerRef.current?.load();
+  });
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const cameraRef = useRef<MapboxGL.Camera>(null);
@@ -65,19 +73,35 @@ export default function Dashboard() {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [searchMarker, setSearchMarker] = useState<[number, number] | null>(null);
 
-  //Cosas del modal
+  //Cosas del slider de anuncios
   const [IsAdsVisible, setAdsVisible] = useState(true);
+  const [IsAdsDismissed, setAdsDismissed] = useState(false);
+  const slideAnim = useRef(new Animated.Value(0)).current; // 0 = visible, 1 = hidden (slid down)
 
-  const showAds = () => setAdsVisible(true);
-  const hideAds = () => setAdsVisible(false);
-  const containerStyle = {
-    backgroundColor: "white",
-    padding: 20,
-    margin: 20,
-    height: `${95}%` as `${number}%`,
-    width: `${90}%` as `${number}%`,
-    borderRadius: 15,
+  const showAds = () => {
+    if (!IsAdsDismissed) {
+      setAdsVisible(true);
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 60,
+        friction: 12,
+      }).start();
+    }
   };
+
+  const hideAds = useCallback(() => {
+    Animated.timing(slideAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(() => {
+      setAdsVisible(false);
+      setAdsDismissed(true); // No vuelve a salir
+    });
+  }, [slideAnim]);
+
+  const sliderHeight = height; // Pantalla completa
 
   // Request location permissions and get current position
   React.useLayoutEffect(() => {
@@ -221,33 +245,77 @@ export default function Dashboard() {
         */}
       </MapboxGL.MapView>
 
-      {/*Modal verbo*/}
-      <Portal>
-        <Modal
-          visible={IsAdsVisible}
-          onDismiss={hideAds}
-          contentContainerStyle={containerStyle}
+      {/*------------------------ Slider de Anuncios (Pantalla Completa) ------------------------*/}
+      {IsAdsVisible && (
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "#1a1a2e",
+            zIndex: 50,
+            elevation: 20,
+            transform: [
+              {
+                translateY: slideAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, sliderHeight + 50],
+                }),
+              },
+            ],
+          }}
         >
-          <View className="flex-1 ">
-            <View className="flex flex-row items-center justify-between">
-              <Text> Revisa los lugares de la semana! </Text>
-              <IconButton icon="close" size={30} onPress={hideAds} style={{}} />
-            </View>
-            <View>
-              <Anuncio
-                nombreEmpresa={"Empresa"}
-                descripcion={"Descripcion de empresa"}
-                distancia={"Distancia"}
-              />
-              <Anuncio
-                nombreEmpresa={"Empresa"}
-                descripcion={"Descripcion de empresa"}
-                distancia={"Distancia"}
-              />
-            </View>
+          {/* Header */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 20,
+              paddingTop: 50,
+              paddingBottom: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(255,255,255,0.1)",
+            }}
+          >
+            <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: "700" }}>
+              📍 Lugares de la semana
+            </Text>
+            <IconButton
+              icon="close"
+              size={28}
+              iconColor="#ffffff"
+              onPress={hideAds}
+              style={{ margin: 0 }}
+            />
           </View>
-        </Modal>
-      </Portal>
+
+          {/* Contenido con scroll vertical */}
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16 }}
+            style={{ flex: 1 }}
+          >
+            <Anuncio
+              nombreEmpresa={"Empresa"}
+              descripcion={"Descripcion de empresa"}
+              distancia={"Distancia"}
+            />
+            <Anuncio
+              nombreEmpresa={"Empresa 2"}
+              descripcion={"Otra descripcion"}
+              distancia={"Distancia"}
+            />
+          </ScrollView>
+
+          {/* Banner Ad fijo en la parte inferior */}
+          <View style={{paddingBottom: 24 }}>
+            <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
+          </View>
+        </Animated.View>
+      )}
 
       <View className="absolute top-20 z-2">
         <View
