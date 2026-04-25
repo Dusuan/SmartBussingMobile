@@ -19,6 +19,7 @@ import DashboardTopBar from "@/components/DashboardTopBar";
 import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
 import { useRouteFilter } from "@/hooks/useRouteFilter";
+import { MapboxPoi } from "@/types/geodata";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -32,12 +33,14 @@ const ENSENADA_CENTER: [number, number] = [-116.6060, 31.8600];
 export default function Dashboard() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const cameraRef = useRef<MapboxGL.Camera>(null);
+  const mapRef = useRef<MapboxGL.MapView>(null);
 
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
-  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/dark-v11");
+  const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v12");
   const [Ruta, setRuta] = useState("Mapa de Ensenada");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [searchMarker, setSearchMarker] = useState<[number, number] | null>(null);
+  const [selectedMapPoi, setSelectedMapPoi] = useState<MapboxPoi | null>(null);
 
   // ─── Geo-Routes Module ─────────────────────────────────────────────────────
   const {
@@ -82,6 +85,48 @@ export default function Dashboard() {
     });
   };
 
+  const handleMapPress = async (e: any) => {
+    if (!mapRef.current) return;
+    const { properties, geometry } = e;
+    
+    // Clear previously selected POI
+    setSelectedMapPoi(null);
+
+    if (properties && properties.screenPointX !== undefined && properties.screenPointY !== undefined) {
+      try {
+        const TOUCH_RADIUS = 25;
+        const bbox = [
+          properties.screenPointY - TOUCH_RADIUS, // top
+          properties.screenPointX - TOUCH_RADIUS, // left
+          properties.screenPointY + TOUCH_RADIUS, // bottom
+          properties.screenPointX + TOUCH_RADIUS  // right
+        ];
+        // Consultar un área rectangular (caja táctil) para que sea fácil atinarle a los iconos
+        const features = await mapRef.current.queryRenderedFeaturesInRect(bbox);
+        
+        // Encontrar cualquier elemento tocado que tenga nombre, descartando calles y cuerpos de agua
+        const poiFeature = features?.features?.find((f: any) => {
+          if (!f.properties?.name) return false;
+          const layerId = (f.layer?.id || '').toLowerCase();
+          const sourceLayer = (f.sourceLayer || '').toLowerCase();
+          
+          return !layerId.includes('road') && !sourceLayer.includes('road') && !layerId.includes('water');
+        });
+
+        if (poiFeature) {
+          setSelectedMapPoi({
+            id: (poiFeature.id as string) || (poiFeature.properties?.name as string) || Math.random().toString(),
+            name: (poiFeature.properties?.name as string) || 'Comercio',
+            category: (poiFeature.properties?.type as string) || (poiFeature.properties?.maki as string) || 'Punto de interés',
+            coordinates: geometry.coordinates as [number, number],
+          });
+        }
+      } catch (error) {
+        console.error("Error querying map features:", error);
+      }
+    }
+  };
+
   if (userLocation === null) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -92,7 +137,7 @@ export default function Dashboard() {
 
   return (
     <GestureHandlerRootView style={styles.root}>
-      <MapboxGL.MapView style={styles.map} styleURL={CurrMap} rotateEnabled>
+      <MapboxGL.MapView ref={mapRef} style={styles.map} styleURL={CurrMap} rotateEnabled onPress={handleMapPress}>
         <MapboxGL.Camera
           ref={cameraRef}
           defaultSettings={{ zoomLevel: 13, centerCoordinate: userLocation ?? ENSENADA_CENTER }}
@@ -117,6 +162,8 @@ export default function Dashboard() {
           activeRouteId={activeRouteId}
           mode={mode}
           onRoutePress={handleRouteSelect}
+          externalMapPoi={selectedMapPoi}
+          onClearExternalMapPoi={() => setSelectedMapPoi(null)}
         />
       </MapboxGL.MapView>
 

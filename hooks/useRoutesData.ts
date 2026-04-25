@@ -10,7 +10,8 @@
  * To enable remote sync: set DATA_SOURCE_URL to your API endpoint.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
+import { Alert } from 'react-native';
 import {
   SmartBussingGeoJSON,
   RouteFeature,
@@ -22,12 +23,10 @@ import {
 // ─── Configuration ────────────────────────────────────────────────────────────
 
 /**
- * Set this to a remote URL when the backend API is ready.
- * Leave as null to use only the local GeoJSON file.
- *
- * Example: 'https://api.smartbussing.com/v1/geodata/routes'
+ * Remote API endpoint for the route geodata.
+ * Falls back to local JSON if this fails or is offline.
  */
-const DATA_SOURCE_URL: string | null = null;
+const DATA_SOURCE_URL: string | null = 'https://smart-bussing-back.onrender.com/api/v1/geodata/routes';
 
 // ─── Local data source ────────────────────────────────────────────────────────
 
@@ -63,13 +62,71 @@ export interface RoutesDataResult {
 
   /** Bounding box for a specific route */
   getRouteBounds: (routeId: string) => [[number, number], [number, number]] | null;
+
+  /** Indicates if data is currently being fetched from the remote API */
+  isSyncing: boolean;
+
+  /** Contains error information if the sync fails */
+  syncError: string | null;
+
+  /** Manual trigger to re-fetch data from the remote server */
+  syncRoutes: () => Promise<void>;
 }
 
 export function useRoutesData(): RoutesDataResult {
-  // NOTE: DATA_SOURCE_URL is reserved for future API integration.
-  // When ready, implement a useEffect that fetches, validates, and merges
-  // the remote data into a local state variable, falling back to LOCAL_GEODATA.
-  const data = LOCAL_GEODATA;
+  const [data, setData] = useState<SmartBussingGeoJSON>(LOCAL_GEODATA);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+
+  const syncRoutes = useCallback(async () => {
+    if (!DATA_SOURCE_URL) return;
+
+    setIsSyncing(true);
+    setSyncError(null);
+
+    try {
+      const response = await fetch(DATA_SOURCE_URL, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+
+      const remoteData = await response.json();
+
+      if (
+        remoteData &&
+        remoteData.type === 'FeatureCollection' &&
+        Array.isArray(remoteData.features)
+      ) {
+        setData(remoteData as SmartBussingGeoJSON);
+      } else {
+        throw new Error('Formato de datos no válido. Se esperaba FeatureCollection.');
+      }
+    } catch (error) {
+      console.error('Error sincronizando rutas:', error);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error desconocido de red';
+      setSyncError(errorMessage);
+      Alert.alert(
+        'Error de sincronización',
+        'No se pudo actualizar la información de rutas y paradas. Mostrando datos locales.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setIsSyncing(false);
+    }
+  }, []);
+
+  // Fetch from the API once when the component mounts
+  useEffect(() => {
+    syncRoutes();
+  }, [syncRoutes]);
 
   return useMemo<RoutesDataResult>(() => {
     const allFeatures = data;
@@ -124,6 +181,9 @@ export function useRoutesData(): RoutesDataResult {
       getStopsForRoute,
       networkBounds,
       getRouteBounds,
+      isSyncing,
+      syncError,
+      syncRoutes,
     };
-  }, [data]);
+  }, [data, isSyncing, syncError, syncRoutes]);
 }

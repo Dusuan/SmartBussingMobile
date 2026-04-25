@@ -14,7 +14,7 @@
 
 import React, { useMemo } from 'react';
 import MapboxGL from '@rnmapbox/maps';
-import { SmartBussingGeoJSON } from '@/types/geodata';
+import { SmartBussingGeoJSON, StopFeature } from '@/types/geodata';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -29,7 +29,7 @@ interface RouteStopsLayerProps {
   filter: unknown[] | null;
 
   /** Called when the user taps a stop circle */
-  onStopPress?: (stopId: string, stopName: string) => void;
+  onStopPress?: (feature: StopFeature) => void;
 }
 
 // ─── Layer Styles ─────────────────────────────────────────────────────────────
@@ -71,6 +71,7 @@ const STOP_LABEL_STYLE: MapboxGL.SymbolLayerStyle = {
 export const RouteStopsLayer = React.memo(function RouteStopsLayer({
   shape,
   filter,
+  onStopPress,
 }: RouteStopsLayerProps) {
   const memoFilter = useMemo(() => filter, [JSON.stringify(filter)]);
 
@@ -78,6 +79,11 @@ export const RouteStopsLayer = React.memo(function RouteStopsLayer({
     <MapboxGL.ShapeSource
       id="smartbussing-stops-source"
       shape={shape as any}
+      onPress={(e: any) => {
+        if (e.features && e.features.length > 0 && onStopPress) {
+          onStopPress(e.features[0] as StopFeature);
+        }
+      }}
     >
       {/* Outer ring */}
       <MapboxGL.CircleLayer

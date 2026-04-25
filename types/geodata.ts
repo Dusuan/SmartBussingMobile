@@ -28,7 +28,16 @@ export interface StopProperties {
   stop_id: string;
   stop_name: string;
   stop_description?: string;
+  stop_image?: string;       // Optional image for the stop or sponsor
   routes: string[];          // Array of route_ids that serve this stop
+}
+
+/** Properties for a native Mapbox POI (Point of Interest) */
+export interface MapboxPoi {
+  id: string;
+  name: string;
+  category: string;
+  coordinates: [number, number];
 }
 
 export type SmartBussingProperties = RouteProperties | StopProperties;
