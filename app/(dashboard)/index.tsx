@@ -20,7 +20,6 @@ import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
 import { useRouteFilter } from "@/hooks/useRouteFilter";
 import { MapboxPoi } from "@/types/geodata";
-import { reportRoute } from "@/app/(reportRoute)";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -128,13 +127,14 @@ export default function Dashboard() {
     }
   };
 
+  /*
   if (userLocation === null) {
     return (
       <View className="flex-1 items-center justify-center">
         <Text className="text-center">Cargando ...</Text>
       </View>
     );
-  }
+  } */
 
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -187,8 +187,6 @@ export default function Dashboard() {
         showAds={showAds}
         handleRouteSelect={handleRouteSelect}
       />
-
-      reportRoute
     </GestureHandlerRootView>
   );
 }

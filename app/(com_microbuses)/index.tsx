@@ -59,7 +59,7 @@ const ComentariosRuta = ({name} : Route)  => {
 
     useEffect(() => {
       getComentarios()
-  },[]);
+  },[]); 
 
   const navigateProfile = () => {
     //Ahorita esta redirigiendo al main, pero cuando se haga la del profile ahi se debera regresar
