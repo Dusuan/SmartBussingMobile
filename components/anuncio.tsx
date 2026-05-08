@@ -21,13 +21,7 @@ export default function Anuncio({nombreEmpresa, descripcion}: anuncio) {
         <Text style={styles.title}>{nombreEmpresa}</Text>
         <Text style={styles.description}>{descripcion}</Text>
         
-        {/* Dotted lines */}
-        <View style={styles.dottedLinesContainer}>
-          <View style={styles.dottedLine} />
-          <View style={styles.dottedLine} />
-          <View style={styles.dottedLine} />
-          <View style={styles.dottedLine} />
-        </View>
+        <Text style={styles.placeholderText}>Información adicional o detalles de la promoción van aquí...</Text>
 
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>¡Llévame ahí!</Text>
@@ -72,15 +66,12 @@ const styles = StyleSheet.create({
     color: '#8A8A8A',
     marginBottom: 6,
   },
-  dottedLinesContainer: {
+  placeholderText: {
+    fontFamily: 'Manrope',
+    fontSize: 12,
+    color: '#A0A0A0',
+    fontStyle: 'italic',
     marginBottom: 10,
-    gap: 4,
-  },
-  dottedLine: {
-    height: 1,
-    borderWidth: 1,
-    borderColor: '#A0A0A0',
-    borderStyle: 'dashed',
   },
   button: {
     backgroundColor: '#5B9EA0',

@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { Modal, Portal, IconButton } from "react-native-paper";
 import Text from "@/components/AppText";
 import Anuncio from "@/components/anuncio";
@@ -47,6 +47,14 @@ export default function AdsModal({ visible, onDismiss }: AdsModalProps) {
               descripcion={"Descripcion de empresa"}
               distancia={"Distancia"}
             />
+          </View>
+          <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'center', paddingVertical: 16 }}>
+            <Text style={{ color: '#8A8A8A', fontWeight: 'bold' }}>¿Quisieras un espacio? </Text>
+            <TouchableOpacity>
+              <Text style={{ color: '#5B9EA0', fontWeight: 'bold', textDecorationLine: 'underline' }}>
+                Regístrate aquí
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>

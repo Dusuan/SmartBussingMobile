@@ -156,6 +156,7 @@ export default function DashboardBottomSheet({
       ref={bottomSheetRef}
       backgroundStyle={{
         backgroundColor: "#FFFFFF",
+        borderRadius: 30,
       }}
       handleIndicatorStyle={{ backgroundColor: "#D3D3D3", width: 40, height: 5 }}
     >
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   },
   routeCardContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     overflow: 'hidden',
