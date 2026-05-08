@@ -42,6 +42,11 @@ export default function AdsModal({ visible, onDismiss }: AdsModalProps) {
               descripcion={"Descripcion de empresa"}
               distancia={"Distancia"}
             />
+            <Anuncio
+              nombreEmpresa={"Empresa"}
+              descripcion={"Descripcion de empresa"}
+              distancia={"Distancia"}
+            />
           </View>
         </View>
       </Modal>

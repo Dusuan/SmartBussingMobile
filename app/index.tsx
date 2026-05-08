@@ -1,8 +1,10 @@
 import React from "react";
-import { View, StyleSheet, Image, Dimensions, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { Image } from "react-native";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../components/AppText";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -12,11 +14,10 @@ export default function Index() {
       <View style={styles.contentContainer}>
         {/* Top Half: Logo */}
         <View style={styles.topSection}>
-          <Image
-            source={require("../assets/images/smartbussing-removebg-preview.png")}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <View style={styles.logoContainer}>
+            <MaterialCommunityIcons name="bus" size={70} color="#5B9EA0" />
+          </View>
+          <Text style={styles.headerTitle}>SMART{'\n'}BUSSING</Text>
         </View>
 
         {/* Middle Section: Action Buttons */}
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     zIndex: 10,
-    paddingBottom: 320, // Increased to fully clear the 300px illustration
+    paddingBottom: 320, 
   },
   topSection: {
     flex: 1,
@@ -72,9 +73,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 10,
   },
-  logo: {
-    width: 230, // Slightly reduced to help it fit better if screen is small
-    height: 230,
+  logoContainer: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  headerTitle: {
+    color: '#5B9EA0',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    lineHeight: 36,
   },
   middleSection: {
     flex: 1,

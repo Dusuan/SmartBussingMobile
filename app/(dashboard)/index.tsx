@@ -13,7 +13,7 @@ import Constants from "expo-constants";
 import * as React from "react";
 import Text from "../../components/AppText";
 import * as Location from "expo-location";
-import { GeocodingFeature } from "@/components/SearchBar";
+import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
 import AdsModal from "@/components/AdsModal";
 import DashboardTopBar from "@/components/DashboardTopBar";
 import DashboardBottomSheet from "@/components/DashboardBottomSheet";
@@ -26,8 +26,6 @@ MapboxGL.setTelemetryEnabled(false);
 
 // Ensenada city center — default camera target
 const ENSENADA_CENTER: [number, number] = [-116.6060, 31.8600];
-
-
 
 // ─── Main Dashboard ─────────────────────────────────────────────────────────────
 export default function Dashboard() {
@@ -101,10 +99,8 @@ export default function Dashboard() {
           properties.screenPointY + TOUCH_RADIUS, // bottom
           properties.screenPointX + TOUCH_RADIUS  // right
         ];
-        // Consultar un área rectangular (caja táctil) para que sea fácil atinarle a los iconos
         const features = await mapRef.current.queryRenderedFeaturesInRect(bbox);
         
-        // Encontrar cualquier elemento tocado que tenga nombre, descartando calles y cuerpos de agua
         const poiFeature = features?.features?.find((f: any) => {
           if (!f.properties?.name) return false;
           const layerId = (f.layer?.id || '').toLowerCase();
@@ -126,15 +122,6 @@ export default function Dashboard() {
       }
     }
   };
-
-  /*
-  if (userLocation === null) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-center">Cargando ...</Text>
-      </View>
-    );
-  } */
 
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -176,6 +163,16 @@ export default function Dashboard() {
       />
 
       <AdsModal visible={IsAdsVisible} onDismiss={hideAds} />
+      
+      {/* Floating Search Bar */}
+      <View style={styles.searchBarWrapper}>
+        <SearchBar
+          userLocation={userLocation}
+          onSelectLocation={handleLocationSelect}
+          setSearchMarker={setSearchMarker}
+        />
+      </View>
+
       <DashboardTopBar ruta={Ruta} handleOpenPress={HandleOpenPress} />
       <DashboardBottomSheet
         bottomSheetRef={bottomSheetRef}
@@ -194,7 +191,13 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   map: { flex: 1 },
-
+  searchBarWrapper: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    zIndex: 20, // Above Map and other overlays
+  },
   // Search pin
   searchPin: {
     width: 20,

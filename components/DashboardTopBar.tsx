@@ -1,7 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Text from "@/components/AppText";
-import ProfileButton from "@/components/gotologin";
 import Pullbottom from "@/components/pullbottom";
 
 interface DashboardTopBarProps {
@@ -14,7 +13,6 @@ export default function DashboardTopBar({ ruta, handleOpenPress }: DashboardTopB
     <View style={styles.container} pointerEvents="box-none">
       {/* Botones izquierda: usuario y casa en fila */}
       <View style={styles.leftGroup}>
-        <ProfileButton ruta={"/(profile)"} />
         <Pullbottom HandleOpenPress={handleOpenPress} />
       </View>
 
@@ -31,7 +29,7 @@ export default function DashboardTopBar({ ruta, handleOpenPress }: DashboardTopB
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 52,
+    top: 110, // Moved down to make room for SearchBar
     left: 0,
     right: 0,
     flexDirection: "row",

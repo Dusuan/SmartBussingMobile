@@ -1,140 +1,308 @@
-import { router } from "expo-router";
-import { Button, View,  ScrollView } from "react-native";
-import { Card, IconButton, Icon, Surface } from "react-native-paper";
+import React from "react";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import Text from "../../components/AppText";
+import { FontAwesome5, Feather, AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import Flechitaregreso from "../../components/flechitaregreso";
-import { StyleSheet } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Feather from "@expo/vector-icons/Feather";
-import Rutasfavoritas from "@/components/rutasfavoritas";
-import {useFonts} from "expo-font";
-import Text from '../../components/AppText';
 
 export default function Profile() {
-  const navigateProfile = () => {
-    //redireccion hacia la pagina principal (segun q no jala)
-    router.navigate("/configuracion");
-  };
-
-  const [fontsLoaded] = useFonts({Manrope : require("../../assets/fonts/Manrope-regular.otf")}) //Agregeun esto con el nombre de las fonts que van a usar
-      
-  if(!fontsLoaded) return null; //Y esto para que no se crashee
-
   return (
-    <SafeAreaView>
-      <View className="ml-3">
-        <Flechitaregreso ruta={"../"} />
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.backButtonContainer}>
+          <Flechitaregreso ruta={"../"} />
+        </View>
+        <Text style={styles.headerTitle}>Mi perfil</Text>
       </View>
 
-      {/*Apartado donde sale el nombre y correo del usuario*/}
-      <View className="h-48 w-90 m-6 rounded-[15px] flex flex-wrap">
-        <LinearGradient
-          colors={["#3c7c5c", "#75bd99", "#a9d6bf"]}
-          style={styles.linearGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 2, y: 1 }}
-        >
-          {/*Aqui adentro poner el icono y el texto de hola usuario*/}
-          <View className="absolute">
-            <AntDesign
-              name="user"
-              color="white"
-              size={90}
-              className="mt-10 ml-3"
-            />
+      <ScrollView contentContainerStyle={styles.scrollContent} bounces={false}>
+        {/* User Info (Avatar & Name) */}
+        <View style={styles.userInfoSection}>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatar}>
+              <FontAwesome5 name="user-alt" size={50} color="#FFFFFF" />
+            </View>
+            <TouchableOpacity style={styles.cameraButton}>
+              <Feather name="camera" size={14} color="#FFFFFF" />
+            </TouchableOpacity>
           </View>
-          <Text style={{fontFamily: "Manrope"}} className="text-4xl mt-14 ml-28 text-white">Hola, Usuario</Text>
-          <Text style={{fontFamily: "Manrope"}} className="text-xl ml-28 text-white">
-            correo.ejemplo@cetys.edu.mx
-          </Text>
-        </LinearGradient>
-      </View>
-
-      {/*Apartado de Modifical Perfil*/}
-      <View className="h-20 w-90 m-6 mt-1 rounded-[15px] flex flex-wrap bg-white">
-        <View className="absolute">
-          <Feather name="user" color="gray" size={50} className="ml-4 mt-3" />
+          <View style={styles.nameContainer}>
+            <Text style={styles.userName}>Ejemplo Apellido</Text>
+            <TouchableOpacity>
+              <Feather name="edit-2" size={16} color="#A0A0A0" style={styles.editIcon} />
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <Text style={{fontFamily: "Manrope"}} className="text-3xl ml-24 mt-5 text-black">Modificar Perfil</Text>
+        {/* Details Section */}
+        <View style={styles.detailsSection}>
+          <DetailRow title="Correo" value="examplemail@gmail.com" />
+          <DetailRow title="Contraseña" value="*****************" />
+          <DetailRow title="Agregar bio" value="Descripción" noBorder />
+        </View>
 
-        <View className="ml-9 mt-2">
-          <IconButton
-            icon={() => <AntDesign name="arrow-right" color="grey" size={40} />}
-            onPress={() => navigateProfile()}
+        {/* Bottom Section: Rutas Favoritas */}
+        <View style={styles.bottomSection}>
+          <View style={styles.bottomHeader}>
+            <Text style={styles.bottomTitle}>Rutas favoritas</Text>
+          </View>
+
+          {/* Cards for favorite routes */}
+          <FavoriteRouteCard 
+            routeName="Ruta 1" 
+            details="Centro a UABC" 
+            date="08/05/2026" 
+          />
+          <FavoriteRouteCard 
+            routeName="Ruta 3" 
+            details="Villas del Real" 
+            date="07/05/2026" 
+          />
+          <FavoriteRouteCard 
+            routeName="Ruta 4" 
+            details="Pórticos del Mar" 
+            date="05/05/2026" 
           />
         </View>
-      </View>
-
-      {/*Apartado para las rutas favoritas */}
-
-      <View className="h-90 w-90 m-6 mt-1 rounded-[15px] bg-white">
-        <View className="ml-5 mt-3">
-          <AntDesign name="heart" color="grey" size={45} />
-        </View>
-
-        <Text style={{fontFamily: "Manrope"}} className="text-3xl ml-24 mt-4 absolute text-black">
-          Rutas Favoritas
-        </Text>
-
-        <ScrollView className="h-80 w-90 m-6 mt-1 rounded-[15px] bg-white ">
-          {/*Test del scrollview*/}
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-          <Rutasfavoritas destino={"Cetys"} inicio={"Mi casa"} />
-        </ScrollView>
-      </View>
-
-      {/*Boton de cerrar sesion*/}
-      <View
-        style={{
-          width: "50%",
-          alignSelf: "center",
-          borderRadius: 25,
-          overflow: "hidden",
-        }}
-      >
-        <Button
-          title="Cerrar Sesión"
-          color={"black"}
-          onPress={() =>
-            console.log(
-              "Cerrando sesión!"
-            )
-          }
-        />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
+const DetailRow = ({ title, value, noBorder }: { title: string, value: string, noBorder?: boolean }) => (
+  <View style={[styles.detailRow, !noBorder && styles.borderBottom]}>
+    <View style={styles.detailTextContainer}>
+      <Text style={styles.detailTitle}>{title}</Text>
+      <Text style={styles.detailValue}>{value}</Text>
+    </View>
+    <TouchableOpacity style={styles.detailEditButton}>
+      <Feather name="edit-2" size={16} color="#A0A0A0" />
+    </TouchableOpacity>
+  </View>
+);
+
+const FavoriteRouteCard = ({ routeName, details, date }: { routeName: string, details: string, date: string }) => (
+  <View style={styles.card}>
+    <View style={styles.cardTopRow}>
+      <View style={styles.cardHeaderLeft}>
+        <View style={styles.cardIcon}>
+          <MaterialCommunityIcons name="bus" size={18} color="#7D7D7D" />
+        </View>
+        <Text style={styles.cardRouteName}>{routeName}</Text>
+      </View>
+      <View style={styles.cardHeaderRight}>
+         {/* Using stars to mimic the aesthetic of the mockup, though they are routes */}
+         <AntDesign name="star" size={16} color="#FFC107" />
+         <AntDesign name="star" size={16} color="#FFC107" />
+         <AntDesign name="star" size={16} color="#FFC107" />
+         <AntDesign name="star" size={16} color="#FFC107" />
+         <AntDesign name="staro" size={16} color="#A0A0A0" />
+      </View>
+    </View>
+    
+    <View style={styles.cardMiddleRow}>
+      <Text style={styles.cardDetails}>{details}</Text>
+      <Text style={styles.cardDate}>{date}</Text>
+    </View>
+    
+    <View style={styles.cardDivider} />
+    
+    <View style={styles.cardBottomRow}>
+      <TouchableOpacity>
+        <Text style={styles.deleteText}>Eliminar</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+);
+
 const styles = StyleSheet.create({
-  linearGradient: {
+  safeArea: {
     flex: 1,
-    paddingLeft: 15,
-    paddingRight: 15,
-    borderRadius: 5,
+    backgroundColor: "#FFFFFF",
   },
-  buttonText: {
-    fontSize: 18,
-    fontFamily: "Gill Sans",
+  scrollContent: {
+    flexGrow: 1,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 10,
+  },
+  headerTitle: {
+    flex: 1,
     textAlign: "center",
-    margin: 10,
-    color: "#ffffff",
-    backgroundColor: "transparent",
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333333",
+  },
+  userInfoSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    marginTop: 10,
+    marginBottom: 30,
+  },
+  avatarContainer: {
+    position: "relative",
+  },
+  avatar: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: "#C4C4C4",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cameraButton: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#7D7D7D",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#FFFFFF",
+  },
+  nameContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 20,
+  },
+  userName: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#333333",
+  },
+  editIcon: {
+    marginLeft: 8,
+  },
+  detailsSection: {
+    paddingHorizontal: 24,
+    marginBottom: 30,
+  },
+  detailRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+  },
+  borderBottom: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+  },
+  detailTextContainer: {
+    flex: 1,
+  },
+  detailTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333333",
+    marginBottom: 6,
+  },
+  detailValue: {
+    fontSize: 14,
+    color: "#888888",
+  },
+  detailEditButton: {
+    padding: 8,
+  },
+  bottomSection: {
+    flex: 1,
+    backgroundColor: "#5B9EA0", // Teal background
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+    paddingBottom: 40,
+    minHeight: 500,
+  },
+  bottomHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  bottomTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+  card: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  cardHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  cardIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#E0E0E0",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 10,
+  },
+  cardRouteName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333333",
+  },
+  cardHeaderRight: {
+    flexDirection: "row",
+    gap: 2,
+  },
+  cardMiddleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  cardDetails: {
+    fontSize: 14,
+    color: "#666666",
+  },
+  cardDate: {
+    fontSize: 12,
+    color: "#999999",
+  },
+  cardDivider: {
+    height: 1,
+    backgroundColor: "#F0F0F0",
+    marginBottom: 12,
+  },
+  cardBottomRow: {
+    alignItems: "flex-end",
+  },
+  deleteText: {
+    color: "#D32F2F", // Red color for delete
+    fontSize: 14,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
   },
 });
