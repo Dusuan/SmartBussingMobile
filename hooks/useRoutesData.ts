@@ -19,6 +19,13 @@ import {
   isRouteFeature,
   isStopFeature,
 } from '@/types/geodata';
+import {
+  cacheRoutes,
+  getCachedRoutes,
+  getLastSyncTime,
+  isCacheFresh,
+} from '@/services/routesCache';
+
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
@@ -105,6 +112,8 @@ export function useRoutesData(): RoutesDataResult {
         Array.isArray(remoteData.features)
       ) {
         setData(remoteData as SmartBussingGeoJSON);
+        await cacheRoutes(remoteData as SmartBussingGeoJSON);
+        console.log('Rutas guardadas en caché');
       } else {
         throw new Error('Formato de datos no válido. Se esperaba FeatureCollection.');
       }
@@ -124,9 +133,25 @@ export function useRoutesData(): RoutesDataResult {
   }, []);
 
   // Fetch from the API once when the component mounts
-  useEffect(() => {
-    syncRoutes();
-  }, [syncRoutes]);
+    useEffect(() => {
+      const loadRoutes = async () => {
+        // 1. Intentar cargar desde caché
+        const cached = await getCachedRoutes();
+        if (cached) {
+          setData(cached);
+          console.log('Rutas cargadas desde caché local');
+          // 2. Verificar si el caché todavía es fresco (< 24 horas)
+          const lastSync = await getLastSyncTime();
+          if (lastSync && isCacheFresh(lastSync)) {
+            console.log('Caché fresco, no se necesita sincronizar');
+            return; 
+          }
+        }
+        console.log('Sincronizando rutas desde el servidor...');
+        syncRoutes();
+      };
+      loadRoutes();
+    }, [syncRoutes]);
 
   return useMemo<RoutesDataResult>(() => {
     const allFeatures = data;

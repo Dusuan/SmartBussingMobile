@@ -214,6 +214,15 @@ export default function Dashboard() {
             <View style={styles.searchPin} />
           </MapboxGL.PointAnnotation>
         )}
+
+        {/* Rutas y paradas en el mapa */}
+        <MapRouteController
+          cameraRef={cameraRef}
+          activeRouteId={activeRouteId}
+          mode={mode}
+          externalMapPoi={selectedMapPoi}
+          onClearExternalMapPoi={() => setSelectedMapPoi(null)}
+        />
       </MapboxGL.MapView>
 
       {/*------------------------ Slider de Anuncios (Pantalla Completa) ------------------------*/}
