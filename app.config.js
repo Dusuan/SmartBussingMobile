@@ -71,6 +71,12 @@ export default {
           backgroundColor: "#ffffff",
         },
       ],
+      [
+        "react-native-google-mobile-ads",
+        {
+          androidAppId: "ca-app-pub-6372485658515796~9768969991"
+        }
+      ]
     ],
   },
 };
