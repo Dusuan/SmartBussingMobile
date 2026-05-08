@@ -127,9 +127,15 @@ export default function Dashboard() {
         if (status === "granted") {
           const position = await Location.getCurrentPositionAsync({});
           setUserLocation([position.coords.longitude, position.coords.latitude]);
+        } else {
+          // Permission denied — fall back to default center so the map still loads
+          console.warn("Location permission denied, using default center");
+          setUserLocation(ENSENADA_CENTER);
         }
       } catch (error) {
         console.error("Error requesting location permission:", error);
+        // On any error, fall back to default center instead of staying stuck
+        setUserLocation(ENSENADA_CENTER);
       }
     })();
   }, []);
@@ -214,6 +220,15 @@ export default function Dashboard() {
             <View style={styles.searchPin} />
           </MapboxGL.PointAnnotation>
         )}
+
+        {/* Rutas y paradas en el mapa */}
+        <MapRouteController
+          cameraRef={cameraRef}
+          activeRouteId={activeRouteId}
+          mode={mode}
+          externalMapPoi={selectedMapPoi}
+          onClearExternalMapPoi={() => setSelectedMapPoi(null)}
+        />
       </MapboxGL.MapView>
 
       {/*------------------------ Slider de Anuncios (Pantalla Completa) ------------------------*/}

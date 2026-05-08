@@ -60,11 +60,11 @@ export default function Index() {
             </Link>
           </Button>
 
-         }
+         */}
 
-          {/*<Button className="mb-8" mode="elevated">
+          <Button className="mb-8" mode="elevated">
             <Link href="/(likedRoute)"> Vista de rutas Favoritas </Link>
-          </Button>*/}
+          </Button>
         </View>
         <View
           className="mb-8"
