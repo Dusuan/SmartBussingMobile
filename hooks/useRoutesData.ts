@@ -30,15 +30,139 @@ import {
 // ─── Configuration ────────────────────────────────────────────────────────────
 
 /**
- * Remote API endpoint for the route geodata.
+ * Remote API endpoint — apunta al endpoint real del backend.
  * Falls back to local JSON if this fails or is offline.
  */
-const DATA_SOURCE_URL: string | null = 'https://smart-bussing-back.onrender.com/api/v1/geodata/routes';
+const DATA_SOURCE_URL: string | null = 'https://smart-bussing-back.onrender.com/api/v1/ruta';
 
 // ─── Local data source ────────────────────────────────────────────────────────
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const LOCAL_GEODATA: SmartBussingGeoJSON = require('../assets/geodata/routes.json');
+
+// ─── Backend response types ──────────────────────────────────────────────────
+
+/** Coordenada individual tal como la devuelve el backend */
+interface BackendCoordenada {
+  id_coordenada: number;
+  longitud: number;
+  latitud: number;
+}
+
+/** Parada tal como la devuelve el backend (si existe en la ruta) */
+interface BackendParada {
+  id_parada: number;
+  nombre_parada: string;
+  descripcion_parada?: string;
+  coordenadas_parada: {
+    id_coordenada: number;
+    longitud: number;
+    latitud: number;
+  };
+}
+
+/** Ruta tal como la devuelve el backend */
+interface BackendRuta {
+  id_ruta: number;
+  nombre_ruta: string;
+  nombre_corto_ruta: string;
+  color_ruta: string;
+  color_texto_ruta: string;
+  tipo_ruta: string;
+  horario_ruta: string | null;
+  active: boolean;
+  coordenadas: BackendCoordenada[];
+  paradas?: BackendParada[];
+}
+
+/** Respuesta envuelta del backend */
+interface BackendResponse {
+  info: string;
+  response: BackendRuta[];
+  error?: string | null;
+}
+
+// ─── Transformer ─────────────────────────────────────────────────────────────
+
+/**
+ * Convierte la respuesta del backend (array de rutas con coordenadas planas)
+ * al formato GeoJSON FeatureCollection que espera el resto de la app.
+ */
+function transformBackendToGeoJSON(rutas: BackendRuta[]): SmartBussingGeoJSON {
+  const features: SmartBussingGeoJSON['features'] = [];
+
+  // Set para rastrear paradas ya agregadas (evitar duplicados)
+  const addedStops = new Set<string>();
+
+  for (const ruta of rutas) {
+    // Solo incluir rutas activas
+    if (!ruta.active) continue;
+
+    const routeId = ruta.id_ruta.toString();
+
+    // 1. Crear el Feature de la ruta (LineString)
+    const coordinates = ruta.coordenadas.map((c) => [c.longitud, c.latitud] as [number, number]);
+
+    if (coordinates.length > 0) {
+      features.push({
+        type: 'Feature',
+        id: `route-${routeId}`,
+        geometry: {
+          type: 'LineString',
+          coordinates,
+        },
+        properties: {
+          feature_type: 'route',
+          route_id: routeId,
+          route_short_name: ruta.nombre_corto_ruta || routeId,
+          route_long_name: ruta.nombre_ruta,
+          route_color: ruta.color_ruta || '#34D399',
+          route_text_color: ruta.color_texto_ruta || '#065F46',
+          route_type: (ruta.tipo_ruta as RouteFeature['properties']['route_type']) || 'microbus',
+        },
+      });
+    }
+
+    // 2. Crear Features de paradas (Points) si existen
+    if (ruta.paradas && Array.isArray(ruta.paradas)) {
+      for (const parada of ruta.paradas) {
+        const stopKey = `${parada.id_parada}`;
+
+        if (addedStops.has(stopKey)) {
+          // La parada ya existe — agregar esta ruta a sus rutas
+          const existing = features.find(
+            (f) => f.properties.feature_type === 'stop' && (f.properties as any).stop_id === stopKey
+          );
+          if (existing && existing.properties.feature_type === 'stop') {
+            (existing.properties as any).routes.push(routeId);
+          }
+        } else {
+          features.push({
+            type: 'Feature',
+            id: `stop-${stopKey}`,
+            geometry: {
+              type: 'Point',
+              coordinates: [parada.coordenadas_parada.longitud, parada.coordenadas_parada.latitud],
+            },
+            properties: {
+              feature_type: 'stop',
+              stop_id: stopKey,
+              stop_name: parada.nombre_parada,
+              stop_description: parada.descripcion_parada,
+              routes: [routeId],
+            },
+          });
+          addedStops.add(stopKey);
+        }
+      }
+    }
+  }
+
+  return {
+    type: 'FeatureCollection',
+    features,
+  };
+}
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
@@ -104,18 +228,20 @@ export function useRoutesData(): RoutesDataResult {
         throw new Error(`Error HTTP: ${response.status}`);
       }
 
-      const remoteData = await response.json();
+      const backendData: BackendResponse = await response.json();
 
       if (
-        remoteData &&
-        remoteData.type === 'FeatureCollection' &&
-        Array.isArray(remoteData.features)
+        backendData &&
+        Array.isArray(backendData.response) &&
+        backendData.response.length > 0
       ) {
-        setData(remoteData as SmartBussingGeoJSON);
-        await cacheRoutes(remoteData as SmartBussingGeoJSON);
-        console.log('Rutas guardadas en caché');
+        // Transformar del formato del backend a GeoJSON
+        const geoJSON = transformBackendToGeoJSON(backendData.response);
+        setData(geoJSON);
+        await cacheRoutes(geoJSON);
+        console.log(`Rutas sincronizadas: ${geoJSON.features.length} features desde el backend`);
       } else {
-        throw new Error('Formato de datos no válido. Se esperaba FeatureCollection.');
+        throw new Error('No se recibieron rutas del servidor.');
       }
     } catch (error) {
       console.error('Error sincronizando rutas:', error);
@@ -142,10 +268,7 @@ export function useRoutesData(): RoutesDataResult {
           console.log('Rutas cargadas desde caché local');
           // 2. Verificar si el caché todavía es fresco (< 24 horas)
           const lastSync = await getLastSyncTime();
-          if (lastSync && isCacheFresh(lastSync)) {
-            console.log('Caché fresco, no se necesita sincronizar');
-            return; 
-          }
+          return; 
         }
         console.log('Sincronizando rutas desde el servidor...');
         syncRoutes();

@@ -85,7 +85,7 @@ export const RouteLineLayer = React.memo(function RouteLineLayer({
         id="routes-inactive"
         style={INACTIVE_LINE_STYLE}
         filter={memoInactiveFilter as any}
-        layerIndex={10}
+        aboveLayerID="road-label"
       />
     );
   }
@@ -97,7 +97,7 @@ export const RouteLineLayer = React.memo(function RouteLineLayer({
         id="routes-active-glow"
         style={ACTIVE_GLOW_STYLE}
         filter={memoActiveFilter as any}
-        layerIndex={11}
+        aboveLayerID={memoInactiveFilter ? "routes-inactive" : "road-label"}
       />
     );
     layers.push(
@@ -106,7 +106,7 @@ export const RouteLineLayer = React.memo(function RouteLineLayer({
         id="routes-active"
         style={ACTIVE_LINE_STYLE}
         filter={memoActiveFilter as any}
-        layerIndex={12}
+        aboveLayerID="routes-active-glow"
       />
     );
   }
@@ -117,7 +117,7 @@ export const RouteLineLayer = React.memo(function RouteLineLayer({
         key="routes-all"
         id="routes-all"
         style={ACTIVE_LINE_STYLE}
-        layerIndex={10}
+        aboveLayerID="road-label"
       />
     );
   }

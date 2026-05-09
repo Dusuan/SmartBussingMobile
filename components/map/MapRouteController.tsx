@@ -194,6 +194,13 @@ export function MapRouteController({
     onRoutePress?.(routeId);
   }, [setActiveRoute, onRoutePress]);
 
+  // Determine the topmost route layer so stops render above routes
+  const topRouteLayerID = activeRouteFilter
+    ? 'routes-active'
+    : inactiveRoutesFilter
+      ? 'routes-inactive'
+      : 'routes-all';
+
   return (
     <>
       {/* Map Layers — rendered inside MapboxGL.MapView */}
@@ -206,6 +213,7 @@ export function MapRouteController({
       <RouteStopsLayer
         shape={stopsGeoJSON}
         filter={stopsFilter}
+        aboveLayerID={topRouteLayerID}
         onStopPress={handleStopPress}
       />
 
