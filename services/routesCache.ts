@@ -65,8 +65,8 @@ export async function getLastSyncTime(): Promise<number | null> {
  * @param timestamp - Cuándo se guardó el caché (en milisegundos)
  * @param maxAgeHours - Máximo de horas antes de considerar el caché "viejo" (default: 24)
  */
-export function isCacheFresh(timestamp: number, maxAgeHours: number = 24): boolean {
-  const maxAgeMs = maxAgeHours * 60 * 60 * 1000; // Convertir horas a milisegundos
+export function isCacheFresh(timestamp: number, maxAgeHours: number = 1): boolean {
+  const maxAgeMs = maxAgeHours * 1000; // Convertir horas a milisegundos
   return (Date.now() - timestamp) < maxAgeMs;
 }
 

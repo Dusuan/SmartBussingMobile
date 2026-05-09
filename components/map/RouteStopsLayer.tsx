@@ -28,6 +28,9 @@ interface RouteStopsLayerProps {
    */
   filter: unknown[] | null;
 
+  /** ID of the layer that stops should render above */
+  aboveLayerID?: string;
+
   /** Called when the user taps a stop circle */
   onStopPress?: (feature: StopFeature) => void;
 }
@@ -36,7 +39,7 @@ interface RouteStopsLayerProps {
 
 /** Outer ring of the stop marker */
 const STOP_CIRCLE_STYLE: MapboxGL.CircleLayerStyle = {
-  circleRadius: 9,
+  circleRadius: 6,
   circleColor: '#1D3A2D',
   circleStrokeColor: '#A4FFD7',
   circleStrokeWidth: 2,
@@ -71,6 +74,7 @@ const STOP_LABEL_STYLE: MapboxGL.SymbolLayerStyle = {
 export const RouteStopsLayer = React.memo(function RouteStopsLayer({
   shape,
   filter,
+  aboveLayerID = 'road-label',
   onStopPress,
 }: RouteStopsLayerProps) {
   const memoFilter = useMemo(() => filter, [JSON.stringify(filter)]);
@@ -90,7 +94,7 @@ export const RouteStopsLayer = React.memo(function RouteStopsLayer({
         id="stops-circle-outer"
         style={STOP_CIRCLE_STYLE}
         filter={memoFilter as any ?? undefined}
-        layerIndex={20}
+        aboveLayerID={aboveLayerID}
       />
 
       {/* Inner dot */}
@@ -98,7 +102,7 @@ export const RouteStopsLayer = React.memo(function RouteStopsLayer({
         id="stops-circle-inner"
         style={STOP_DOT_STYLE}
         filter={memoFilter as any ?? undefined}
-        layerIndex={21}
+        aboveLayerID="stops-circle-outer"
       />
 
       {/* Name label — shown when zoom is high enough */}
@@ -107,7 +111,7 @@ export const RouteStopsLayer = React.memo(function RouteStopsLayer({
         minZoomLevel={13}
         style={STOP_LABEL_STYLE}
         filter={memoFilter as any ?? undefined}
-        layerIndex={22}
+        aboveLayerID="stops-circle-inner"
       />
     </MapboxGL.ShapeSource>
   );

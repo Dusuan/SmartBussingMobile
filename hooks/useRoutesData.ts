@@ -268,10 +268,7 @@ export function useRoutesData(): RoutesDataResult {
           console.log('Rutas cargadas desde caché local');
           // 2. Verificar si el caché todavía es fresco (< 24 horas)
           const lastSync = await getLastSyncTime();
-          if (lastSync && isCacheFresh(lastSync)) {
-            console.log('Caché fresco, no se necesita sincronizar');
-            return; 
-          }
+          return; 
         }
         console.log('Sincronizando rutas desde el servidor...');
         syncRoutes();
