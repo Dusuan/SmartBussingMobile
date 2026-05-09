@@ -1,15 +1,19 @@
-import Text from "../components/AppText";
-import { View } from "react-native";
-import { Link } from "expo-router";
-import { Button, IconButton } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React from "react";
+import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { Image } from "react-native";
+import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Text from "../components/AppText";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+const { width } = Dimensions.get('window');
 import { ImageBackground } from "react-native";
-import { StyleSheet } from "react-native";
 import { blue } from "react-native-reanimated/lib/typescript/Colors";
 import Entypo from "react-native-vector-icons/Entypo";
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
+import { Link } from "expo-router";
+import { Button } from "react-native-paper";
 
 mobileAds()
   .setRequestConfiguration({
@@ -31,134 +35,134 @@ mobileAds()
     // Request config successfully set!
   });
 
-  mobileAds().initialize();
+mobileAds().initialize();
 
-  
 
 export default function Index() {
   return (
-    <ImageBackground
-      source={require("../assets/images/primera.jpg")}
-      style={{ flex: 1, justifyContent: "center" }}
-      resizeMode="cover"
-    >
-      <SafeAreaView className="flex-1 items-center justify-center">
-        <View style={styles.overlay} />
-
-        <View>
-          <Image
-            source={require("../assets/images/smartbussing-removebg-preview.png")}
-            style={{ width: 200, height: 200, marginBottom: 170 }}
-            resizeMode="contain"
-          />
-        </View>
-        <View>
-         {/* <Button className="mb-8" mode="elevated">
-            <Link href="/(dashboard)">
-              {" "}
-              <Text style={{ fontFamily: "MyFont" }}>Dashboard</Text>{" "}
-            </Link>
-          </Button>
-
-         */}
-
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(likedRoute)"> Vista de rutas Favoritas </Link>
-          </Button>
-        </View>
-        <View
-          className="mb-8"
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginTop: 90,
-          }}
-        >
-          <Button
-            className="mb-8"
-            mode="elevated"
-            buttonColor="#1d3a2d"
-            textColor="#f5f5f5"
-            style={{
-              marginRight: 25,
-              borderRadius: 15,
-              paddingVertical: 8,
-              paddingHorizontal: 5,
-            }}
-          >
-            <Link href="/login">Login</Link>
-          </Button>
-<Button
-            className="mb-8"
-            mode="elevated"
-            buttonColor="#1d3a2d"
-            textColor="#f5f5f5"
-            style={{
-              marginRight: 25,
-              borderRadius: 15,
-              paddingVertical: 8,
-              paddingHorizontal: 5,
-            }}
-          >
-            <Link href="/(dashboard)">Dev</Link>
-          </Button>
-          <Button
-            className="mb-8"
-            mode="elevated"
-            buttonColor="#1d3a2d"
-            textColor="#ffffff"
-            style={{
-              marginLeft: 25,
-              borderRadius: 15,
-              paddingVertical: 8,
-              paddingHorizontal: 5,
-            }}
-          >
-            <Link className="mb-8" href="/register">
-              {" "}
-              Registro
-            </Link>
-          </Button>
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={styles.contentContainer}>
+        {/* Top Half: Logo */}
+        <View style={styles.topSection}>
+          <View>
+            <Image
+              source={require("../assets/images/logoSB.png")}
+              style={{ width: 100, height: 100 }}
+              resizeMode="contain"
+            />
+          </View>
+          <Text style={styles.headerTitle}>SMART{'\n'}BUSSING</Text>
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Text
-            style={{
-              marginTop: 10,
-              textAlign: "left",
-              color: "#3b7c5f",
-              fontSize: 16,
-              fontWeight: "400",
-              textDecorationLine: "underline",
-              textDecorationColor: "#3b7c5f",
-              marginRight: 10,
-            }}
+        {/* Middle Section: Action Buttons */}
+        <View style={styles.middleSection}>
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={() => router.navigate("/login" as any)}
           >
-            Terminos
-          </Text>
-          <Text
-            style={{
-              marginTop: 10,
-              textAlign: "right",
-              color: "#3b7c5f",
-              fontSize: 16,
-              fontWeight: "400",
-              textDecorationLine: "underline",
-              textDecorationColor: "#3b7c5f",
-              marginLeft: 10,
-            }}
+             <Text style={styles.buttonText}>Log In</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={() => router.navigate("/register" as any)}
           >
-            Condiciones
-          </Text>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[styles.button, styles.devButton]}
+            onPress={() => router.navigate("/dashboard" as any)}
+          >
+            <Text style={styles.buttonText}>Dev (Dashboard)</Text>
+          </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    </ImageBackground>
+      </View>
+
+      {/* Bottom Section: City/Bus Illustration */}
+      <View style={styles.bottomSection}>
+        <Image
+          source={require("../assets/images/fondosplash.png")}
+          style={styles.illustration}
+          resizeMode="cover"
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+  container: {
+    flex: 1,
+    backgroundColor: "#EEFEFF", 
   },
+  contentContainer: {
+    flex: 1,
+    zIndex: 10,
+    justifyContent: 'center',
+    paddingBottom: 250, 
+  },
+  topSection: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  logoContainer: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  headerTitle: {
+    color: '#5B9EA0',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    lineHeight: 36,
+  },
+  middleSection: {
+    alignItems: "center",
+    gap: 16,
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  button: {
+    backgroundColor: '#5B9EA0',
+    width: '80%',
+    height: 52,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  devButton: {
+    backgroundColor: '#4A4A4A',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  bottomSection: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+  },
+  illustration: {
+    width: width,
+    height: 300, 
+  }
 });

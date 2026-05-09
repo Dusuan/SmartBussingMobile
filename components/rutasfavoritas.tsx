@@ -10,7 +10,7 @@ type ruta = {
 
 export default function rutasfavoritas({ inicio, destino }: ruta) {
   const navigateProfile = () => {
-    router.navigate("/(dashboard)");
+     router.navigate("/dashboard");
   };
 
   return (

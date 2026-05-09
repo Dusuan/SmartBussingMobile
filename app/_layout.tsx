@@ -57,7 +57,7 @@ export default function RootLayout() {
           options={{ headerShown: false }}
         ></Stack.Screen>
         <Stack.Screen
-          name="(dashboard)/index"
+          name="dashboard/index"
           options={{ headerShown: false }}
         />
         <Stack.Screen

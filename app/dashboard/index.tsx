@@ -32,11 +32,12 @@ import Constants from "expo-constants";
 import * as React from "react";
 import Text from "../../components/AppText";
 import * as Location from "expo-location";
+import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
+import AdsModal from "@/components/AdsModal";
 import uberStyle from "@/assets/tilesets/map-style.json";
 import { MapStyleState } from "@/components/mapview";
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
-import { GeocodingFeature } from "@/components/SearchBar";
 import DashboardTopBar from "@/components/DashboardTopBar";
 import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
@@ -169,7 +170,6 @@ export default function Dashboard() {
         // Consultar un área rectangular (caja táctil) para que sea fácil atinarle a los iconos
         const features = await mapRef.current.queryRenderedFeaturesInRect(bbox);
         
-        // Encontrar cualquier elemento tocado que tenga nombre, descartando calles y cuerpos de agua
         const poiFeature = features?.features?.find((f: any) => {
           if (!f.properties?.name) return false;
           const layerId = (f.layer?.id || '').toLowerCase();
@@ -191,14 +191,6 @@ export default function Dashboard() {
       }
     }
   };
-
-  if (userLocation === null) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-center">Cargando ...</Text>
-      </View>
-    );
-  }
 
   return (
     <GestureHandlerRootView style={styles.root}>
@@ -240,7 +232,7 @@ export default function Dashboard() {
             bottom: 0,
             left: 0,
             right: 0,
-            backgroundColor: "#1a1a2e",
+            backgroundColor: "#FFFFFF",
             zIndex: 50,
             elevation: 20,
             transform: [
@@ -263,16 +255,16 @@ export default function Dashboard() {
               paddingTop: 50,
               paddingBottom: 12,
               borderBottomWidth: 1,
-              borderBottomColor: "rgba(255,255,255,0.1)",
+              borderBottomColor: "rgba(0,0,0,0.1)",
             }}
           >
-            <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: "700" }}>
+            <Text style={{ color: "#4A4A4A", fontSize: 20, fontWeight: "700" }}>
               📍 Lugares de la semana
             </Text>
             <IconButton
               icon="close"
               size={28}
-              iconColor="#ffffff"
+              iconColor="#4A4A4A"
               onPress={hideAds}
               style={{ margin: 0 }}
             />
@@ -294,7 +286,23 @@ export default function Dashboard() {
               descripcion={"Otra descripcion"}
               distancia={"Distancia"}
             />
+            <Anuncio
+              nombreEmpresa={"Empresa 3"}
+              descripcion={"Más lugares"}
+              distancia={"Distancia"}
+            />
+
           </ScrollView>
+
+          {/* Footer estilo AdsModal */}
+          <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 12, borderTopWidth: 1, borderTopColor: '#F0F0F0' }}>
+            <Text style={{ color: '#8A8A8A', fontWeight: 'bold' }}>¿Quisieras un espacio? </Text>
+            <TouchableOpacity>
+              <Text style={{ color: '#5B9EA0', fontWeight: 'bold', textDecorationLine: 'underline' }}>
+                Regístrate aquí
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Banner Ad fijo en la parte inferior */}
           <View style={{ paddingBottom: 24 }}>
@@ -309,6 +317,19 @@ export default function Dashboard() {
         onToggle={toggleMode}
         visible={activeRouteId !== null}
       />
+
+      {/*
+      <AdsModal visible={IsAdsVisible} onDismiss={hideAds} />
+      */}
+      
+      {/* Floating Search Bar */}
+      <View style={styles.searchBarWrapper}>
+        <SearchBar
+          userLocation={userLocation}
+          onSelectLocation={handleLocationSelect}
+          setSearchMarker={setSearchMarker}
+        />
+      </View>
 
       <DashboardTopBar ruta={Ruta} handleOpenPress={HandleOpenPress} />
       <DashboardBottomSheet
@@ -328,7 +349,13 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   root: { flex: 1 },
   map: { flex: 1 },
-
+  searchBarWrapper: {
+    position: 'absolute',
+    top: 50,
+    left: 0,
+    right: 0,
+    zIndex: 20, // Above Map and other overlays
+  },
   // Search pin
   searchPin: {
     width: 20,

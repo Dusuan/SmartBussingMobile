@@ -1,13 +1,14 @@
 import React from "react";
 import { router } from "expo-router";
-import { View, Dimensions, StyleSheet, ImageBackground, Text, ScrollView } from "react-native";
+import { View, Dimensions, StyleSheet, Text, ScrollView, TouchableOpacity } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
+import { GeocodingFeature } from "@/components/SearchBar";
 import MapView from "@/components/mapview";
 import RouteView from "@/app/(routeView)";
 import { Button } from "react-native-paper";
 import { useRoutesData } from "@/hooks/useRoutesData";
+import { AntDesign } from "@expo/vector-icons";
 
 const width = Dimensions.get("window").width;
 
@@ -39,50 +40,82 @@ export default function DashboardBottomSheet({
       {
         id: "1",
         render: () => (
-          <ScrollView style={{ padding: 16 }}>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white', marginBottom: 12 }}>
+          <ScrollView style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+            <Text style={{ textAlign: "center", fontSize: 15, color: "#333333", marginBottom: 20, fontWeight: "500" }}>
+              Ensenada, Baja California
+            </Text>
+            
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#333333', marginBottom: 16 }}>
               Rutas Disponibles
             </Text>
+
             {routeFeatures.map((route) => (
               <View 
                 key={route.properties.route_id} 
-                style={{ backgroundColor: 'white', borderRadius: 12, overflow: 'hidden', elevation: 2, marginBottom: 12, borderWidth: 1, borderColor: '#eee' }}
+                style={styles.routeCardContainer}
               >
-                <View style={{ padding: 16, borderLeftWidth: 6, borderLeftColor: route.properties.route_color }}>
-                  <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#1D3A2D', marginBottom: 4 }}>
-                    Ruta {route.properties.route_short_name}
-                  </Text>
-                  <Text style={{ fontSize: 14, color: '#555', marginBottom: 12 }}>
+                <View style={[styles.routeCardInner, { borderLeftColor: route.properties.route_color }]}>
+                  
+                  {/* Top Row: Name & Heart */}
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.routeShortName}>
+                      Ruta {route.properties.route_short_name}
+                    </Text>
+                    {/* Just an example of a heart icon from the design */}
+                    <AntDesign 
+                      name={route.properties.route_short_name === "203" ? "heart" : "hearto"} 
+                      size={18} 
+                      color={route.properties.route_short_name === "203" ? "#E53935" : "#333333"} 
+                    />
+                  </View>
+                  
+                  {/* Middle Row: Long Name */}
+                  <Text style={styles.routeLongName}>
                     {route.properties.route_long_name}
                   </Text>
-                  <Button
-                    mode="contained"
-                    buttonColor="#3B7C5F"
-                    onPress={() => {
-                      if (handleRouteSelect) handleRouteSelect(route.properties.route_id);
-                    }}
-                  >
-                    Ver en Mapa
-                  </Button>
-                  <Button
-                    mode="outlined"
-                    textColor="#1D3A2D"
-                    style={{ marginTop: 8, borderColor: '#1D3A2D' }}
-                    onPress={() => {
-                      router.push({
-                        pathname: '/(reportRoute)',
-                        params: { 
-                          routeId: route.properties.route_id, 
-                          routeName: route.properties.route_short_name 
-                        }
-                      });
-                    }}
-                  >
-                    Reportar esta ruta
-                  </Button>
+
+                  {/* Buttons Row */}
+                  <View style={styles.cardButtonsRow}>
+                    <TouchableOpacity
+                      style={[styles.actionButton, { backgroundColor: route.properties.route_color }]}
+                      onPress={() => {
+                        if (handleRouteSelect) handleRouteSelect(route.properties.route_id);
+                      }}
+                    >
+                      <Text style={styles.actionButtonText}>Visualizar en el mapa</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={[styles.actionButton, { backgroundColor: route.properties.route_color }]}
+                    >
+                      <Text style={styles.actionButtonText}>Iniciar</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Links Row */}
+                  <View style={styles.cardLinksRow}>
+                    <TouchableOpacity>
+                      <Text style={styles.linkText}>Comentar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      onPress={() => {
+                        router.push({
+                          pathname: '/(reportRoute)',
+                          params: { 
+                            routeId: route.properties.route_id, 
+                            routeName: route.properties.route_short_name 
+                          }
+                        });
+                      }}
+                    >
+                      <Text style={styles.linkText}>Reportar ruta</Text>
+                    </TouchableOpacity>
+                  </View>
+
                 </View>
               </View>
             ))}
+            <View style={{ height: 40 }} />
           </ScrollView>
         ),
       },
@@ -96,8 +129,7 @@ export default function DashboardBottomSheet({
               textColor="black"
               onPress={showAds}
             >
-              {" "}
-              Ver lugares de la semana{" "}
+              Ver lugares de la semana
             </Button>
           </View>
         ),
@@ -116,42 +148,30 @@ export default function DashboardBottomSheet({
 
   return (
     <BottomSheet
-      style={{ marginRight: 8, marginLeft: 8 }}
+      style={{ marginHorizontal: 0 }} // Remove margin to allow full width for the sheet
       index={1}
       animateOnMount={true}
       snapPoints={["15%", "30%", "50%", "75%", "90%"]}
       enablePanDownToClose={false}
       ref={bottomSheetRef}
       backgroundStyle={{
-        backgroundColor: "#808080",
+        backgroundColor: "#FFFFFF",
+        borderRadius: 30,
       }}
+      handleIndicatorStyle={{ backgroundColor: "#D3D3D3", width: 40, height: 5 }}
     >
-      <View style={{ marginTop: 12, marginBottom: 12 }}>
-        <SearchBar
-          userLocation={userLocation}
-          onSelectLocation={handleLocationSelect}
-          setSearchMarker={setSearchMarker}
+      <BottomSheetView style={styles.bottomSheetContainer}>
+        <FlatList
+          data={Slides}
+          horizontal
+          pagingEnabled
+          keyExtractor={(item) => item.id}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View style={styles.page}>{item.render()}</View>
+          )}
         />
-      </View>
-      <ImageBackground
-        source={require("../assets/images/fondologinregister.png")}
-        style={styles.BottomSheetbackground}
-        resizeMode="cover"
-      >
-        <BottomSheetView style={styles.bottomSheetContainer}>
-          <FlatList
-            data={Slides}
-            contentContainerStyle={{}}
-            horizontal
-            pagingEnabled
-            keyExtractor={(item) => item.id}
-            showsHorizontalScrollIndicator={true}
-            renderItem={({ item }) => (
-              <View style={styles.page}>{item.render()}</View>
-            )}
-          />
-        </BottomSheetView>
-      </ImageBackground>
+      </BottomSheetView>
     </BottomSheet>
   );
 }
@@ -160,11 +180,62 @@ const styles = StyleSheet.create({
   bottomSheetContainer: {
     flex: 1,
   },
-  BottomSheetbackground: {
-    flex: 1,
-    marginTop: 0,
-  },
   page: {
-    width: width - 16,
+    width: width, // Use full width instead of width - 16
+  },
+  routeCardContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  routeCardInner: {
+    padding: 16,
+    borderLeftWidth: 6,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  routeShortName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  routeLongName: {
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 12,
+  },
+  cardButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 12,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 13,
+  },
+  cardLinksRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  linkText: {
+    color: '#666666',
+    fontSize: 12,
+    textDecorationLine: 'underline',
   },
 });

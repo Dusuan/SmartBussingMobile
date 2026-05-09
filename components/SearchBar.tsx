@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import Constants from "expo-constants";
 import Text from "./AppText";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 export interface GeocodingFeature {
   id: string;
@@ -33,7 +35,6 @@ export const geocodeQuery = async (
   const [proxLng, proxLat] = proximity ?? [-116.5996, 31.8676]; // Ensenada city center fallback
 
   try {
-    // Step 1: Suggest call
     const suggestUrl = `https://api.mapbox.com/search/searchbox/v1/suggest?q=${encodeURIComponent(
       query
     )}&access_token=${token}&session_token=${sessionToken}&proximity=${proxLng},${proxLat}&origin=-116.5996,31.8676&bbox=-116.75,31.75,-116.45,31.95&country=MX&language=es&limit=6&types=poi,address,street,neighborhood`;
@@ -45,7 +46,6 @@ export const geocodeQuery = async (
       return [];
     }
 
-    // Step 2: Retrieve calls in parallel
     const retrievePromises = suggestData.suggestions.map(
       (suggestion: any) =>
         fetch(
@@ -128,7 +128,6 @@ export default function SearchBar({
     setShowResults(false);
     setResults([]);
     Keyboard.dismiss();
-    // Reset session token after selection
     sessionTokenRef.current =
       typeof crypto !== "undefined" && crypto.randomUUID
         ? crypto.randomUUID()
@@ -148,25 +147,40 @@ export default function SearchBar({
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Buscar lugar..."
-          placeholderTextColor="#999"
+          placeholder="Busca una ruta"
+          placeholderTextColor="#A0A0A0"
           value={searchQuery}
           onChangeText={handleChangeText}
           onFocus={() => setShowResults(true)}
           editable={true}
         />
-        {searchQuery !== "" && (
-          <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
-            <Text style={styles.clearButtonText}>✕</Text>
+        
+        {/* Right side icons */}
+        <View style={styles.rightIconsContainer}>
+          {searchQuery !== "" ? (
+            <TouchableOpacity onPress={handleClear} style={styles.iconButton}>
+              <Ionicons name="close" size={22} color="#A0A0A0" />
+            </TouchableOpacity>
+          ) : (
+            <View style={styles.iconButton}>
+              <Ionicons name="search" size={22} color="#A0A0A0" />
+            </View>
+          )}
+
+          <TouchableOpacity 
+            style={styles.profileButton}
+            onPress={() => router.navigate("/(profile)")}
+          >
+            <Ionicons name="person" size={16} color="#FFFFFF" />
           </TouchableOpacity>
-        )}
+        </View>
       </View>
 
       {showResults && (results.length > 0 || isLoading) && (
         <View style={styles.resultsContainer}>
           {isLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color="#0096FF" />
+              <ActivityIndicator size="small" color="#5B9EA0" />
             </View>
           ) : (
             <FlatList
@@ -194,39 +208,57 @@ export default function SearchBar({
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingVertical: 8,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.75)",
-    borderRadius: 8,
-    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 30,
+    height: 50,
+    paddingLeft: 16,
+    paddingRight: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
   },
   input: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    color: "#FAF9F6",
-    fontSize: 14,
+    color: "#333333",
+    fontSize: 16,
   },
-  clearButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+  rightIconsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconButton: {
+    paddingHorizontal: 6,
     justifyContent: "center",
     alignItems: "center",
   },
-  clearButtonText: {
-    color: "#FAF9F6",
-    fontSize: 18,
+  profileButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#C4C4C4",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 6,
   },
   resultsContainer: {
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
-    borderRadius: 8,
-    marginTop: 4,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    marginTop: 8,
     maxHeight: 300,
     overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   loadingContainer: {
     paddingVertical: 16,
@@ -234,13 +266,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   resultItem: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.1)",
+    borderBottomColor: "#F0F0F0",
   },
   resultText: {
-    color: "#FAF9F6",
-    fontSize: 13,
+    color: "#333333",
+    fontSize: 14,
   },
 });
