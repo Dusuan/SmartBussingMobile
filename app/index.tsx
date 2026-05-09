@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
-import { Image } from "react-native";
+import { View, StyleSheet, Dimensions, TouchableOpacity, Image } from "react-native";
+import SBLogo from "../assets/images/SB-Logo-2026.svg";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../components/AppText";
@@ -45,13 +45,8 @@ export default function Index() {
         {/* Top Half: Logo */}
         <View style={styles.topSection}>
           <View>
-            <Image
-              source={require("../assets/images/logoSB.png")}
-              style={{ width: 100, height: 100 }}
-              resizeMode="contain"
-            />
+            <SBLogo width={325} height={250} />
           </View>
-          <Text style={styles.headerTitle}>SMART{'\n'}BUSSING</Text>
         </View>
 
         {/* Middle Section: Action Buttons */}
