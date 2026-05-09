@@ -2,7 +2,6 @@ import "dotenv/config";
 
 export default {
   expo: {
-    scheme: "SmartBussing",
     name: "SmartBussing",
     slug: "smart-bussing-mobile",
     version: "1.0.0",

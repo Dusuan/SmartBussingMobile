@@ -4,6 +4,11 @@ import { TextInput, Button, Divider, useTheme } from "react-native-paper";
 import { router } from "expo-router";
 import Text from '../components/AppText';
 import { useUser } from "./contextUser";
+import * as WebBrowser from 'expo-web-browser'
+import * as Linking from 'expo-linking'
+import { supabase } from '../utils/supabase'
+
+WebBrowser.maybeCompleteAuthSession()
 
 const separacion = StyleSheet.create({
   container: {
@@ -61,6 +66,51 @@ const Login = () => {
       }
   }
 
+  //SIGN IN DE GOOGLE
+const signInWithGoogle = async () => {
+  const redirectTo = Linking.createURL('auth/callback')
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo,
+      skipBrowserRedirect: true,
+    },
+  })
+
+  if (error) {
+    Alert.alert('Error', error.message)
+    return
+  }
+
+  if (data?.url) {
+    const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo)
+
+    if (result.type === 'success' && result.url) {
+      const params = new URLSearchParams(
+        result.url.split('#')[1] ?? result.url.split('?')[1]
+      )
+      const access_token = params.get('access_token')
+      const refresh_token = params.get('refresh_token')
+
+      if (access_token) {
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token,
+          refresh_token: refresh_token ?? '',
+        })
+
+        if (sessionError) {
+          Alert.alert('Error', sessionError.message)
+        } else {
+          router.navigate('/(dashboard)')
+        }
+      } else {
+        Alert.alert('Error', 'No se pudo obtener el token de Google')
+      }
+    }
+  }
+}
+        //FINAL DE SIGN IN GOOGLE
   const {setUser} = useUser();
 
   const asignUserInfo = async () => {
@@ -179,13 +229,26 @@ const Login = () => {
         <View className="me-14 mt-20">
           <Button
             mode="contained"
-            onPress={() => manageLogin(correo,contraseña)}
+            onPress={() => manageLogin(correo, contraseña)}
             buttonColor="#1D3A2D"
             textColor="#FFFFFF"
           >
             Iniciar sesión
           </Button>
         </View>
+      </View>
+
+      {/* Botón de Google — separado y centrado */}
+      <View className="mt-6 ml-10 mr-10">
+        <Button
+          mode="contained"
+          onPress={signInWithGoogle}
+          buttonColor="#4285F4"
+          textColor="#FFFFFF"
+          icon="google"
+        >
+          Continuar con Google
+        </Button>
       </View>
     </ImageBackground>
   );
