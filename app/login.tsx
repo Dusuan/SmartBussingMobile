@@ -31,7 +31,7 @@ const Login = () => {
       } else {
         Alert.alert("Bienvenido a SmartBussing");
         asignUserInfo();
-        router.navigate("/(dashboard)");
+        router.navigate("/dashboard");
       }
     } catch (error) {
       Alert.alert("Hubo un error fatal en el sistema");

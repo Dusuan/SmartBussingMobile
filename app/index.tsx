@@ -8,11 +8,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 import { ImageBackground } from "react-native";
-import { StyleSheet } from "react-native";
 import { blue } from "react-native-reanimated/lib/typescript/Colors";
 import Entypo from "react-native-vector-icons/Entypo";
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
+import { Link } from "expo-router";
+import { Button } from "react-native-paper";
 
 mobileAds()
   .setRequestConfiguration({
@@ -34,9 +35,8 @@ mobileAds()
     // Request config successfully set!
   });
 
-  mobileAds().initialize();
+mobileAds().initialize();
 
-  
 
 export default function Index() {
   return (
@@ -55,47 +55,8 @@ export default function Index() {
           <TouchableOpacity 
             style={styles.button}
             onPress={() => router.navigate("/login" as any)}
-         */}
-
-          <Button className="mb-8" mode="elevated">
-            <Link href="/(likedRoute)"> Vista de rutas Favoritas </Link>
-          </Button>
-        </View>
-        <View
-          className="mb-8"
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginTop: 90,
-          }}
-        >
-          <Button
-            className="mb-8"
-            mode="elevated"
-            buttonColor="#1d3a2d"
-            textColor="#f5f5f5"
-            style={{
-              marginRight: 25,
-              borderRadius: 15,
-              paddingVertical: 8,
-              paddingHorizontal: 5,
-            }}
           >
-            <Link href="/login">Login</Link>
-          </Button>
-<Button
-            className="mb-8"
-            mode="elevated"
-            buttonColor="#1d3a2d"
-            textColor="#f5f5f5"
-            style={{
-              marginRight: 25,
-              borderRadius: 15,
-              paddingVertical: 8,
-              paddingHorizontal: 5,
-            }}
-          >
-            <Text style={styles.buttonText}>Log In</Text>
+             <Text style={styles.buttonText}>Log In</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -107,7 +68,7 @@ export default function Index() {
 
           <TouchableOpacity 
             style={[styles.button, styles.devButton]}
-            onPress={() => router.navigate("/(dashboard)" as any)}
+            onPress={() => router.navigate("/dashboard" as any)}
           >
             <Text style={styles.buttonText}>Dev (Dashboard)</Text>
           </TouchableOpacity>
@@ -134,13 +95,12 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     zIndex: 10,
-    paddingBottom: 320, 
+    justifyContent: 'center',
+    paddingBottom: 250, 
   },
   topSection: {
-    flex: 1,
-    justifyContent: "flex-end",
     alignItems: "center",
-    paddingBottom: 10,
+    marginBottom: 40,
   },
   logoContainer: {
     width: 120,
@@ -164,11 +124,9 @@ const styles = StyleSheet.create({
     lineHeight: 36,
   },
   middleSection: {
-    flex: 1,
-    justifyContent: "flex-start",
     alignItems: "center",
     gap: 16,
-    paddingTop: 10,
+    width: '100%',
     paddingHorizontal: 20,
   },
   button: {

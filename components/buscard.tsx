@@ -10,7 +10,7 @@ export default function BusCard() {
 
  const navigateProfile = () => {
      //Ahorita esta redirigiendo al main, pero cuando se haga la del profile ahi se debera regresar
-     router.navigate("/(dashboard)");
+     router.navigate("/dashboard");
    };
  
    const navigateTimeline = () => {

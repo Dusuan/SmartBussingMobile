@@ -38,7 +38,6 @@ import uberStyle from "@/assets/tilesets/map-style.json";
 import { MapStyleState } from "@/components/mapview";
 import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
 import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
-import { GeocodingFeature } from "@/components/SearchBar";
 import DashboardTopBar from "@/components/DashboardTopBar";
 import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
@@ -167,7 +166,6 @@ export default function Dashboard() {
           properties.screenPointX - TOUCH_RADIUS, // left
           properties.screenPointY + TOUCH_RADIUS, // bottom
           properties.screenPointX + TOUCH_RADIUS  // right
-        ];
         ] as [number, number, number, number];
         // Consultar un área rectangular (caja táctil) para que sea fácil atinarle a los iconos
         const features = await mapRef.current.queryRenderedFeaturesInRect(bbox);
@@ -234,7 +232,7 @@ export default function Dashboard() {
             bottom: 0,
             left: 0,
             right: 0,
-            backgroundColor: "#1a1a2e",
+            backgroundColor: "#FFFFFF",
             zIndex: 50,
             elevation: 20,
             transform: [
@@ -257,16 +255,16 @@ export default function Dashboard() {
               paddingTop: 50,
               paddingBottom: 12,
               borderBottomWidth: 1,
-              borderBottomColor: "rgba(255,255,255,0.1)",
+              borderBottomColor: "rgba(0,0,0,0.1)",
             }}
           >
-            <Text style={{ color: "#ffffff", fontSize: 20, fontWeight: "700" }}>
+            <Text style={{ color: "#4A4A4A", fontSize: 20, fontWeight: "700" }}>
               📍 Lugares de la semana
             </Text>
             <IconButton
               icon="close"
               size={28}
-              iconColor="#ffffff"
+              iconColor="#4A4A4A"
               onPress={hideAds}
               style={{ margin: 0 }}
             />
@@ -288,7 +286,23 @@ export default function Dashboard() {
               descripcion={"Otra descripcion"}
               distancia={"Distancia"}
             />
+            <Anuncio
+              nombreEmpresa={"Empresa 3"}
+              descripcion={"Más lugares"}
+              distancia={"Distancia"}
+            />
+
           </ScrollView>
+
+          {/* Footer estilo AdsModal */}
+          <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 12, borderTopWidth: 1, borderTopColor: '#F0F0F0' }}>
+            <Text style={{ color: '#8A8A8A', fontWeight: 'bold' }}>¿Quisieras un espacio? </Text>
+            <TouchableOpacity>
+              <Text style={{ color: '#5B9EA0', fontWeight: 'bold', textDecorationLine: 'underline' }}>
+                Regístrate aquí
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Banner Ad fijo en la parte inferior */}
           <View style={{ paddingBottom: 24 }}>
@@ -304,7 +318,9 @@ export default function Dashboard() {
         visible={activeRouteId !== null}
       />
 
+      {/*
       <AdsModal visible={IsAdsVisible} onDismiss={hideAds} />
+      */}
       
       {/* Floating Search Bar */}
       <View style={styles.searchBarWrapper}>
