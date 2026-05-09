@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, StyleSheet, Alert, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from "react-native";
+import { View, StyleSheet, Alert, TextInput, TouchableOpacity, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView, StatusBar, Image } from "react-native";
 import { router } from "expo-router";
 import Text from '../components/AppText';
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
@@ -53,8 +53,12 @@ const Register = () => {
         <ScrollView contentContainerStyle={styles.scrollContent} bounces={false}>
           {/* Header Section */}
           <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <MaterialCommunityIcons name="bus" size={48} color="#5B9EA0" />
+            <View>
+              <Image
+                source={require("../assets/images/logoSBWhite.png")}
+                style={{ width: 80, height: 80 }}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.headerTitle}>SMART{'\n'}BUSSING</Text>
           </View>
@@ -167,9 +171,12 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#5B9EA0',
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 100,
     paddingBottom: 40,
+    gap: 16,
   },
   logoContainer: {
     width: 80,
@@ -184,7 +191,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
     lineHeight: 28,
   },
   body: {

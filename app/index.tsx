@@ -44,8 +44,12 @@ export default function Index() {
       <View style={styles.contentContainer}>
         {/* Top Half: Logo */}
         <View style={styles.topSection}>
-          <View style={styles.logoContainer}>
-            <MaterialCommunityIcons name="bus" size={70} color="#5B9EA0" />
+          <View>
+            <Image
+              source={require("../assets/images/logoSB.png")}
+              style={{ width: 100, height: 100 }}
+              resizeMode="contain"
+            />
           </View>
           <Text style={styles.headerTitle}>SMART{'\n'}BUSSING</Text>
         </View>
