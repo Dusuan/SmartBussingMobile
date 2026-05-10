@@ -20,7 +20,7 @@ export default function flechitaregreso(texto: ruta) {
         className=""
         mode="contained-tonal"
         containerColor="#FAF9F6"
-        icon={() => <AntDesign name="arrowleft" color="#353935" size={30} />}
+        icon={() => <AntDesign name="arrow-left" color="#353935" size={30} />}
         onPress={() => navigate()}
       />
     </View>

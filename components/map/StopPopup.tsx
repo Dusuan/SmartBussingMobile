@@ -1,6 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Image, Linking, TouchableOpacity } from 'react-native';
-import { Card, IconButton } from 'react-native-paper';
+import React, { useCallback } from 'react';
+import { View, StyleSheet, Image, Linking, GestureResponderEvent } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AppText from '@/components/AppText';
 
@@ -19,15 +18,35 @@ const DEFAULT_IMAGE = require('../../assets/images/Microbus.jpg'); // Fallback m
 
 export function StopPopup({ stopName, description, imageUrl, routes = [], coordinates, googleMapsUrl, hideImage, onClose }: StopPopupProps) {
   
-  const handleOpenGoogleMaps = () => {
-    // If specific URL is provided, use it. Otherwise fallback to coordinates
-    const url = googleMapsUrl || `https://www.google.com/maps/dir/?api=1&destination=${coordinates[1]},${coordinates[0]}`;
+  const handleOpenGoogleMaps = useCallback(() => {
+    // If specific URL is provided, use it. Otherwise show exact location by coordinates
+    const url = googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${coordinates[1]},${coordinates[0]}`;
     Linking.openURL(url).catch(err => console.error('Error opening maps', err));
-  };
+  }, [googleMapsUrl, coordinates]);
+
+  const handleCloseTap = useCallback((e: GestureResponderEvent) => {
+    e.stopPropagation();
+    onClose();
+  }, [onClose]);
+
+  const handleMapsTap = useCallback((e: GestureResponderEvent) => {
+    e.stopPropagation();
+    handleOpenGoogleMaps();
+  }, [handleOpenGoogleMaps]);
 
   return (
-    <Card style={styles.cardContainer} mode="elevated">
+    <View style={styles.cardContainer}>
       <View style={styles.contentRow}>
+        {/* Close button on the left */}
+        <View style={styles.closeContainer}>
+          <View
+            style={styles.closeTouchable}
+            onTouchEnd={handleCloseTap}
+          >
+            <MaterialCommunityIcons name="close" size={20} color="#A4FFD7" />
+          </View>
+        </View>
+
         {!hideImage && (
           <View style={styles.imageContainer}>
             <Image
@@ -39,16 +58,7 @@ export function StopPopup({ stopName, description, imageUrl, routes = [], coordi
         )}
 
         <View style={styles.infoContainer}>
-          <View style={styles.headerRow}>
-            <AppText style={styles.title} numberOfLines={1}>{stopName}</AppText>
-            <IconButton 
-              icon="close" 
-              size={18} 
-              onPress={onClose} 
-              style={styles.closeBtn} 
-              iconColor="#A4FFD7"
-            />
-          </View>
+          <AppText style={styles.title} numberOfLines={1}>{stopName}</AppText>
           
           <AppText style={styles.description} numberOfLines={2}>
             {description || 'Parada de autobús local.'}
@@ -63,13 +73,17 @@ export function StopPopup({ stopName, description, imageUrl, routes = [], coordi
           </View>
         </View>
         
+        {/* Arrow button on the right — flipped direction */}
         <View style={styles.actionContainer}>
-          <TouchableOpacity style={styles.mapsButton} onPress={handleOpenGoogleMaps}>
-            <MaterialCommunityIcons name="arrow-top-left-thick" size={24} color="#1D3A2D" />
-          </TouchableOpacity>
+          <View
+            style={styles.mapsButton}
+            onTouchEnd={handleMapsTap}
+          >
+            <MaterialCommunityIcons name="arrow-top-right-thick" size={24} color="#1D3A2D" />
+          </View>
         </View>
       </View>
-    </Card>
+    </View>
   );
 }
 
@@ -83,6 +97,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     // Add margin bottom to place the popup above the marker instead of centered on it
     marginBottom: 10,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   contentRow: {
     flexDirection: 'row',
@@ -104,23 +123,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  headerRow: {
-    flexDirection: 'row',
+  closeContainer: {
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  closeTouchable: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(164, 255, 215, 0.15)',
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginRight: -10, // pull close button closer
   },
   title: {
     color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 14,
-    flex: 1,
-  },
-  closeBtn: {
-    margin: 0,
-    padding: 0,
-    width: 24,
-    height: 24,
   },
   description: {
     color: '#B0D8C9',

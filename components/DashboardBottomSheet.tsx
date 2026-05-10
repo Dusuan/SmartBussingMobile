@@ -21,6 +21,8 @@ interface DashboardBottomSheetProps {
   setRuta: (ruta: string) => void;
   showAds: () => void;
   handleRouteSelect?: (routeId: string) => void;
+  activeRouteId?: string | null;
+  clearRoute?: () => void;
 }
 
 export default function DashboardBottomSheet({
@@ -32,6 +34,8 @@ export default function DashboardBottomSheet({
   setRuta,
   showAds,
   handleRouteSelect,
+  activeRouteId,
+  clearRoute,
 }: DashboardBottomSheetProps) {
   const { routeFeatures } = useRoutesData();
 
@@ -77,12 +81,18 @@ export default function DashboardBottomSheet({
                   {/* Buttons Row */}
                   <View style={styles.cardButtonsRow}>
                     <TouchableOpacity
-                      style={[styles.actionButton, { backgroundColor: route.properties.route_color }]}
+                      style={[styles.actionButton, { backgroundColor: activeRouteId === route.properties.route_id ? '#555555' : route.properties.route_color }]}
                       onPress={() => {
-                        if (handleRouteSelect) handleRouteSelect(route.properties.route_id);
+                        if (activeRouteId === route.properties.route_id) {
+                          if (clearRoute) clearRoute();
+                        } else {
+                          if (handleRouteSelect) handleRouteSelect(route.properties.route_id);
+                        }
                       }}
                     >
-                      <Text style={styles.actionButtonText}>Visualizar en el mapa</Text>
+                      <Text style={styles.actionButtonText}>
+                        {activeRouteId === route.properties.route_id ? 'Activa' : 'Visualizar en el mapa'}
+                      </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -143,12 +153,12 @@ export default function DashboardBottomSheet({
         ),
       },
     ],
-    [routeFeatures, showAds, handleRouteSelect]
+    [routeFeatures, showAds, handleRouteSelect, activeRouteId, clearRoute]
   );
 
   return (
     <BottomSheet
-      style={{ marginHorizontal: 0 }} // Remove margin to allow full width for the sheet
+      style={{ marginHorizontal: 0, zIndex: 100 }} // Remove margin to allow full width for the sheet
       index={1}
       animateOnMount={true}
       snapPoints={["15%", "30%", "50%", "75%", "90%"]}

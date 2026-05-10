@@ -330,7 +330,7 @@ export default function Dashboard() {
           setSearchMarker={setSearchMarker}
         />
       </View>
-
+      <View></View>
       <DashboardTopBar ruta={Ruta} handleOpenPress={HandleOpenPress} />
       <DashboardBottomSheet
         bottomSheetRef={bottomSheetRef}
@@ -341,6 +341,8 @@ export default function Dashboard() {
         setRuta={setRuta}
         showAds={showAds}
         handleRouteSelect={handleRouteSelect}
+        activeRouteId={activeRouteId}
+        clearRoute={clearRoute}
       />
     </GestureHandlerRootView>
   );
@@ -354,8 +356,9 @@ const styles = StyleSheet.create({
     top: 50,
     left: 0,
     right: 0,
-    zIndex: 20, // Above Map and other overlays
+    zIndex: 0, // Above Map and other overlays
   },
+
   // Search pin
   searchPin: {
     width: 20,

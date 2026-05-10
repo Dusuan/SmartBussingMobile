@@ -12,9 +12,7 @@ export default function DashboardTopBar({ ruta, handleOpenPress }: DashboardTopB
   return (
     <View style={styles.container} pointerEvents="box-none">
       {/* Botones izquierda: usuario y casa en fila */}
-      <View style={styles.leftGroup}>
-        <Pullbottom HandleOpenPress={handleOpenPress} />
-      </View>
+    
 
       {/* Etiqueta de ruta a la derecha */}
       <View style={styles.routePill}>
@@ -29,8 +27,8 @@ export default function DashboardTopBar({ ruta, handleOpenPress }: DashboardTopB
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 110, // Moved down to make room for SearchBar
-    left: 0,
+    top: 115, // Moved down to make room for SearchBar
+    left: 300,
     right: 0,
     flexDirection: "row",
     alignItems: "center",

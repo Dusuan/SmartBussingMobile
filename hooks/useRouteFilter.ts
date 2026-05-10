@@ -105,7 +105,7 @@ export function useRouteFilter(): RouteFilterResult {
       return {
         activeRouteFilter: null,
         inactiveRoutesFilter: ['all', isRoute] as unknown[],
-        stopsFilter: ['all', isStop] as unknown[],
+        stopsFilter: null,
       };
     }
 
