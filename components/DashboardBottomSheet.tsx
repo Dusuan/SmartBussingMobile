@@ -8,7 +8,7 @@ import MapView from "@/components/mapview";
 import RouteView from "@/app/(routeView)";
 import { Button } from "react-native-paper";
 import { useRoutesData } from "@/hooks/useRoutesData";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const width = Dimensions.get("window").width;
 
@@ -66,9 +66,9 @@ export default function DashboardBottomSheet({
                       Ruta {route.properties.route_short_name}
                     </Text>
                     {/* Just an example of a heart icon from the design */}
-                    <AntDesign 
-                      name={route.properties.route_short_name === "203" ? "heart" : "hearto"} 
-                      size={18} 
+                    <MaterialCommunityIcons 
+                      name={route.properties.route_short_name === "203" ? "heart" : "heart-outline"} 
+                      size={20} 
                       color={route.properties.route_short_name === "203" ? "#E53935" : "#333333"} 
                     />
                   </View>
