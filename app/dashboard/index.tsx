@@ -94,6 +94,11 @@ export default function Dashboard() {
     requestTrip(userLocation, searchMarker);
   }, [userLocation, searchMarker, requestTrip]);
 
+  // Clear trip draft when the destination marker is removed (X button in SearchBar)
+  React.useEffect(() => {
+    if (searchMarker === null) clearTrip();
+  }, [searchMarker]);
+
   // When trip data arrives: fit camera to the full route bounding box
   React.useEffect(() => {
     if (!tripData || !cameraRef.current) return;
