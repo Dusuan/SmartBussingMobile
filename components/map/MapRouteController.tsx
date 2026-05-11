@@ -242,22 +242,25 @@ export function MapRouteController({
         </MapboxGL.MarkerView>
       )}
 
-      {/* External Mapbox POI Popup */}
+      {/* External Mapbox POI Popup — geo-anchored */}
       {externalMapPoi && (
         <MapboxGL.MarkerView
           coordinate={externalMapPoi.coordinates}
           id={`poi-popup-${externalMapPoi.id}`}
+          allowOverlap={true}
         >
-          <StopPopup
-            stopName={externalMapPoi.name}
-            description={externalMapPoi.category}
-            hideImage={true}
-            coordinates={externalMapPoi.coordinates}
-            googleMapsUrl={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(externalMapPoi.name)}`}
-            onClose={() => {
-              if (onClearExternalMapPoi) onClearExternalMapPoi();
-            }}
-          />
+          <View onStartShouldSetResponder={() => true}>
+            <StopPopup
+              stopName={externalMapPoi.name}
+              description={externalMapPoi.category}
+              hideImage={true}
+              coordinates={externalMapPoi.coordinates}
+              googleMapsUrl={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(externalMapPoi.name)}+@${externalMapPoi.coordinates[1]},${externalMapPoi.coordinates[0]}`}
+              onClose={() => {
+                if (onClearExternalMapPoi) onClearExternalMapPoi();
+              }}
+            />
+          </View>
         </MapboxGL.MarkerView>
       )}
 

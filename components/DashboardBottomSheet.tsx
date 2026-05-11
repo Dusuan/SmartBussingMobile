@@ -8,7 +8,7 @@ import MapView from "@/components/mapview";
 import RouteView from "@/app/(routeView)";
 import { Button } from "react-native-paper";
 import { useRoutesData } from "@/hooks/useRoutesData";
-import { AntDesign } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const width = Dimensions.get("window").width;
 
@@ -21,6 +21,8 @@ interface DashboardBottomSheetProps {
   setRuta: (ruta: string) => void;
   showAds: () => void;
   handleRouteSelect?: (routeId: string) => void;
+  activeRouteId?: string | null;
+  clearRoute?: () => void;
 }
 
 export default function DashboardBottomSheet({
@@ -32,6 +34,8 @@ export default function DashboardBottomSheet({
   setRuta,
   showAds,
   handleRouteSelect,
+  activeRouteId,
+  clearRoute,
 }: DashboardBottomSheetProps) {
   const { routeFeatures } = useRoutesData();
 
@@ -62,9 +66,9 @@ export default function DashboardBottomSheet({
                       Ruta {route.properties.route_short_name}
                     </Text>
                     {/* Just an example of a heart icon from the design */}
-                    <AntDesign 
-                      name={route.properties.route_short_name === "203" ? "heart" : "hearto"} 
-                      size={18} 
+                    <MaterialCommunityIcons 
+                      name={route.properties.route_short_name === "203" ? "heart" : "heart-outline"} 
+                      size={20} 
                       color={route.properties.route_short_name === "203" ? "#E53935" : "#333333"} 
                     />
                   </View>
@@ -77,12 +81,18 @@ export default function DashboardBottomSheet({
                   {/* Buttons Row */}
                   <View style={styles.cardButtonsRow}>
                     <TouchableOpacity
-                      style={[styles.actionButton, { backgroundColor: route.properties.route_color }]}
+                      style={[styles.actionButton, { backgroundColor: activeRouteId === route.properties.route_id ? '#555555' : route.properties.route_color }]}
                       onPress={() => {
-                        if (handleRouteSelect) handleRouteSelect(route.properties.route_id);
+                        if (activeRouteId === route.properties.route_id) {
+                          if (clearRoute) clearRoute();
+                        } else {
+                          if (handleRouteSelect) handleRouteSelect(route.properties.route_id);
+                        }
                       }}
                     >
-                      <Text style={styles.actionButtonText}>Visualizar en el mapa</Text>
+                      <Text style={styles.actionButtonText}>
+                        {activeRouteId === route.properties.route_id ? 'Activa' : 'Visualizar en el mapa'}
+                      </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -143,12 +153,12 @@ export default function DashboardBottomSheet({
         ),
       },
     ],
-    [routeFeatures, showAds, handleRouteSelect]
+    [routeFeatures, showAds, handleRouteSelect, activeRouteId, clearRoute]
   );
 
   return (
     <BottomSheet
-      style={{ marginHorizontal: 0 }} // Remove margin to allow full width for the sheet
+      style={{ marginHorizontal: 0, zIndex: 100 }} // Remove margin to allow full width for the sheet
       index={1}
       animateOnMount={true}
       snapPoints={["15%", "30%", "50%", "75%", "90%"]}

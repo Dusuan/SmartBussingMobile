@@ -79,6 +79,9 @@ export const RouteStopsLayer = React.memo(function RouteStopsLayer({
 }: RouteStopsLayerProps) {
   const memoFilter = useMemo(() => filter, [JSON.stringify(filter)]);
 
+  // Hide all stops when no filter is provided (no route selected)
+  if (!memoFilter) return null;
+
   return (
     <MapboxGL.ShapeSource
       id="smartbussing-stops-source"
