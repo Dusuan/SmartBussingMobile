@@ -45,6 +45,8 @@ import { useRouteFilter } from "@/hooks/useRouteFilter";
 import { MapboxPoi } from "@/types/geodata";
 import Anuncio from "@/components/anuncio";
 import { router } from "expo-router";
+import { useTrip } from "@/hooks/useTrip";
+import GetDirectionsButton from "@/components/GetDirectionsButton";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -83,6 +85,41 @@ export default function Dashboard() {
     clearRoute,
     toggleMode,
   } = useRouteFilter();
+
+  // ─── Trip / Directions Module ─────────────────────────────────────────────
+  const { isLoading: isTripLoading, tripData, requestTrip, clearTrip } = useTrip();
+
+  const handleGetDirections = useCallback(() => {
+    if (!userLocation || !searchMarker) return;
+    requestTrip(userLocation, searchMarker);
+  }, [userLocation, searchMarker, requestTrip]);
+
+  // Clear trip draft when the destination marker is removed (X button in SearchBar)
+  React.useEffect(() => {
+    if (searchMarker === null) clearTrip();
+  }, [searchMarker]);
+
+  // When trip data arrives: fit camera to the full route bounding box
+  React.useEffect(() => {
+    if (!tripData || !cameraRef.current) return;
+
+    // Collect every coordinate from every segment
+    const allCoords: [number, number][] = tripData.segmentos.flatMap(
+      (s) => s.directions.geoJson.coordinates
+    );
+
+    if (allCoords.length === 0) return;
+
+    const lngs = allCoords.map(([lng]) => lng);
+    const lats = allCoords.map(([, lat]) => lat);
+
+    const ne: [number, number] = [Math.max(...lngs), Math.max(...lats)]; // northeast
+    const sw: [number, number] = [Math.min(...lngs), Math.min(...lats)]; // southwest
+
+    // Padding: [top, right, bottom, left] — bottom accounts for BottomSheet
+    cameraRef.current.fitBounds(ne, sw, [80, 40, 320, 40], 900);
+  }, [tripData]);
+
 
   const handleRouteSelect = useCallback((routeId: string) => {
     setActiveRoute(routeId);
@@ -220,6 +257,7 @@ export default function Dashboard() {
           mode={mode}
           externalMapPoi={selectedMapPoi}
           onClearExternalMapPoi={() => setSelectedMapPoi(null)}
+          tripData={tripData}
         />
       </MapboxGL.MapView>
 
@@ -330,6 +368,14 @@ export default function Dashboard() {
           setSearchMarker={setSearchMarker}
         />
       </View>
+
+      {/* "Obtener direcciones" — appears when a destination is pinned */}
+      <GetDirectionsButton
+        visible={searchMarker !== null}
+        isLoading={isTripLoading}
+        onPress={handleGetDirections}
+      />
+
       <View></View>
       <DashboardTopBar ruta={Ruta} handleOpenPress={HandleOpenPress} />
       <DashboardBottomSheet

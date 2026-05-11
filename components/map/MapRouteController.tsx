@@ -15,9 +15,11 @@ import { View, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import MapboxGL from '@rnmapbox/maps';
 import { RouteLineLayer } from './RouteLineLayer';
 import { RouteStopsLayer } from './RouteStopsLayer';
+import { TripRouteLayer } from './TripRouteLayer';
 import { useRoutesData } from '@/hooks/useRoutesData';
 import { useRouteFilter } from '@/hooks/useRouteFilter';
 import { MapDisplayMode, StopFeature, MapboxPoi } from '@/types/geodata';
+import { TripResponse } from '@/types/trips';
 import AppText from '@/components/AppText';
 import { StopPopup } from './StopPopup';
 
@@ -53,6 +55,12 @@ interface MapRouteControllerProps {
    * Callback to clear the external Mapbox POI.
    */
   onClearExternalMapPoi?: () => void;
+
+  /**
+   * Trip directions data from the backend.
+   * When set, renders the WALKING + BUS segments on the map.
+   */
+  tripData?: TripResponse | null;
 }
 
 // ─── Camera Padding ───────────────────────────────────────────────────────────
@@ -114,6 +122,7 @@ export function MapRouteController({
   onRoutePress,
   externalMapPoi,
   onClearExternalMapPoi,
+  tripData,
 }: MapRouteControllerProps) {
   const {
     routesGeoJSON,
@@ -254,6 +263,9 @@ export function MapRouteController({
           </View>
         </MapboxGL.MarkerView>
       )}
+
+      {/* Trip Direction Segments (WALKING + BUS) */}
+      <TripRouteLayer tripData={tripData ?? null} />
 
       {/* Mode Toggle Overlay — rendered OUTSIDE MapboxGL.MapView */}
       {/* NOTE: This must be placed as a sibling to MapboxGL.MapView in the parent, */}
