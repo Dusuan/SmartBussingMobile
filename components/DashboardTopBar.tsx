@@ -11,12 +11,9 @@ interface DashboardTopBarProps {
 export default function DashboardTopBar({ ruta, handleOpenPress }: DashboardTopBarProps) {
   return (
     <View style={styles.container} pointerEvents="box-none">
-      {/* Botones izquierda: usuario y casa en fila */}
-    
-
       {/* Etiqueta de ruta a la derecha */}
       <View style={styles.routePill}>
-        <Text style={styles.routeText} numberOfLines={1}>
+        <Text style={styles.routeText}>
           📍 {ruta}
         </Text>
       </View>
@@ -28,25 +25,19 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     top: 115, // Moved down to make room for SearchBar
-    left: 300,
-    right: 0,
+    right: 16,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     paddingHorizontal: 8,
   },
-  leftGroup: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
   routePill: {
-    backgroundColor: "rgba(29, 58, 45, 0.92)",
-    borderColor: "#A4FFD7",
+    backgroundColor: "#5B9EA0",
+    borderColor: "rgba(255, 255, 255, 0.6)",
     borderWidth: 1.5,
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 14,
-    maxWidth: 200,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,

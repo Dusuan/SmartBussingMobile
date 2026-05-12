@@ -9,6 +9,7 @@ import RouteView from "@/app/(routeView)";
 import { Button } from "react-native-paper";
 import { useRoutesData } from "@/hooks/useRoutesData";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { SharedValue } from "react-native-reanimated";
 
 const width = Dimensions.get("window").width;
 
@@ -18,11 +19,11 @@ interface DashboardBottomSheetProps {
   handleLocationSelect: (feature: GeocodingFeature) => void;
   setSearchMarker: React.Dispatch<React.SetStateAction<[number, number] | null>>;
   setCurrMap: (map: string) => void;
-  setRuta: (ruta: string) => void;
   showAds: () => void;
   handleRouteSelect?: (routeId: string) => void;
   activeRouteId?: string | null;
   clearRoute?: () => void;
+  animatedPosition: SharedValue<number>;
 }
 
 export default function DashboardBottomSheet({
@@ -31,11 +32,11 @@ export default function DashboardBottomSheet({
   handleLocationSelect,
   setSearchMarker,
   setCurrMap,
-  setRuta,
   showAds,
   handleRouteSelect,
   activeRouteId,
   clearRoute,
+  animatedPosition,
 }: DashboardBottomSheetProps) {
   const { routeFeatures } = useRoutesData();
 
@@ -136,7 +137,8 @@ export default function DashboardBottomSheet({
             <Button
               className="mb-8"
               mode="elevated"
-              textColor="black"
+              buttonColor="#5B9EA0"
+              textColor="white"
               onPress={showAds}
             >
               Ver lugares de la semana
@@ -160,6 +162,7 @@ export default function DashboardBottomSheet({
     <BottomSheet
       style={{ marginHorizontal: 0, zIndex: 100 }} // Remove margin to allow full width for the sheet
       index={1}
+      animatedPosition={animatedPosition}
       animateOnMount={true}
       snapPoints={["15%", "30%", "50%", "75%", "90%"]}
       enablePanDownToClose={false}
@@ -168,7 +171,7 @@ export default function DashboardBottomSheet({
         backgroundColor: "#FFFFFF",
         borderRadius: 30,
       }}
-      handleIndicatorStyle={{ backgroundColor: "#D3D3D3", width: 40, height: 5 }}
+      handleIndicatorStyle={{ backgroundColor: "#5B9EA0", width: 40, height: 5 }}
     >
       <BottomSheetView style={styles.bottomSheetContainer}>
         <FlatList
@@ -244,7 +247,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   linkText: {
-    color: '#666666',
+    color: '#5B9EA0',
     fontSize: 12,
     textDecorationLine: 'underline',
   },

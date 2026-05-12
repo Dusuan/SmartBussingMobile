@@ -223,7 +223,6 @@ export function useRoutesData(): RoutesDataResult {
           'Content-Type': 'application/json',
         },
       });
-
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -268,10 +267,14 @@ export function useRoutesData(): RoutesDataResult {
           console.log('Rutas cargadas desde caché local');
           // 2. Verificar si el caché todavía es fresco (< 24 horas)
           const lastSync = await getLastSyncTime();
+          if(!isCacheFresh(lastSync)){
+          console.log('Sincronizando rutas desde el servidor...');
+          syncRoutes();
+          console.log("Rutas sincronizadas")
+          }
           return; 
         }
-        console.log('Sincronizando rutas desde el servidor...');
-        syncRoutes();
+       
       };
       loadRoutes();
     }, [syncRoutes]);

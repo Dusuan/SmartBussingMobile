@@ -61,6 +61,11 @@ interface MapRouteControllerProps {
    * When set, renders the WALKING + BUS segments on the map.
    */
   tripData?: TripResponse | null;
+
+  /**
+   * Called when the user wants to get directions to a stop or POI.
+   */
+  onDirectionsPress?: (coordinates: [number, number], name: string) => void;
 }
 
 // ─── Camera Padding ───────────────────────────────────────────────────────────
@@ -123,6 +128,7 @@ export function MapRouteController({
   externalMapPoi,
   onClearExternalMapPoi,
   tripData,
+  onDirectionsPress,
 }: MapRouteControllerProps) {
   const {
     routesGeoJSON,
@@ -238,6 +244,10 @@ export function MapRouteController({
             routes={selectedStop.properties.routes}
             coordinates={selectedStop.geometry.coordinates as [number, number]}
             onClose={handleClosePopup}
+            onDirectionsPress={() => {
+              handleClosePopup();
+              onDirectionsPress?.(selectedStop.geometry.coordinates as [number, number], selectedStop.properties.stop_name);
+            }}
           />
         </MapboxGL.MarkerView>
       )}
@@ -255,10 +265,10 @@ export function MapRouteController({
               description={externalMapPoi.category}
               hideImage={true}
               coordinates={externalMapPoi.coordinates}
-              googleMapsUrl={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(externalMapPoi.name)}+@${externalMapPoi.coordinates[1]},${externalMapPoi.coordinates[0]}`}
               onClose={() => {
                 if (onClearExternalMapPoi) onClearExternalMapPoi();
               }}
+              onDirectionsPress={() => onDirectionsPress?.(externalMapPoi.coordinates, externalMapPoi.name)}
             />
           </View>
         </MapboxGL.MarkerView>
@@ -290,12 +300,12 @@ const styles = StyleSheet.create({
   modeToggleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(29, 58, 45, 0.92)',
+    backgroundColor: '#5B9EA0',
     paddingVertical: 10,
     paddingHorizontal: 18,
     borderRadius: 24,
     borderWidth: 1.5,
-    borderColor: '#A4FFD7',
+    borderColor: '#FFFFFF',
     gap: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -304,12 +314,12 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   modeToggleText: {
-    color: '#A4FFD7',
+    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '600',
   },
   modeToggleArrow: {
-    backgroundColor: 'rgba(164, 255, 215, 0.15)',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: 12,
     width: 24,
     height: 24,
@@ -317,7 +327,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modeToggleArrowText: {
-    color: '#A4FFD7',
+    color: '#FFFFFF',
     fontSize: 14,
   },
 });

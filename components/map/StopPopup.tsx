@@ -9,30 +9,24 @@ export interface StopPopupProps {
   imageUrl?: string;
   routes?: string[];
   coordinates: [number, number]; // [lng, lat]
-  googleMapsUrl?: string; // Optional direct search URL
   hideImage?: boolean; // If true, do not render the image block at all
   onClose: () => void;
+  onDirectionsPress: () => void;
 }
 
 const DEFAULT_IMAGE = require('../../assets/images/Microbus.jpg'); // Fallback mock image
 
-export function StopPopup({ stopName, description, imageUrl, routes = [], coordinates, googleMapsUrl, hideImage, onClose }: StopPopupProps) {
+export function StopPopup({ stopName, description, imageUrl, routes = [], coordinates, hideImage, onClose, onDirectionsPress }: StopPopupProps) {
   
-  const handleOpenGoogleMaps = useCallback(() => {
-    // If specific URL is provided, use it. Otherwise show exact location by coordinates
-    const url = googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${coordinates[1]},${coordinates[0]}`;
-    Linking.openURL(url).catch(err => console.error('Error opening maps', err));
-  }, [googleMapsUrl, coordinates]);
-
   const handleCloseTap = useCallback((e: GestureResponderEvent) => {
     e.stopPropagation();
     onClose();
   }, [onClose]);
 
-  const handleMapsTap = useCallback((e: GestureResponderEvent) => {
+  const handleDirectionsTap = useCallback((e: GestureResponderEvent) => {
     e.stopPropagation();
-    handleOpenGoogleMaps();
-  }, [handleOpenGoogleMaps]);
+    onDirectionsPress();
+  }, [onDirectionsPress]);
 
   return (
     <View style={styles.cardContainer}>
@@ -43,7 +37,7 @@ export function StopPopup({ stopName, description, imageUrl, routes = [], coordi
             style={styles.closeTouchable}
             onTouchEnd={handleCloseTap}
           >
-            <MaterialCommunityIcons name="close" size={20} color="#A4FFD7" />
+            <MaterialCommunityIcons name="close" size={20} color="#FFFFFF" />
           </View>
         </View>
 
@@ -77,9 +71,9 @@ export function StopPopup({ stopName, description, imageUrl, routes = [], coordi
         <View style={styles.actionContainer}>
           <View
             style={styles.mapsButton}
-            onTouchEnd={handleMapsTap}
+            onTouchEnd={handleDirectionsTap}
           >
-            <MaterialCommunityIcons name="arrow-top-right-thick" size={24} color="#1D3A2D" />
+            <MaterialCommunityIcons name="directions" size={26} color="#5B9EA0" />
           </View>
         </View>
       </View>
@@ -90,10 +84,10 @@ export function StopPopup({ stopName, description, imageUrl, routes = [], coordi
 const styles = StyleSheet.create({
   cardContainer: {
     width: 320,
-    backgroundColor: '#1D3A2D',
+    backgroundColor: '#5B9EA0',
     borderRadius: 16,
     overflow: 'hidden',
-    borderColor: '#A4FFD7',
+    borderColor: '#FFFFFF',
     borderWidth: 1,
     // Add margin bottom to place the popup above the marker instead of centered on it
     marginBottom: 10,
@@ -131,7 +125,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: 'rgba(164, 255, 215, 0.15)',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -141,7 +135,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   description: {
-    color: '#B0D8C9',
+    color: '#E0E0E0',
     fontSize: 11,
     marginTop: 2,
     marginBottom: 6,
@@ -152,13 +146,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   routeBadge: {
-    backgroundColor: '#A4FFD7',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
   },
   routeText: {
-    color: '#1D3A2D',
+    color: '#5B9EA0',
     fontSize: 10,
     fontWeight: 'bold',
   },
@@ -167,7 +161,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mapsButton: {
-    backgroundColor: '#A4FFD7',
+    backgroundColor: '#FFFFFF',
     width: 44,
     height: 44,
     borderRadius: 22,

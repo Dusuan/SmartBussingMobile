@@ -1,13 +1,5 @@
-/**
- * @file components/GetDirectionsButton.tsx
- * @description Floating "Obtener direcciones" button that appears above the
- * BottomSheet when the user has selected a destination on the map.
- * Animates in/out with a slide-up spring and handles the loading state.
- */
-
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import {
-  Animated,
   TouchableOpacity,
   ActivityIndicator,
   StyleSheet,
@@ -15,6 +7,12 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Text from '@/components/AppText';
+import Animated, { 
+  useAnimatedStyle, 
+  withTiming, 
+  withSpring, 
+  SharedValue 
+} from 'react-native-reanimated';
 
 interface GetDirectionsButtonProps {
   /** Show the button (true when a destination marker is active) */
@@ -23,56 +21,39 @@ interface GetDirectionsButtonProps {
   isLoading: boolean;
   /** Called when the user taps the button */
   onPress: () => void;
+  /** Animated top edge position of the BottomSheet */
+  animatedPosition: SharedValue<number>;
 }
-
-const BOTTOM_OFFSET = 108; // Sits just above the BottomSheet collapsed handle
 
 export default function GetDirectionsButton({
   visible,
   isLoading,
   onPress,
+  animatedPosition,
 }: GetDirectionsButtonProps) {
-  const translateY = useRef(new Animated.Value(80)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+  
+  const animatedStyle = useAnimatedStyle(() => {
+    // The button should float about 12px above the bottom sheet top edge
+    // We also add an internal translation when it appears/disappears
+    const internalTranslateY = withSpring(visible ? 0 : 40, { damping: 15 });
+    const opacity = withTiming(visible ? 1 : 0, { duration: 250 });
 
-  useEffect(() => {
-    if (visible) {
-      Animated.parallel([
-        Animated.spring(translateY, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 65,
-          friction: 11,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 220,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(translateY, {
-          toValue: 80,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 180,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [visible]);
+    return {
+      top: animatedPosition.value - 76, // 64 (height) + 12 (margin)
+      opacity,
+      transform: [{ translateY: internalTranslateY }],
+      // Use pointerEvents indirectly via opacity or separate logic, 
+      // but reanimated style won't change pointerEvents directly easily.
+    };
+  });
 
   return (
     <Animated.View
-      pointerEvents={visible ? 'auto' : 'none'}
       style={[
         styles.wrapper,
-        { transform: [{ translateY }], opacity },
+        animatedStyle,
       ]}
+      pointerEvents={visible ? 'auto' : 'none'}
     >
       <TouchableOpacity
         id="get-directions-button"
@@ -100,7 +81,6 @@ export default function GetDirectionsButton({
 const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
-    bottom: BOTTOM_OFFSET,
     left: 20,
     right: 20,
     zIndex: 15,
@@ -112,9 +92,9 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   button: {
-    backgroundColor: '#3D9970',
+    backgroundColor: '#5B9EA0',
     borderRadius: 30,
-    paddingVertical: 15,
+    height: 64, // Explicit height for easier positioning calculation
     paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'center',

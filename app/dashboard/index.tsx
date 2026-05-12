@@ -6,6 +6,7 @@ import {
   Animated,
   Dimensions,
   Platform,
+  Alert,
 } from "react-native";
 import MapboxGL from "@rnmapbox/maps";
 import UserTrackingMode from "@rnmapbox/maps";
@@ -42,11 +43,13 @@ import DashboardTopBar from "@/components/DashboardTopBar";
 import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
 import { useRouteFilter } from "@/hooks/useRouteFilter";
+import { useRoutesData } from "@/hooks/useRoutesData";
 import { MapboxPoi } from "@/types/geodata";
 import Anuncio from "@/components/anuncio";
 import { router } from "expo-router";
 import { useTrip } from "@/hooks/useTrip";
 import GetDirectionsButton from "@/components/GetDirectionsButton";
+import { useSharedValue } from "react-native-reanimated";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -65,6 +68,9 @@ export default function Dashboard() {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const cameraRef = useRef<MapboxGL.Camera>(null);
   const mapRef = useRef<MapboxGL.MapView>(null);
+
+  // Animated position of the bottom sheet top edge
+  const animatedPosition = useSharedValue(height);
 
   useForeground(() => {
     Platform.OS === 'android' && bannerRef.current?.load();
@@ -87,11 +93,29 @@ export default function Dashboard() {
   } = useRouteFilter();
 
   // ─── Trip / Directions Module ─────────────────────────────────────────────
+  const { getRouteById } = useRoutesData();
   const { isLoading: isTripLoading, tripData, requestTrip, clearTrip } = useTrip();
 
-  const handleGetDirections = useCallback(() => {
-    if (!userLocation || !searchMarker) return;
-    requestTrip(userLocation, searchMarker);
+  // Sync the "Ruta" label in the TopBar with the selected route's short name
+  useEffect(() => {
+    if (activeRouteId) {
+      const route = getRouteById(activeRouteId);
+      setRuta(route?.properties.route_short_name || `Ruta ${activeRouteId}`);
+    } else {
+      setRuta("Mapa de Ensenada");
+    }
+  }, [activeRouteId, getRouteById]);
+
+  const handleGetDirections = useCallback(async () => {
+    let currentLoc = userLocation;
+    
+    // If location is missing, try to request it now (with an alert if it fails)
+    if (!currentLoc) {
+      currentLoc = await requestLocation(true);
+    }
+
+    if (!currentLoc || !searchMarker) return;
+    requestTrip(currentLoc, searchMarker);
   }, [userLocation, searchMarker, requestTrip]);
 
   // Clear trip draft when the destination marker is removed (X button in SearchBar)
@@ -123,7 +147,6 @@ export default function Dashboard() {
 
   const handleRouteSelect = useCallback((routeId: string) => {
     setActiveRoute(routeId);
-    setRuta(`Ruta ${routeId}`);
     bottomSheetRef.current?.snapToIndex(2);
   }, [setActiveRoute]);
 
@@ -157,25 +180,70 @@ export default function Dashboard() {
 
   const sliderHeight = height; // Pantalla completa
 
-  // Request location permissions and get current position
-  React.useLayoutEffect(() => {
-    (async () => {
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status === "granted") {
-          const position = await Location.getCurrentPositionAsync({});
-          setUserLocation([position.coords.longitude, position.coords.latitude]);
-        } else {
-          // Permission denied — fall back to default center so the map still loads
-          console.warn("Location permission denied, using default center");
-          setUserLocation(ENSENADA_CENTER);
+  /**
+   * Helper to request and fetch the user's current location.
+   * @param showErrorAlert If true, shows an Alert if permissions or services are missing.
+   */
+  const requestLocation = async (showErrorAlert = false): Promise<[number, number] | null> => {
+    try {
+      const enabled = await Location.hasServicesEnabledAsync();
+      if (!enabled) {
+        if (showErrorAlert) {
+          Alert.alert(
+            "Ubicación desactivada",
+            "Por favor activa los servicios de ubicación en tu dispositivo para obtener direcciones."
+          );
         }
-      } catch (error) {
-        console.error("Error requesting location permission:", error);
-        // On any error, fall back to default center instead of staying stuck
+        return null;
+      }
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        if (showErrorAlert) {
+          Alert.alert(
+            "Permiso denegado",
+            "Necesitamos permiso de ubicación para calcular tu ruta."
+          );
+        }
+        return null;
+      }
+
+      const position = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      const coords: [number, number] = [position.coords.longitude, position.coords.latitude];
+      setUserLocation(coords);
+      return coords;
+    } catch (error) {
+      console.error("Error fetching location:", error);
+      return null;
+    }
+  };
+
+  // Request location permissions and get current position on mount
+  React.useEffect(() => {
+    (async () => {
+      // Try to get location silently on startup
+      const loc = await requestLocation(false);
+      if (!loc) {
+        // Fall back to default center so the map still loads
+        console.warn("Location unavailable on startup, using default center");
         setUserLocation(ENSENADA_CENTER);
       }
     })();
+  }, []);
+
+  const handleDirectionsPress = useCallback((coords: [number, number], name: string) => {
+    setSearchMarker(coords);
+    setSelectedMapPoi(null); // Close POI popup
+    // Optionally: close stop popup is handled inside MapRouteController via its internal state
+    // but here we ensure the camera moves to see the destination clearly
+    cameraRef.current?.setCamera({
+      centerCoordinate: coords,
+      zoomLevel: 15,
+      animationMode: "flyTo",
+      animationDuration: 800,
+    });
   }, []);
 
   const handleLocationSelect = (feature: GeocodingFeature) => {
@@ -241,7 +309,7 @@ export default function Dashboard() {
           animationDuration={1000}
         />
 
-        <MapboxGL.LocationPuck visible />
+        {userLocation && <MapboxGL.LocationPuck visible />}
 
         {/* Search result marker */}
         {searchMarker && (
@@ -258,6 +326,7 @@ export default function Dashboard() {
           externalMapPoi={selectedMapPoi}
           onClearExternalMapPoi={() => setSelectedMapPoi(null)}
           tripData={tripData}
+          onDirectionsPress={handleDirectionsPress}
         />
       </MapboxGL.MapView>
 
@@ -374,17 +443,18 @@ export default function Dashboard() {
         visible={searchMarker !== null}
         isLoading={isTripLoading}
         onPress={handleGetDirections}
+        animatedPosition={animatedPosition}
       />
 
       <View></View>
       <DashboardTopBar ruta={Ruta} handleOpenPress={HandleOpenPress} />
       <DashboardBottomSheet
         bottomSheetRef={bottomSheetRef}
+        animatedPosition={animatedPosition}
         userLocation={userLocation}
         handleLocationSelect={handleLocationSelect}
         setSearchMarker={setSearchMarker}
         setCurrMap={setCurrMap}
-        setRuta={setRuta}
         showAds={showAds}
         handleRouteSelect={handleRouteSelect}
         activeRouteId={activeRouteId}
@@ -402,7 +472,7 @@ const styles = StyleSheet.create({
     top: 50,
     left: 0,
     right: 0,
-    zIndex: 0, // Above Map and other overlays
+    zIndex: 10, // Above Map and other overlays (like the TopBar pill)
   },
 
   // Search pin
