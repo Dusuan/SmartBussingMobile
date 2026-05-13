@@ -6,7 +6,7 @@
 
 import { TripApiResponse } from '@/types/trips';
 
-const API_BASE = 'https://smart-bussing-back.onrender.com/api/v1';
+const API_BASE = 'https://smart-bussing-back-production.up.railway.app/api/v1';
 
 /**
  * Fetches the optimized trip from the backend.

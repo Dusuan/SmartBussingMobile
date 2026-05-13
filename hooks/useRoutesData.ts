@@ -33,7 +33,7 @@ import {
  * Remote API endpoint — apunta al endpoint real del backend.
  * Falls back to local JSON if this fails or is offline.
  */
-const DATA_SOURCE_URL: string | null = 'https://smart-bussing-back.onrender.com/api/v1/ruta';
+const DATA_SOURCE_URL: string | null = 'https://smart-bussing-back-production.up.railway.app/api/v1/ruta';
 
 // ─── Local data source ────────────────────────────────────────────────────────
 
