@@ -39,6 +39,8 @@ export interface SegmentDirections {
 export interface TripSegment {
   tipo: SegmentType;
   descripcion: string;
+  /** Hex color of the bus route (e.g. "#B3261E"). Only present for BUS segments. */
+  routeColor?: string;
   directions: SegmentDirections;
 }
 

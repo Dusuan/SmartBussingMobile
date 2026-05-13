@@ -5,8 +5,12 @@
  */
 
 import { TripApiResponse } from '@/types/trips';
+import Constants from 'expo-constants';
 
-const API_BASE = 'https://smart-bussing-back.onrender.com/api/v1';
+const API_BASE: string =
+  Constants.expoConfig?.extra?.BACKEND_URL
+
+console.log('[tripsApi] API_BASE =', API_BASE);
 
 /**
  * Fetches the optimized trip from the backend.

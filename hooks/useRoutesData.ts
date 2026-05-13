@@ -25,6 +25,7 @@ import {
   getLastSyncTime,
   isCacheFresh,
 } from '@/services/routesCache';
+import Constants from 'expo-constants';
 
 
 // ─── Configuration ────────────────────────────────────────────────────────────
@@ -33,7 +34,11 @@ import {
  * Remote API endpoint — apunta al endpoint real del backend.
  * Falls back to local JSON if this fails or is offline.
  */
-const DATA_SOURCE_URL: string | null = 'https://smart-bussing-back.onrender.com/api/v1/ruta';
+
+
+const BACKEND_URL = Constants.expoConfig?.extra?.BACKEND_URL;
+
+const DATA_SOURCE_URL: string | null = `${BACKEND_URL}/api/v1/ruta`;
 
 // ─── Local data source ────────────────────────────────────────────────────────
 
@@ -258,26 +263,26 @@ export function useRoutesData(): RoutesDataResult {
   }, []);
 
   // Fetch from the API once when the component mounts
-    useEffect(() => {
-      const loadRoutes = async () => {
-        // 1. Intentar cargar desde caché
-        const cached = await getCachedRoutes();
-        if (cached) {
-          setData(cached);
-          console.log('Rutas cargadas desde caché local');
-          // 2. Verificar si el caché todavía es fresco (< 24 horas)
-          const lastSync = await getLastSyncTime();
-          if(!isCacheFresh(lastSync)){
+  useEffect(() => {
+    const loadRoutes = async () => {
+      // 1. Intentar cargar desde caché
+      const cached = await getCachedRoutes();
+      if (cached) {
+        setData(cached);
+        console.log('Rutas cargadas desde caché local');
+        // 2. Verificar si el caché todavía es fresco (< 24 horas)
+        const lastSync = await getLastSyncTime();
+        if (!isCacheFresh(lastSync)) {
           console.log('Sincronizando rutas desde el servidor...');
           syncRoutes();
           console.log("Rutas sincronizadas")
-          }
-          return; 
         }
-       
-      };
-      loadRoutes();
-    }, [syncRoutes]);
+        return;
+      }
+
+    };
+    loadRoutes();
+  }, [syncRoutes]);
 
   return useMemo<RoutesDataResult>(() => {
     const allFeatures = data;
