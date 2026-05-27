@@ -1,42 +1,80 @@
+/**
+ * @file components/TimelineBar.tsx
+ * @description Horizontal proportional bar that visualizes trip segments.
+ * Each segment's width is proportional to its duration (timeSeconds).
+ * WALKING → gray, BUS → routeColor from backend (fallback #B3261E).
+ */
 
-import React, {useState} from "react";
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import {Surface } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5"
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { TripSegment } from "@/types/trips";
 
-export default function TimelineBar(){
-    return(
-        <View className="flex flex-row w-full h-8 mt-7 gap-x-3">
-                <Surface style = {styles.walkBar} elevation={3} className="flex-1 items-center justify-center p-4 ">
-                    <FontAwesome5 name="walking" size={20}></FontAwesome5>
-                </Surface>
+interface TimelineBarProps {
+  segments: TripSegment[];
+}
 
-                  <Surface style = {styles.busBar} elevation={3} className="flex-1 items-center justify-center p-4">
-                    <FontAwesome5 name="bus" size={20}></FontAwesome5>
-                  </Surface>
+const WALK_COLOR = "#9E9E9E";
+const BUS_FALLBACK_COLOR = "#B3261E";
 
-                  <Surface style = {styles.walkBar} elevation={3} className="flex-1 items-center justify-center p-4">
-                    <FontAwesome5 name="walking" size={20}></FontAwesome5>
-                  </Surface>
+export default function TimelineBar({ segments }: TimelineBarProps) {
+  if (!segments || segments.length === 0) return null;
 
-                  <Surface style= {styles.busBar} elevation={3} className="flex-1 items-center justify-center p-4">
-                    <FontAwesome5 name="bus" size={20}></FontAwesome5>
-                  </Surface>
+  const totalSeconds = segments.reduce(
+    (sum, seg) => sum + seg.directions.timeSeconds,
+    0
+  );
 
-        </View>
-    )
+  return (
+    <View style={styles.container}>
+      {segments.map((seg, index) => {
+        const flex =
+          totalSeconds > 0 ? seg.directions.timeSeconds / totalSeconds : 1;
+        const isBus = seg.tipo === "BUS";
+        const bgColor = isBus
+          ? (seg.routeColor ?? BUS_FALLBACK_COLOR)
+          : WALK_COLOR;
+        const iconName = isBus ? "bus" : "walk";
+        const isFirst = index === 0;
+        const isLast = index === segments.length - 1;
+
+        return (
+          <View
+            key={index}
+            style={[
+              styles.segment,
+              {
+                flex,
+                backgroundColor: bgColor,
+                borderTopLeftRadius: isFirst ? 8 : 0,
+                borderBottomLeftRadius: isFirst ? 8 : 0,
+                borderTopRightRadius: isLast ? 8 : 0,
+                borderBottomRightRadius: isLast ? 8 : 0,
+              },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name={iconName}
+              size={16}
+              color="#FFFFFF"
+            />
+          </View>
+        );
+      })}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    walkBar : {
-      backgroundColor: "#E6E0E9",
-      borderRadius : 5,
-    },
-
-    busBar : {
-      backgroundColor : "#B3261E",
-      borderRadius : 5,
-    },
-
-})
+  container: {
+    flexDirection: "row",
+    width: "100%",
+    height: 32,
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  segment: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

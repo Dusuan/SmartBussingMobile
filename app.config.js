@@ -42,6 +42,7 @@ export default {
     },
     extra: {
       MAPBOX_DOWNLOAD_TOKEN: process.env.MAPBOX_DOWNLOAD_TOKEN,
+      BACKEND_URL: process.env.BACKEND_URL,
       eas: {
         projectId: "04c352a6-b378-4fdb-9b9b-64d0c38b698b",
       },
