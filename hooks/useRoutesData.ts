@@ -25,6 +25,7 @@ import {
   getLastSyncTime,
   isCacheFresh,
 } from '@/services/routesCache';
+import Constants from 'expo-constants';
 
 
 // ─── Configuration ────────────────────────────────────────────────────────────
@@ -33,7 +34,11 @@ import {
  * Remote API endpoint — apunta al endpoint real del backend.
  * Falls back to local JSON if this fails or is offline.
  */
-const DATA_SOURCE_URL: string | null = 'https://smart-bussing-back-production.up.railway.app/api/v1/ruta';
+
+
+const BACKEND_URL = Constants.expoConfig?.extra?.BACKEND_URL;
+
+const DATA_SOURCE_URL: string | null = `${BACKEND_URL}/api/v1/ruta`;
 
 // ─── Local data source ────────────────────────────────────────────────────────
 

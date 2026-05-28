@@ -378,6 +378,7 @@ export default function Dashboard() {
         handleRouteSelect={handleRouteSelect}
         activeRouteId={activeRouteId}
         clearRoute={clearRoute}
+        tripData={tripData}
       />
     </GestureHandlerRootView>
   );
