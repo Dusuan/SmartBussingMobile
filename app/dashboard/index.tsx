@@ -37,19 +37,17 @@ import SearchBar, { GeocodingFeature } from "@/components/SearchBar";
 import AdsModal from "@/components/AdsModal";
 import uberStyle from "@/assets/tilesets/map-style.json";
 import { MapStyleState } from "@/components/mapview";
-import mobileAds, { MaxAdContentRating } from 'react-native-google-mobile-ads';
-import { BannerAd, BannerAdSize, TestIds, useForeground } from 'react-native-google-mobile-ads';
 import DashboardTopBar from "@/components/DashboardTopBar";
 import DashboardBottomSheet from "@/components/DashboardBottomSheet";
 import { MapRouteController, ModeToggleButton } from "@/components/map/MapRouteController";
 import { useRouteFilter } from "@/hooks/useRouteFilter";
 import { useRoutesData } from "@/hooks/useRoutesData";
 import { MapboxPoi } from "@/types/geodata";
-import Anuncio from "@/components/anuncio";
 import { router } from "expo-router";
 import { useTrip } from "@/hooks/useTrip";
 import GetDirectionsButton from "@/components/GetDirectionsButton";
 import { useSharedValue } from "react-native-reanimated";
+import AdsFullScreen from "@/components/AdsFullScreen";
 
 MapboxGL.setAccessToken(Constants.expoConfig?.extra?.MAPBOX_DOWNLOAD_TOKEN);
 MapboxGL.setTelemetryEnabled(false);
@@ -57,14 +55,11 @@ MapboxGL.setTelemetryEnabled(false);
 const width = Dimensions.get("window").width;
 const height = Dimensions.get("window").height;
 
-const adUnitId = __DEV__ ? TestIds.ADAPTIVE_BANNER : 'ca-app-pub-6372485658515796~9768969991';
-
 // Ensenada city center — default camera target
 const ENSENADA_CENTER: [number, number] = [-116.6060, 31.8600];
 
 // ─── Main Dashboard ─────────────────────────────────────────────────────────────
 export default function Dashboard() {
-  const bannerRef = useRef<BannerAd>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const cameraRef = useRef<MapboxGL.Camera>(null);
   const mapRef = useRef<MapboxGL.MapView>(null);
@@ -72,16 +67,13 @@ export default function Dashboard() {
   // Animated position of the bottom sheet top edge
   const animatedPosition = useSharedValue(height);
 
-  useForeground(() => {
-    Platform.OS === 'android' && bannerRef.current?.load();
-  });
-
   const HandleOpenPress = () => bottomSheetRef.current?.snapToIndex(0);
   const [CurrMap, setCurrMap] = useState("mapbox://styles/mapbox/streets-v12");
   const [Ruta, setRuta] = useState("Mapa de Ensenada");
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [searchMarker, setSearchMarker] = useState<[number, number] | null>(null);
   const [selectedMapPoi, setSelectedMapPoi] = useState<MapboxPoi | null>(null);
+  const [isRequestingLocation, setIsRequestingLocation] = useState(false);
 
   // ─── Geo-Routes Module ─────────────────────────────────────────────────────
   const {
@@ -93,7 +85,7 @@ export default function Dashboard() {
   } = useRouteFilter();
 
   // ─── Trip / Directions Module ─────────────────────────────────────────────
-  const { getRouteById } = useRoutesData();
+  const { getRouteById, isSyncing } = useRoutesData();
   const { isLoading: isTripLoading, tripData, requestTrip, clearTrip } = useTrip();
 
   // Sync the "Ruta" label in the TopBar with the selected route's short name
@@ -178,13 +170,12 @@ export default function Dashboard() {
     });
   }, [slideAnim]);
 
-  const sliderHeight = height; // Pantalla completa
-
   /**
    * Helper to request and fetch the user's current location.
    * @param showErrorAlert If true, shows an Alert if permissions or services are missing.
    */
   const requestLocation = async (showErrorAlert = false): Promise<[number, number] | null> => {
+    setIsRequestingLocation(true);
     try {
       const enabled = await Location.hasServicesEnabledAsync();
       if (!enabled) {
@@ -217,6 +208,8 @@ export default function Dashboard() {
     } catch (error) {
       console.error("Error fetching location:", error);
       return null;
+    } finally {
+      setIsRequestingLocation(false);
     }
   };
 
@@ -331,92 +324,11 @@ export default function Dashboard() {
       </MapboxGL.MapView>
 
       {/*------------------------ Slider de Anuncios (Pantalla Completa) ------------------------*/}
-      {IsAdsVisible && (
-        <Animated.View
-          style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: "#FFFFFF",
-            zIndex: 50,
-            elevation: 20,
-            transform: [
-              {
-                translateY: slideAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, sliderHeight + 50],
-                }),
-              },
-            ],
-          }}
-        >
-          {/* Header */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingHorizontal: 20,
-              paddingTop: 50,
-              paddingBottom: 12,
-              borderBottomWidth: 1,
-              borderBottomColor: "rgba(0,0,0,0.1)",
-            }}
-          >
-            <Text style={{ color: "#4A4A4A", fontSize: 20, fontWeight: "700" }}>
-              📍 Lugares de la semana
-            </Text>
-            <IconButton
-              icon="close"
-              size={28}
-              iconColor="#4A4A4A"
-              onPress={hideAds}
-              style={{ margin: 0 }}
-            />
-          </View>
-
-          {/* Contenido con scroll vertical */}
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16 }}
-            style={{ flex: 1 }}
-          >
-            <Anuncio
-              nombreEmpresa={"Empresa"}
-              descripcion={"Descripcion de empresa"}
-              distancia={"Distancia"}
-            />
-            <Anuncio
-              nombreEmpresa={"Empresa 2"}
-              descripcion={"Otra descripcion"}
-              distancia={"Distancia"}
-            />
-            <Anuncio
-              nombreEmpresa={"Empresa 3"}
-              descripcion={"Más lugares"}
-              distancia={"Distancia"}
-            />
-
-          </ScrollView>
-
-          {/* Footer estilo AdsModal */}
-          <View style={{ flexDirection: 'row', justifyContent: 'center', paddingVertical: 12, borderTopWidth: 1, borderTopColor: '#F0F0F0' }}>
-            <Text style={{ color: '#8A8A8A', fontWeight: 'bold' }}>¿Quisieras un espacio? </Text>
-            <TouchableOpacity>
-              <Text style={{ color: '#5B9EA0', fontWeight: 'bold', textDecorationLine: 'underline' }}>
-                Regístrate aquí
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Banner Ad fijo en la parte inferior */}
-          <View style={{ paddingBottom: 24 }}>
-            <BannerAd ref={bannerRef} unitId={adUnitId} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} />
-          </View>
-        </Animated.View>
-      )}
+      <AdsFullScreen
+        isVisible={IsAdsVisible}
+        slideAnim={slideAnim}
+        hideAds={hideAds}
+      />
 
       {/* Mode toggle overlay — shown only when a route is active */}
       <ModeToggleButton
@@ -424,6 +336,13 @@ export default function Dashboard() {
         onToggle={toggleMode}
         visible={activeRouteId !== null}
       />
+
+      {/* Loading indicator for syncing routes */}
+      {isSyncing && (
+        <View style={styles.syncLoadingWrapper}>
+          <Text style={styles.syncLoadingText}>Sincronizando rutas...</Text>
+        </View>
+      )}
 
       {/*
       <AdsModal visible={IsAdsVisible} onDismiss={hideAds} />
@@ -441,7 +360,7 @@ export default function Dashboard() {
       {/* "Obtener direcciones" — appears when a destination is pinned */}
       <GetDirectionsButton
         visible={searchMarker !== null}
-        isLoading={isTripLoading}
+        isLoading={isTripLoading || isRequestingLocation}
         onPress={handleGetDirections}
         animatedPosition={animatedPosition}
       />
@@ -483,5 +402,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderWidth: 3,
     borderColor: '#508484',
+  },
+
+  // Loading indicator for syncing
+  syncLoadingWrapper: {
+    position: 'absolute',
+    top: 110,
+    alignSelf: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    elevation: 5,
+    zIndex: 10,
+  },
+  syncLoadingText: {
+    color: '#5B9EA0',
+    fontWeight: 'bold',
   },
 });

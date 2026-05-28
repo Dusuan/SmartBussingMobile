@@ -1,3 +1,4 @@
+import React from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import {useFonts} from "expo-font";
 import Text from "./AppText";
@@ -8,7 +9,7 @@ type anuncio = {
   distancia?: string;
 };
 
-export default function Anuncio({nombreEmpresa, descripcion}: anuncio) {
+const Anuncio = ({nombreEmpresa, descripcion}: anuncio) => {
   const [fontsLoaded] = useFonts({Manrope : require("../assets/fonts/Manrope-regular.otf")});
     
   if(!fontsLoaded) return null;
@@ -29,7 +30,9 @@ export default function Anuncio({nombreEmpresa, descripcion}: anuncio) {
       </View>
     </View>
   );
-}
+};
+
+export default React.memo(Anuncio);
 
 const styles = StyleSheet.create({
   card: {
