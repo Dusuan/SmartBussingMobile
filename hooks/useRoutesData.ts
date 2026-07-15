@@ -38,7 +38,7 @@ import Constants from 'expo-constants';
 
 const BACKEND_URL = Constants.expoConfig?.extra?.BACKEND_URL;
 
-const DATA_SOURCE_URL: string | null = `${BACKEND_URL}/api/v1/ruta`;
+const DATA_SOURCE_URL: string | null = `${BACKEND_URL}/ruta`;
 
 // ─── Local data source ────────────────────────────────────────────────────────
 
@@ -305,21 +305,23 @@ export function useRoutesData(): RoutesDataResult {
   useEffect(() => {
     // Para evitar que cada montura del hook dispare múltiples cargas de la caché simultáneas
     const loadRoutes = async () => {
-      // 1. Cargar desde caché para visualización inmediata si existe
-      // Y si aún no se ha cargado en los datos globales
-      if (globalData === LOCAL_GEODATA) {
-        const cached = await getCachedRoutes();
-        if (cached) {
-          globalData = cached;
-          notifyListeners();
-          console.log('Rutas cargadas desde caché local para carga inicial rápida');
+      // 1. Intentar cargar desde caché
+      const cached = await getCachedRoutes();
+      if (cached) {
+        setData(cached);
+        console.log('Rutas cargadas desde caché local');
+        // 2. Verificar si el caché todavía es fresco
+        const lastSync = await getLastSyncTime();
+        if (lastSync === null || !isCacheFresh(lastSync)) {
+          console.log('Sincronizando rutas desde el servidor...');
+          syncRoutes();
+          console.log("Rutas sincronizadas");
         }
+      } else {
+        // Si no hay caché local, sincronizar inmediatamente desde el servidor para poblarlo
+        console.log('No hay caché local. Sincronizando desde el servidor por primera vez...');
+        syncRoutes();
       }
-      
-      // 2. Siempre sincronizar en segundo plano al abrir la app
-      // Como ahora globalSyncPromise controla la concurrencia, esto solo hará fetch una vez.
-      console.log('Sincronizando rutas desde el servidor...');
-      await syncRoutes();
     };
     
     loadRoutes();
