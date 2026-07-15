@@ -45,6 +45,16 @@ const DATA_SOURCE_URL: string | null = `${BACKEND_URL}/ruta`;
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const LOCAL_GEODATA: SmartBussingGeoJSON = require('../assets/geodata/routes.json');
 
+// ─── Global State & Synchronization ─────────────────────────────────────────
+
+let globalData: SmartBussingGeoJSON = LOCAL_GEODATA;
+let globalSyncPromise: Promise<void> | null = null;
+const listeners = new Set<() => void>();
+
+function notifyListeners() {
+  listeners.forEach((listener) => listener());
+}
+
 // ─── Backend response types ──────────────────────────────────────────────────
 
 /** Coordenada individual tal como la devuelve el backend */
@@ -210,17 +220,41 @@ export interface RoutesDataResult {
 }
 
 export function useRoutesData(): RoutesDataResult {
-  const [data, setData] = useState<SmartBussingGeoJSON>(LOCAL_GEODATA);
+  const [data, setData] = useState<SmartBussingGeoJSON>(globalData);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+
+  // Subscribe to global data changes
+  useEffect(() => {
+    const handleUpdate = () => {
+      setData(globalData);
+    };
+    listeners.add(handleUpdate);
+    return () => {
+      listeners.delete(handleUpdate);
+    };
+  }, []);
 
   const syncRoutes = useCallback(async () => {
     if (!DATA_SOURCE_URL) return;
 
+    // Si ya hay una sincronización en curso, simplemente esperamos a que termine
+    if (globalSyncPromise) {
+      setIsSyncing(true);
+      try {
+        await globalSyncPromise;
+      } catch (error) {
+        // El error ya se maneja en el worker principal
+      } finally {
+        setIsSyncing(false);
+      }
+      return;
+    }
+
     setIsSyncing(true);
     setSyncError(null);
 
-    try {
+    globalSyncPromise = (async () => {
       const response = await fetch(DATA_SOURCE_URL, {
         method: 'GET',
         headers: {
@@ -239,14 +273,18 @@ export function useRoutesData(): RoutesDataResult {
         Array.isArray(backendData.response) &&
         backendData.response.length > 0
       ) {
-        // Transformar del formato del backend a GeoJSON
         const geoJSON = transformBackendToGeoJSON(backendData.response);
-        setData(geoJSON);
+        globalData = geoJSON;
+        notifyListeners();
         await cacheRoutes(geoJSON);
         console.log(`Rutas sincronizadas: ${geoJSON.features.length} features desde el backend`);
       } else {
         throw new Error('No se recibieron rutas del servidor.');
       }
+    })();
+
+    try {
+      await globalSyncPromise;
     } catch (error) {
       console.error('Error sincronizando rutas:', error);
       const errorMessage =
@@ -258,12 +296,14 @@ export function useRoutesData(): RoutesDataResult {
         [{ text: 'OK' }]
       );
     } finally {
+      globalSyncPromise = null;
       setIsSyncing(false);
     }
   }, []);
 
   // Fetch from the API once when the component mounts
   useEffect(() => {
+    // Para evitar que cada montura del hook dispare múltiples cargas de la caché simultáneas
     const loadRoutes = async () => {
       // 1. Intentar cargar desde caché
       const cached = await getCachedRoutes();
@@ -283,6 +323,7 @@ export function useRoutesData(): RoutesDataResult {
         syncRoutes();
       }
     };
+    
     loadRoutes();
   }, [syncRoutes]);
 

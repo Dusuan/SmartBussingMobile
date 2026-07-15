@@ -3,16 +3,26 @@ import { Stack } from "expo-router";
 import { DefaultTheme, PaperProvider } from "react-native-paper";
 import { StatusBar } from "react-native";
 import { useFonts } from "expo-font";
-import Text from '../components/AppText';
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 import { UserProvider } from "./contextUser";
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     MyFont: require("../assets/fonts/Manrope-regular.otf"),
   });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
-    return <Text>Loading...</Text>;
+    return null; // Return null to keep splash screen visible while fonts load
   }
   const theme = {
     ...DefaultTheme,
