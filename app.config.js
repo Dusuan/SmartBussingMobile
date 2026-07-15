@@ -2,19 +2,18 @@ import "dotenv/config";
 
 export default {
   expo: {
-    scheme: "SmartBussing",
     name: "SmartBussing",
     slug: "smart-bussing-mobile",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
-    scheme: ["smartbussingmobile"],
+    scheme: "smartbussingmobile", // Corregido: unificado en un solo string válido
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     assetBundlePatterns: ["**/*"],
     owner: "smart-bussing",
     ios: {
-      bundleIdentifier: "com.anonymous.smartbussingmobile",
+      bundleIdentifier: "com.smartbussing.smartbussingmobile",
 
       supportsTablet: true,
       infoPlist: {
@@ -75,7 +74,8 @@ export default {
       [
         "react-native-google-mobile-ads",
         {
-          androidAppId: "ca-app-pub-6372485658515796~9768969991"
+          androidAppId: "ca-app-pub-6372485658515796~9768969991",
+          iosAppId: "ca-app-pub-3940256099942544~1458002511"
         }
       ]
     ],

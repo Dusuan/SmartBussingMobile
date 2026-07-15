@@ -38,7 +38,7 @@ import Constants from 'expo-constants';
 
 const BACKEND_URL = Constants.expoConfig?.extra?.BACKEND_URL;
 
-const DATA_SOURCE_URL: string | null = `${BACKEND_URL}/api/v1/ruta`;
+const DATA_SOURCE_URL: string | null = `${BACKEND_URL}/ruta`;
 
 // ─── Local data source ────────────────────────────────────────────────────────
 
@@ -270,16 +270,18 @@ export function useRoutesData(): RoutesDataResult {
       if (cached) {
         setData(cached);
         console.log('Rutas cargadas desde caché local');
-        // 2. Verificar si el caché todavía es fresco (< 24 horas)
+        // 2. Verificar si el caché todavía es fresco
         const lastSync = await getLastSyncTime();
-        if (!isCacheFresh(lastSync)) {
+        if (lastSync === null || !isCacheFresh(lastSync)) {
           console.log('Sincronizando rutas desde el servidor...');
           syncRoutes();
-          console.log("Rutas sincronizadas")
+          console.log("Rutas sincronizadas");
         }
-        return;
+      } else {
+        // Si no hay caché local, sincronizar inmediatamente desde el servidor para poblarlo
+        console.log('No hay caché local. Sincronizando desde el servidor por primera vez...');
+        syncRoutes();
       }
-
     };
     loadRoutes();
   }, [syncRoutes]);
